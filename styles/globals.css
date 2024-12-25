@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --background-secondary: #f9fafb;
+  --text-primary: #27272a;
+  --text-secondary: #4a4a4a;
+  --accent: #006FEE;
+  --accent-hover: #005bc4;
+  --border: #e4e4e7;
+  --card-background: #ffffff;
+  --nav-background: rgba(255, 255, 255, 0.9);
+  --hero-overlay: rgba(0, 0, 0, 0.7);
+}
+
+.dark {
+  --background: #18181b;
+  --background-secondary: #1f1f23;
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --accent: #006FEE;
+  --accent-hover: #005bc4;
+  --border: #27272a;
+  --card-background: #27272a;
+  --nav-background: rgba(24, 24, 27, 0.9);
+  --hero-overlay: rgba(0, 0, 0, 0.8);
+}
+
+@layer base {
+  body {
+    @apply bg-main text-primary transition-colors duration-300;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-primary;
+  }
+
+  p {
+    @apply text-secondary;
+  }
+}
+
+@layer components {
+  .nav-link {
+    @apply text-primary hover:text-accent transition-colors duration-200;
+  }
+  
+  .card {
+    @apply bg-card-bg border border-border rounded-lg shadow-sm;
+  }
+
+  .hero-section {
+    @apply relative bg-cover bg-center;
+  }
+
+  .hero-overlay {
+    @apply absolute inset-0;
+    background-color: var(--hero-overlay);
+  }
+
+  .nav-background {
+    background-color: var(--nav-background);
+    backdrop-filter: blur(8px);
+  }
+}
