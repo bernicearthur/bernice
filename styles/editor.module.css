@@ -1,0 +1,143 @@
+.editor {
+  min-height: 400px;
+  padding: 1rem;
+  position: relative;
+}
+
+/* CKEditor container styles */
+.editor :global(.ck-editor) {
+  width: 100%;
+}
+
+.editor :global(.ck-editor__editable_inline) {
+  min-height: 400px;
+  max-height: 800px;
+  overflow-y: auto;
+  padding: 0 1rem;
+  background-color: var(--background) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border) !important;
+  border-top: none !important;
+}
+
+.editor :global(.ck-toolbar) {
+  background-color: var(--card-background) !important;
+  border-color: var(--border) !important;
+}
+
+.editor :global(.ck-toolbar__items) {
+  color: var(--text-primary) !important;
+}
+
+.editor :global(.ck-button) {
+  color: var(--text-primary) !important;
+}
+
+.editor :global(.ck-button:hover) {
+  background-color: var(--accent) !important;
+  color: white !important;
+}
+
+.editor :global(.ck-button.ck-on) {
+  background-color: var(--accent) !important;
+  color: white !important;
+}
+
+.editor :global(.ck-dropdown__panel) {
+  background-color: var(--card-background) !important;
+  border-color: var(--border) !important;
+}
+
+.editor :global(.ck-list__item) {
+  color: var(--text-primary) !important;
+}
+
+.editor :global(.ck-list__item:hover) {
+  background-color: var(--accent) !important;
+  color: white !important;
+}
+
+/* Dark theme specific overrides */
+:global(.dark) .editor :global(.ck-editor__editable) {
+  background-color: var(--background) !important;
+  color: var(--text-primary) !important;
+}
+
+:global(.dark) .editor :global(.ck-toolbar) {
+  background-color: var(--card-background) !important;
+}
+
+:global(.dark) .editor :global(.ck-button) {
+  color: var(--text-primary) !important;
+}
+
+:global(.dark) .editor :global(.ck-button:hover) {
+  background-color: var(--accent) !important;
+  color: white !important;
+}
+
+:global(.dark) .editor :global(.ck-button.ck-on) {
+  background-color: var(--accent) !important;
+  color: white !important;
+}
+
+:global(.dark) .editor :global(.ck-dropdown__panel) {
+  background-color: var(--card-background) !important;
+}
+
+:global(.dark) .editor :global(.ck-list__item) {
+  color: var(--text-primary) !important;
+}
+
+/* Content styles */
+.editor :global(.ck-content h1),
+.editor :global(.ck-content h2),
+.editor :global(.ck-content h3),
+.editor :global(.ck-content h4),
+.editor :global(.ck-content h5),
+.editor :global(.ck-content h6),
+.editor :global(.ck-content p) {
+  color: var(--text-primary) !important;
+  margin: 1em 0;
+}
+
+.editor :global(.ck-content a) {
+  color: var(--accent) !important;
+}
+
+.editor :global(.ck-content blockquote) {
+  border-left: 4px solid var(--accent) !important;
+  padding-left: 1rem;
+  margin: 1rem 0;
+  color: var(--text-secondary) !important;
+}
+
+/* Table styles */
+.editor :global(.ck-content table) {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1rem 0;
+  border: 1px solid var(--border) !important;
+}
+
+.editor :global(.ck-content th),
+.editor :global(.ck-content td) {
+  border: 1px solid var(--border) !important;
+  padding: 0.5rem;
+}
+
+/* List styles */
+.editor :global(.ck-content ul),
+.editor :global(.ck-content ol) {
+  margin: 1rem 0 1rem 1.5rem;
+}
+
+.editor :global(.ck-content li) {
+  margin: 0.5rem 0;
+}
+
+/* Placeholder styles */
+.editor :global(.ck-editor__editable.ck-editor__editable_empty::before) {
+  color: var(--text-secondary) !important;
+  opacity: 0.6;
+} 

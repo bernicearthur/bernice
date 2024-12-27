@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/navbar';
 import Footer from '../components/footer';
 import { useTheme } from '../components/theme';
+import { useRouter } from 'next/router';
 
 // Animation variants
 const fadeIn = {
@@ -29,6 +30,66 @@ const itemVariants = {
     y: 0,
     transition: {
       duration: 0.5
+    }
+  }
+};
+
+// New animation variants
+const popIn = {
+  hidden: { scale: 0.8, opacity: 0 },
+  visible: { 
+    scale: 1, 
+    opacity: 1,
+    transition: {
+      type: "spring",
+      stiffness: 260,
+      damping: 20
+    }
+  }
+};
+
+const slideIn = {
+  hidden: { x: -60, opacity: 0 },
+  visible: { 
+    x: 0, 
+    opacity: 1,
+    transition: {
+      type: "spring",
+      stiffness: 100,
+      damping: 20
+    }
+  }
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05,
+      delayChildren: 0.3
+    }
+  }
+};
+
+const pulse = {
+  scale: [1, 1.05, 1],
+  transition: {
+    duration: 2,
+    repeat: Infinity,
+    ease: "easeInOut"
+  }
+};
+
+const shimmer = {
+  hidden: { opacity: 0, x: -100 },
+  visible: {
+    opacity: [0.1, 0.5, 0.1],
+    x: ["-100%", "100%"],
+    transition: {
+      duration: 1.5,
+      repeat: Infinity,
+      ease: "linear"
     }
   }
 };
@@ -78,6 +139,8 @@ const Dashboard = () => {
     defaultAltText: 'Bernice Arthur - Portfolio Image',
     defaultPermalink: 'bernice-arthur.com/blog/'
   });
+
+  const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
@@ -248,26 +311,39 @@ const Dashboard = () => {
   const StatCard = ({ icon: Icon, title, value }) => (
     <motion.div
       variants={itemVariants}
-      whileHover={{ scale: 1.02 }}
-      className="bg-card-background p-4 sm:p-5 rounded-lg shadow-md border border-border h-[120px] sm:h-[140px] flex items-center justify-center"
+      whileHover={{ scale: 1.02, y: -5 }}
+      className="bg-card-background p-4 sm:p-5 rounded-lg shadow-md border border-border h-[120px] sm:h-[140px] flex items-center justify-center group"
     >
       <div className="flex flex-col items-center text-center gap-2 sm:gap-3">
         <motion.div
           initial={{ scale: 1 }}
           animate={{ scale: [1, 1.2, 1] }}
           transition={{ duration: 1, repeat: Infinity, repeatDelay: 2 }}
+          className="relative"
         >
-          <Icon className="w-8 h-8 sm:w-10 sm:h-10 text-accent" />
+          <Icon className="w-8 h-8 sm:w-10 sm:h-10 text-accent group-hover:text-accent-hover transition-colors duration-300" />
+          <motion.div
+            className="absolute inset-0 bg-accent/10 rounded-full -z-10"
+            animate={pulse}
+          />
         </motion.div>
         <div>
-          <p className="text-sm sm:text-base text-secondary">{title}</p>
+          <p className="text-sm sm:text-base text-secondary group-hover:text-primary transition-colors duration-300">{title}</p>
           <motion.p 
             className="text-xl sm:text-2xl font-bold text-primary mt-1"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            {value.toLocaleString()}
+            <motion.span
+              animate={{
+                scale: [1, 1.2, 1],
+                color: ["#current", "#accent", "#current"],
+              }}
+              transition={{ duration: 0.3, delay: 0.1 }}
+            >
+              {value.toLocaleString()}
+            </motion.span>
           </motion.p>
         </div>
       </div>
@@ -279,31 +355,37 @@ const Dashboard = () => {
       variants={fadeIn}
       initial="hidden"
       animate="visible"
-      className="bg-card-background rounded-lg shadow-md border border-border"
+      className="bg-card-background rounded-lg shadow-md border border-border overflow-hidden"
     >
       <div className="block w-full overflow-hidden">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-border">
+            <motion.tr 
+              variants={slideIn}
+              className="border-b border-border"
+            >
               <th className="px-2 sm:px-4 py-3 text-left text-sm font-medium text-secondary max-w-[180px] sm:max-w-none">Title</th>
               <th className="px-1 sm:px-2 py-3 text-left text-sm font-medium text-secondary w-[90px] sm:w-[100px]">Date</th>
               <th className="hidden sm:table-cell px-6 py-3 text-center text-sm font-medium text-secondary">Likes</th>
               <th className="hidden sm:table-cell px-6 py-3 text-center text-sm font-medium text-secondary">Comments</th>
               <th className="hidden sm:table-cell px-6 py-3 text-center text-sm font-medium text-secondary">Views</th>
               <th className="px-2 sm:px-4 py-3 text-right sm:text-center text-sm font-medium text-secondary w-[80px] sm:w-auto">Actions</th>
-            </tr>
+            </motion.tr>
           </thead>
           <tbody>
-            <AnimatePresence>
-              {items.map((item) => (
+            <AnimatePresence mode="wait">
+              {items.map((item, index) => (
                 <motion.tr 
                   key={item.id} 
                   className="border-b border-border hover:bg-background-secondary transition-colors duration-200"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  whileHover={{ scale: 1.01 }}
-                  transition={{ duration: 0.2 }}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  transition={{ duration: 0.2, delay: index * 0.05 }}
+                  whileHover={{ 
+                    backgroundColor: "rgba(var(--accent-rgb), 0.05)",
+                    transition: { duration: 0.2 }
+                  }}
                 >
                   <td className="px-2 sm:px-4 py-4 text-primary truncate max-w-[180px] sm:max-w-none">{item.title}</td>
                   <td className="px-1 sm:px-2 py-4 text-secondary text-sm whitespace-nowrap">{item.date}</td>
@@ -313,25 +395,49 @@ const Dashboard = () => {
                   <td className="px-2 sm:px-4 py-4">
                     <div className="flex justify-end sm:justify-center gap-0.5 sm:gap-2">
                       <motion.button 
-                        className="p-1 text-accent hover:text-accent-hover"
+                        className="p-1 text-accent hover:text-accent-hover relative group"
                         whileHover={{ scale: 1.2 }}
                         whileTap={{ scale: 0.9 }}
                       >
                         <FiEdit2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                        <motion.span
+                          className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-accent text-white text-xs py-1 px-2 rounded opacity-0 pointer-events-none whitespace-nowrap"
+                          initial={{ opacity: 0, y: 10 }}
+                          whileHover={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          Edit
+                        </motion.span>
                       </motion.button>
                       <motion.button 
-                        className="p-1 text-accent hover:text-accent-hover"
+                        className="p-1 text-accent hover:text-accent-hover relative group"
                         whileHover={{ scale: 1.2 }}
                         whileTap={{ scale: 0.9 }}
                       >
                         <FiView className="w-4 h-4 sm:w-5 sm:h-5" />
+                        <motion.span
+                          className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-accent text-white text-xs py-1 px-2 rounded opacity-0 pointer-events-none whitespace-nowrap"
+                          initial={{ opacity: 0, y: 10 }}
+                          whileHover={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          View
+                        </motion.span>
                       </motion.button>
                       <motion.button 
-                        className="p-1 text-red-500 hover:text-red-600"
+                        className="p-1 text-red-500 hover:text-red-600 relative group"
                         whileHover={{ scale: 1.2 }}
                         whileTap={{ scale: 0.9 }}
                       >
                         <FiTrash2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                        <motion.span
+                          className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-red-500 text-white text-xs py-1 px-2 rounded opacity-0 pointer-events-none whitespace-nowrap"
+                          initial={{ opacity: 0, y: 10 }}
+                          whileHover={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          Delete
+                        </motion.span>
                       </motion.button>
                     </div>
                   </td>
@@ -739,7 +845,7 @@ const Dashboard = () => {
               whileFocus={{ scale: 1.02 }}
             />
             <motion.button
-              onClick={() => setShowEditor(true)}
+              onClick={() => router.push('/create')}
               className="w-full sm:w-auto px-4 py-2 bg-accent hover:bg-accent-hover text-white rounded-lg transition-colors duration-300"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -851,13 +957,14 @@ const Dashboard = () => {
                 
                 {showTimeRangeDropdown && (
                   <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
+                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                    transition={{ type: "spring", stiffness: 200, damping: 20 }}
                     className="absolute left-0 sm:right-0 sm:left-auto mt-2 w-full sm:w-[160px] bg-main border border-border rounded-lg shadow-lg z-10 overflow-hidden"
                   >
-                    {['day', 'week', 'month', 'year'].map((range) => (
-                      <button
+                    {['day', 'week', 'month', 'year'].map((range, index) => (
+                      <motion.button
                         key={range}
                         onClick={() => handleTimeRangeChange(range)}
                         className={`w-full px-4 py-2.5 text-left capitalize transition-colors duration-200 ${
@@ -865,9 +972,14 @@ const Dashboard = () => {
                             ? 'bg-accent/10 text-accent font-medium' 
                             : 'text-primary hover:bg-border'
                         } ${range !== 'year' ? 'border-b border-border' : ''}`}
+                        variants={popIn}
+                        initial="hidden"
+                        animate="visible"
+                        transition={{ delay: index * 0.05 }}
+                        whileHover={{ x: 4 }}
                       >
                         {range}
-                      </button>
+                      </motion.button>
                     ))}
                   </motion.div>
                 )}
@@ -960,30 +1072,48 @@ const Dashboard = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-2 sm:p-4 z-50"
+              className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 z-50"
             >
               <motion.div 
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
+                initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                transition={{ type: "spring", stiffness: 300, damping: 25 }}
                 className="bg-card-background rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto"
               >
-                <div className="p-4 sm:p-6">
-                  <div className="flex justify-between items-center mb-4">
+                <motion.div 
+                  className="p-4 sm:p-6"
+                  variants={staggerContainer}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  <motion.div 
+                    className="flex justify-between items-center mb-4"
+                    variants={slideIn}
+                  >
                     <h2 className="text-xl sm:text-2xl font-bold text-primary">Create New Content</h2>
-                    <button
+                    <motion.button
                       onClick={() => setShowEditor(false)}
                       className="text-secondary hover:text-primary text-2xl"
+                      whileHover={{ scale: 1.1, rotate: 90 }}
+                      whileTap={{ scale: 0.9 }}
                     >
                       ×
-                    </button>
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Title"
-                    className="w-full px-4 py-2 mb-4 rounded-lg border border-border bg-card-background text-primary focus:outline-none focus:ring-2 focus:ring-accent"
-                  />
-                  <div className={`${theme === 'dark' ? 'quill-dark' : ''} border border-border rounded-lg overflow-hidden`}>
+                    </motion.button>
+                  </motion.div>
+                  
+                  <motion.div variants={fadeIn}>
+                    <input
+                      type="text"
+                      placeholder="Title"
+                      className="w-full px-4 py-2 mb-4 rounded-lg border border-border bg-card-background text-primary focus:outline-none focus:ring-2 focus:ring-accent"
+                    />
+                  </motion.div>
+
+                  <motion.div 
+                    variants={fadeIn}
+                    className={`${theme === 'dark' ? 'quill-dark' : ''} border border-border rounded-lg overflow-hidden`}
+                  >
                     <ReactQuill
                       theme="snow"
                       value={editorContent}
@@ -993,25 +1123,33 @@ const Dashboard = () => {
                       className="bg-card-background text-primary"
                       preserveWhitespace
                     />
-                  </div>
-                  <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-4 mt-16">
-                    <button
+                  </motion.div>
+
+                  <motion.div 
+                    className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-4 mt-16"
+                    variants={slideIn}
+                  >
+                    <motion.button
                       onClick={() => setShowEditor(false)}
                       className="w-full sm:w-auto px-4 py-2 text-secondary hover:text-primary border border-border rounded-lg"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                     >
                       Cancel
-                    </button>
-                    <button
+                    </motion.button>
+                    <motion.button
                       onClick={() => {
                         console.log('Content to save:', editorContent);
                         setShowEditor(false);
                       }}
                       className="w-full sm:w-auto px-4 py-2 bg-accent hover:bg-accent-hover text-white rounded-lg transition-colors duration-300"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                     >
                       Publish
-                    </button>
-                  </div>
-                </div>
+                    </motion.button>
+                  </motion.div>
+                </motion.div>
               </motion.div>
             </motion.div>
           )}
