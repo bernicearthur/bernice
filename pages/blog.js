@@ -83,7 +83,7 @@ const BlogPage = () => {
         </motion.h1>
         <div className="w-24 border-b border-gray-300 dark:border-gray-600 my-4 mx-auto" />
         <motion.p 
-          className="text-sm text-secondary"
+          className="text-m text-secondary"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}

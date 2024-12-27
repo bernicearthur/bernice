@@ -15,7 +15,7 @@ export function ThemeProvider({ children }) {
   }, []);
 
   return (
-    <NextThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+    <NextThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
       <ThemeContextProvider>
         {mounted ? children : null}
       </ThemeContextProvider>

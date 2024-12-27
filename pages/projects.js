@@ -71,7 +71,7 @@ const ProjectsPage = () => {
         </motion.h1>
         <div className="w-24 border-b border-gray-300 dark:border-gray-600 my-4 mx-auto" />
         <motion.p 
-          className="text-sm text-secondary"
+          className="text-m text-secondary"
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.4 }}

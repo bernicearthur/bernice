@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import Layout from '@/components/layout';
+import { useState, useEffect } from 'react';
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
@@ -28,21 +29,45 @@ const letterAnimation = {
 
 export default function Home() {
   const text = "Writer | Storyteller | Archiver";
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const backgroundImages = [
+    '/images/bg1.jpg',
+    '/images/bg2.jpg',
+    '/images/bg3.jpg',
+    '/images/bg4.jpg',
+    '/images/bg5.jpg'
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => 
+        prevIndex === backgroundImages.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 5000); // Change image every 5 seconds
+
+    return () => clearInterval(interval);
+  }, []);
   
   return (
     <Layout>
       <div className="relative min-h-screen">
-        {/* Background Image with Overlay */}
-        <div className="absolute inset-0">
-          <Image
-            src="/images/neosiam.jpg"
-            alt="Background"
-            fill
-            className="object-cover object-center"
-            priority
-          />
-          <div className="absolute inset-0 bg-black/80" />
-        </div>
+        {/* Background Images with Overlay */}
+        {backgroundImages.map((image, index) => (
+          <div
+            key={image}
+            className="absolute inset-0 transition-opacity duration-5000"
+            style={{ opacity: currentImageIndex === index ? 1 : 0 }}
+          >
+            <Image
+              src={image}
+              alt={`Background ${index + 1}`}
+              fill
+              className="object-cover object-center"
+              priority={index === 0}
+            />
+            <div className="absolute inset-0 bg-black/90" />
+          </div>
+        ))}
 
         {/* Content */}
         <div className="relative z-10 flex flex-col items-center justify-center min-h-screen text-center px-4">
