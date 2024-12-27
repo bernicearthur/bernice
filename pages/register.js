@@ -245,7 +245,7 @@ export default function Register() {
               className="w-full bg-accent hover:bg-accent-hover text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-[1.02]"
               whileTap={{ scale: 0.98 }}
             >
-              Create Account
+              Become a Member
             </motion.button>
 
             {/* Login Link */}
