@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import { FiHeart, FiMessageSquare, FiUsers, FiEye, FiEdit2, FiTrash2, FiEye as FiView } from 'react-icons/fi';
+import { FiHeart, FiMessageSquare, FiUsers, FiEye, FiEdit2, FiTrash2, FiEye as FiView, FiSettings, FiUser, FiCamera, FiMail, FiLock, FiToggleLeft, FiToggleRight, FiGlobe, FiDatabase, FiCalendar, FiChevronDown } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/navbar';
 import Footer from '../components/footer';
@@ -41,13 +41,43 @@ const ReactQuill = dynamic(() => import('react-quill'), {
 });
 
 const Dashboard = () => {
-  const { theme } = useTheme();
+  const { theme, toggleTheme } = useTheme();
   const [activeTab, setActiveTab] = useState('blogs');
   const [searchQuery, setSearchQuery] = useState('');
   const [editorContent, setEditorContent] = useState('');
   const [showEditor, setShowEditor] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [currentStatIndex, setCurrentStatIndex] = useState(0);
+  const [showTimeRangeDropdown, setShowTimeRangeDropdown] = useState(false);
+  const [timeRange, setTimeRange] = useState('week');
+  const [customDateRange, setCustomDateRange] = useState({
+    start: new Date(new Date().setDate(new Date().getDate() - 7)).toISOString().split('T')[0],
+    end: new Date().toISOString().split('T')[0]
+  });
+
+  // Settings state
+  const [profileImage, setProfileImage] = useState('/images/neosiam.jpg');
+  const [name, setName] = useState('Bernice Arthur');
+  const [email, setEmail] = useState('bernice.arthur@example.com');
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPasswords, setShowPasswords] = useState({
+    current: false,
+    new: false,
+    confirm: false
+  });
+  const [preferences, setPreferences] = useState({
+    enableComments: true,
+    enableLikes: true,
+    enableSharing: true,
+    darkMode: theme === 'dark'
+  });
+  const [seoSettings, setSeoSettings] = useState({
+    defaultMetaDescription: 'Personal portfolio and blog of Bernice Arthur',
+    defaultAltText: 'Bernice Arthur - Portfolio Image',
+    defaultPermalink: 'bernice-arthur.com/blog/'
+  });
 
   useEffect(() => {
     setMounted(true);
@@ -101,7 +131,32 @@ const Dashboard = () => {
     ]
   };
 
-  // Chart options
+  // Mock data for different time ranges
+  const analyticsData = {
+    day: {
+      categories: ['12AM', '4AM', '8AM', '12PM', '4PM', '8PM'],
+      data: [10, 15, 25, 35, 45, 30]
+    },
+    week: {
+      categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      data: [30, 40, 35, 50, 49, 60, 55]
+    },
+    month: {
+      categories: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+      data: [120, 150, 180, 200]
+    },
+    year: {
+      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      data: [300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 850]
+    }
+  };
+
+  const handleTimeRangeChange = (range) => {
+    setTimeRange(range);
+    setShowTimeRangeDropdown(false);
+  };
+
+  // Update chart options with dynamic data based on time range
   const chartOptions = {
     chart: {
       type: 'line',
@@ -114,17 +169,34 @@ const Dashboard = () => {
       mode: theme
     },
     stroke: {
-      curve: 'smooth'
+      curve: 'smooth',
+      width: 3
     },
     xaxis: {
-      categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
+      categories: analyticsData[timeRange].categories
+    },
+    grid: {
+      borderColor: theme === 'dark' ? '#27272a' : '#e4e4e7',
+      strokeDashArray: 4
+    },
+    tooltip: {
+      theme: theme,
+      y: {
+        formatter: (value) => `${value} views`
+      }
+    },
+    markers: {
+      size: 5,
+      colors: ['var(--accent)'],
+      strokeColors: theme === 'dark' ? '#27272a' : '#ffffff',
+      strokeWidth: 2
     }
   };
 
   const chartSeries = [
     {
       name: 'Views',
-      data: [30, 40, 35, 50, 49, 60]
+      data: analyticsData[timeRange].data
     }
   ];
 
@@ -134,6 +206,43 @@ const Dashboard = () => {
     } else {
       setCurrentStatIndex((prev) => (prev === 0 ? 3 : prev - 1));
     }
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfileImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handlePasswordChange = (e) => {
+    e.preventDefault();
+    // Add password validation and API call here
+    console.log('Password change requested');
+    setCurrentPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
+  };
+
+  const handlePreferenceChange = (key) => {
+    setPreferences(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+    if (key === 'darkMode') {
+      toggleTheme();
+    }
+  };
+
+  const handleSeoSettingsChange = (key, value) => {
+    setSeoSettings(prev => ({
+      ...prev,
+      [key]: value
+    }));
   };
 
   const StatCard = ({ icon: Icon, title, value }) => (
@@ -232,6 +341,347 @@ const Dashboard = () => {
           </tbody>
         </table>
       </div>
+    </motion.div>
+  );
+
+  const SettingsSection = () => (
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="space-y-8"
+    >
+      {/* Profile Information */}
+      <motion.div variants={itemVariants} className="bg-card-background p-6 rounded-lg shadow-md border border-border">
+        <h3 className="text-xl font-semibold text-primary mb-6">Profile Information</h3>
+        <div className="space-y-6">
+          <div className="flex flex-col sm:flex-row items-center gap-6">
+            <div className="relative w-full sm:w-auto flex justify-center">
+              <img
+                src={profileImage}
+                alt="Profile"
+                className="w-32 h-32 rounded-full object-cover border-2 border-accent"
+              />
+              <label className="absolute bottom-0 right-1/2 sm:right-0 translate-x-16 sm:translate-x-0 p-2 bg-accent hover:bg-accent-hover rounded-full cursor-pointer transform transition-transform duration-300 hover:scale-110">
+                <FiCamera className="w-5 h-5 text-white" />
+                <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
+              </label>
+            </div>
+            <div className="flex-1 space-y-4 w-full">
+              <div>
+                <label className="block text-sm font-medium text-secondary mb-1">Name</label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full px-4 py-2 rounded-lg border border-border bg-card-background focus:ring-2 focus:ring-accent focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-secondary mb-1">Email</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full px-4 py-2 rounded-lg border border-border bg-card-background focus:ring-2 focus:ring-accent focus:border-transparent"
+                />
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-end">
+            <button
+              onClick={() => console.log('Update profile')}
+              className="w-full sm:w-auto px-6 py-2 bg-accent hover:bg-accent-hover text-white rounded-lg transition-colors duration-300"
+            >
+              Update Profile
+            </button>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Password Management */}
+      <motion.div variants={itemVariants} className="bg-card-background p-6 rounded-lg shadow-md border border-border">
+        <h3 className="text-xl font-semibold text-primary mb-6">Password Management</h3>
+        <form onSubmit={handlePasswordChange} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-secondary mb-1">Current Password</label>
+            <div className="relative">
+              <input
+                type={showPasswords.current ? 'text' : 'password'}
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border border-border bg-card-background focus:ring-2 focus:ring-accent focus:border-transparent"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPasswords(prev => ({ ...prev, current: !prev.current }))}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary hover:text-primary"
+              >
+                {showPasswords.current ? <FiEye /> : <FiEye />}
+              </button>
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-secondary mb-1">New Password</label>
+            <div className="relative">
+              <input
+                type={showPasswords.new ? 'text' : 'password'}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border border-border bg-card-background focus:ring-2 focus:ring-accent focus:border-transparent"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPasswords(prev => ({ ...prev, new: !prev.new }))}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary hover:text-primary"
+              >
+                {showPasswords.new ? <FiEye /> : <FiEye />}
+              </button>
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-secondary mb-1">Confirm New Password</label>
+            <div className="relative">
+              <input
+                type={showPasswords.confirm ? 'text' : 'password'}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border border-border bg-card-background focus:ring-2 focus:ring-accent focus:border-transparent"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPasswords(prev => ({ ...prev, confirm: !prev.confirm }))}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary hover:text-primary"
+              >
+                {showPasswords.confirm ? <FiEye /> : <FiEye />}
+              </button>
+            </div>
+          </div>
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              className="w-full sm:w-auto px-6 py-2 bg-accent hover:bg-accent-hover text-white rounded-lg transition-colors duration-300"
+            >
+              Update Password
+            </button>
+          </div>
+        </form>
+      </motion.div>
+
+      {/* Site Preferences */}
+      <motion.div variants={itemVariants} className="bg-card-background p-6 rounded-lg shadow-md border border-border">
+        <h3 className="text-xl font-semibold text-primary mb-6">Site Preferences</h3>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="text-primary font-medium">Enable Comments</h4>
+              <p className="text-sm text-secondary">Allow visitors to comment on your content</p>
+            </div>
+            <button
+              onClick={() => handlePreferenceChange('enableComments')}
+              className="relative"
+            >
+              {preferences.enableComments ? <FiToggleRight className="w-8 h-8 text-accent" /> : <FiToggleLeft className="w-8 h-8 text-secondary" />}
+            </button>
+          </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="text-primary font-medium">Enable Likes</h4>
+              <p className="text-sm text-secondary">Allow visitors to like your content</p>
+            </div>
+            <button
+              onClick={() => handlePreferenceChange('enableLikes')}
+              className="relative"
+            >
+              {preferences.enableLikes ? <FiToggleRight className="w-8 h-8 text-accent" /> : <FiToggleLeft className="w-8 h-8 text-secondary" />}
+            </button>
+          </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="text-primary font-medium">Enable Sharing</h4>
+              <p className="text-sm text-secondary">Allow visitors to share your content</p>
+            </div>
+            <button
+              onClick={() => handlePreferenceChange('enableSharing')}
+              className="relative"
+            >
+              {preferences.enableSharing ? <FiToggleRight className="w-8 h-8 text-accent" /> : <FiToggleLeft className="w-8 h-8 text-secondary" />}
+            </button>
+          </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="text-primary font-medium">Dark Mode</h4>
+              <p className="text-sm text-secondary">Switch between light and dark theme</p>
+            </div>
+            <button
+              onClick={() => handlePreferenceChange('darkMode')}
+              className="relative"
+            >
+              {theme === 'dark' ? <FiToggleRight className="w-8 h-8 text-accent" /> : <FiToggleLeft className="w-8 h-8 text-secondary" />}
+            </button>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Advanced Settings */}
+      <motion.div variants={itemVariants} className="bg-card-background p-6 rounded-lg shadow-md border border-border">
+        <h3 className="text-xl font-semibold text-primary mb-6">Advanced Settings</h3>
+        <div className="space-y-6">
+          {/* SEO Settings */}
+          <div>
+            <h4 className="text-lg font-medium text-primary mb-4">SEO Settings</h4>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-secondary mb-1">Default Meta Description</label>
+                <textarea
+                  value={seoSettings.defaultMetaDescription}
+                  onChange={(e) => handleSeoSettingsChange('defaultMetaDescription', e.target.value)}
+                  className="w-full px-4 py-2 rounded-lg border border-border bg-card-background focus:ring-2 focus:ring-accent focus:border-transparent"
+                  rows="3"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-secondary mb-1">Default Alt Text</label>
+                <input
+                  type="text"
+                  value={seoSettings.defaultAltText}
+                  onChange={(e) => handleSeoSettingsChange('defaultAltText', e.target.value)}
+                  className="w-full px-4 py-2 rounded-lg border border-border bg-card-background focus:ring-2 focus:ring-accent focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-secondary mb-1">Default Permalink Structure</label>
+                <input
+                  type="text"
+                  value={seoSettings.defaultPermalink}
+                  onChange={(e) => handleSeoSettingsChange('defaultPermalink', e.target.value)}
+                  className="w-full px-4 py-2 rounded-lg border border-border bg-card-background focus:ring-2 focus:ring-accent focus:border-transparent"
+                />
+              </div>
+            </div>
+          </div>
+          
+          {/* Export & Backup Options */}
+          <div className="pt-4 border-t border-border">
+            <h4 className="text-lg font-medium text-primary mb-4">Export & Backup Options</h4>
+            
+            {/* Individual Content Export */}
+            <div className="space-y-4 mb-6">
+              <h5 className="text-sm font-medium text-secondary">Export Individual Content</h5>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {/* Blogs Section */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-primary">Blogs</label>
+                  <select
+                    className="w-full px-3 py-2 bg-card-background border border-border rounded-lg text-primary text-sm focus:ring-2 focus:ring-accent focus:border-transparent"
+                  >
+                    <option value="">Select a blog post</option>
+                    {mockContent.blogs.map(blog => (
+                      <option key={blog.id} value={blog.id}>{blog.title}</option>
+                    ))}
+                  </select>
+                  <button
+                    onClick={() => console.log('Export individual blog')}
+                    className="w-full px-3 py-2 text-sm bg-accent/10 hover:bg-accent/20 text-accent rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+                  >
+                    <FiDatabase className="w-4 h-4" />
+                    Export Blog
+                  </button>
+                </div>
+
+                {/* Stories Section */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-primary">Stories</label>
+                  <select
+                    className="w-full px-3 py-2 bg-card-background border border-border rounded-lg text-primary text-sm focus:ring-2 focus:ring-accent focus:border-transparent"
+                  >
+                    <option value="">Select a story</option>
+                    {mockContent.stories.map(story => (
+                      <option key={story.id} value={story.id}>{story.title}</option>
+                    ))}
+                  </select>
+                  <button
+                    onClick={() => console.log('Export individual story')}
+                    className="w-full px-3 py-2 text-sm bg-accent/10 hover:bg-accent/20 text-accent rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+                  >
+                    <FiDatabase className="w-4 h-4" />
+                    Export Story
+                  </button>
+                </div>
+
+                {/* Projects Section */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-primary">Projects</label>
+                  <select
+                    className="w-full px-3 py-2 bg-card-background border border-border rounded-lg text-primary text-sm focus:ring-2 focus:ring-accent focus:border-transparent"
+                  >
+                    <option value="">Select a project</option>
+                    {mockContent.projects.map(project => (
+                      <option key={project.id} value={project.id}>{project.title}</option>
+                    ))}
+                  </select>
+                  <button
+                    onClick={() => console.log('Export individual project')}
+                    className="w-full px-3 py-2 text-sm bg-accent/10 hover:bg-accent/20 text-accent rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+                  >
+                    <FiDatabase className="w-4 h-4" />
+                    Export Project
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Bulk Export Options */}
+            <div className="space-y-4 mb-6">
+              <h5 className="text-sm font-medium text-secondary">Bulk Export</h5>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <button
+                  onClick={() => console.log('Export all blogs')}
+                  className="px-4 py-2 bg-accent/10 hover:bg-accent/20 text-accent rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+                >
+                  <FiDatabase className="w-5 h-5" />
+                  Export All Blogs
+                </button>
+                <button
+                  onClick={() => console.log('Export all stories')}
+                  className="px-4 py-2 bg-accent/10 hover:bg-accent/20 text-accent rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+                >
+                  <FiDatabase className="w-5 h-5" />
+                  Export All Stories
+                </button>
+                <button
+                  onClick={() => console.log('Export all projects')}
+                  className="px-4 py-2 bg-accent/10 hover:bg-accent/20 text-accent rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+                >
+                  <FiDatabase className="w-5 h-5" />
+                  Export All Projects
+                </button>
+              </div>
+            </div>
+
+            {/* Complete Backup */}
+            <div className="space-y-4">
+              <h5 className="text-sm font-medium text-secondary">Complete Backup</h5>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <button
+                  onClick={() => console.log('Export all content')}
+                  className="w-full sm:w-auto px-6 py-2 bg-accent hover:bg-accent-hover text-white rounded-lg transition-colors duration-300 flex items-center justify-center gap-2"
+                >
+                  <FiDatabase className="w-5 h-5" />
+                  Export All Content
+                </button>
+                <button
+                  onClick={() => console.log('Restore backup')}
+                  className="w-full sm:w-auto px-6 py-2 border border-border text-primary hover:bg-border rounded-lg transition-colors duration-300 flex items-center justify-center gap-2"
+                >
+                  <FiDatabase className="w-5 h-5" />
+                  Restore Backup
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
     </motion.div>
   );
 
@@ -350,7 +800,7 @@ const Dashboard = () => {
           className="mb-6 sm:mb-8"
         >
           <div className="flex space-x-4 border-b border-border">
-            {['blogs', 'stories', 'projects'].map((tab) => (
+            {['blogs', 'stories', 'projects', 'settings'].map((tab) => (
               <motion.button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -367,7 +817,11 @@ const Dashboard = () => {
             ))}
           </div>
           <div className="mt-4 sm:mt-6">
-            <ContentList items={mockContent[activeTab]} />
+            {activeTab === 'settings' ? (
+              <SettingsSection />
+            ) : (
+              <ContentList items={mockContent[activeTab]} />
+            )}
           </div>
         </motion.div>
 
@@ -379,33 +833,121 @@ const Dashboard = () => {
           className="bg-card-background p-4 sm:p-6 rounded-lg shadow-md border border-border mb-6 sm:mb-8"
           whileHover={{ scale: 1.01 }}
         >
-          <h2 className="text-lg sm:text-xl font-bold text-primary mb-4">Analytics Overview</h2>
-          <div className="w-full">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
+            <h2 className="text-lg sm:text-xl font-bold text-primary">Analytics Overview</h2>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full lg:w-auto">
+              {/* Time Range Selector */}
+              <div className="relative w-full sm:w-auto">
+                <button
+                  onClick={() => setShowTimeRangeDropdown(!showTimeRangeDropdown)}
+                  className="w-full sm:w-[160px] px-4 py-2.5 bg-card-background border border-border rounded-lg flex items-center justify-between gap-2 text-primary hover:bg-border transition-colors duration-200"
+                >
+                  <div className="flex items-center gap-2">
+                    <FiCalendar className="w-4 h-4" />
+                    <span className="capitalize">{timeRange}</span>
+                  </div>
+                  <FiChevronDown className={`w-4 h-4 transition-transform duration-200 ${showTimeRangeDropdown ? 'rotate-180' : ''}`} />
+                </button>
+                
+                {showTimeRangeDropdown && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="absolute left-0 sm:right-0 sm:left-auto mt-2 w-full sm:w-[160px] bg-main border border-border rounded-lg shadow-lg z-10 overflow-hidden"
+                  >
+                    {['day', 'week', 'month', 'year'].map((range) => (
+                      <button
+                        key={range}
+                        onClick={() => handleTimeRangeChange(range)}
+                        className={`w-full px-4 py-2.5 text-left capitalize transition-colors duration-200 ${
+                          timeRange === range 
+                            ? 'bg-accent/10 text-accent font-medium' 
+                            : 'text-primary hover:bg-border'
+                        } ${range !== 'year' ? 'border-b border-border' : ''}`}
+                      >
+                        {range}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </div>
+
+              {/* Custom Date Range */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
+                <div className="w-full sm:w-auto flex items-center gap-2">
+                  <div className="flex-1 sm:flex-none">
+                    <label className="block text-xs text-secondary mb-1 sm:hidden">Start Date</label>
+                    <input
+                      type="date"
+                      value={customDateRange.start}
+                      onChange={(e) => setCustomDateRange(prev => ({ ...prev, start: e.target.value }))}
+                      className="w-full sm:w-auto px-3 py-2 bg-card-background border border-border rounded-lg text-primary text-sm focus:ring-2 focus:ring-accent focus:border-transparent"
+                    />
+                  </div>
+                  <span className="text-secondary self-end sm:self-center pb-2 sm:pb-0">to</span>
+                  <div className="flex-1 sm:flex-none">
+                    <label className="block text-xs text-secondary mb-1 sm:hidden">End Date</label>
+                    <input
+                      type="date"
+                      value={customDateRange.end}
+                      onChange={(e) => setCustomDateRange(prev => ({ ...prev, end: e.target.value }))}
+                      className="w-full sm:w-auto px-3 py-2 bg-card-background border border-border rounded-lg text-primary text-sm focus:ring-2 focus:ring-accent focus:border-transparent"
+                    />
+                  </div>
+                </div>
+                <button
+                  onClick={() => console.log('Apply custom date range')}
+                  className="w-full sm:w-auto px-4 py-2 bg-accent hover:bg-accent-hover text-white rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+                >
+                  Apply
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="w-full h-[350px] sm:h-[400px] lg:h-[350px]">
             <Chart
               options={{
                 ...chartOptions,
                 chart: {
                   ...chartOptions.chart,
-                  width: '100%',
-                  height: '100%',
-                  animations: {
-                    enabled: true,
-                    easing: 'easeinout',
-                    speed: 800,
-                    animateGradually: {
-                      enabled: true,
-                      delay: 150
+                  toolbar: {
+                    show: false
+                  },
+                  zoom: {
+                    enabled: false
+                  }
+                },
+                responsive: [{
+                  breakpoint: 640,
+                  options: {
+                    chart: {
+                      height: '300px'
                     },
-                    dynamicAnimation: {
-                      enabled: true,
-                      speed: 350
+                    markers: {
+                      size: 4
+                    },
+                    xaxis: {
+                      labels: {
+                        style: {
+                          fontSize: '10px'
+                        }
+                      }
+                    },
+                    yaxis: {
+                      labels: {
+                        style: {
+                          fontSize: '10px'
+                        }
+                      }
                     }
                   }
-                }
+                }]
               }}
               series={chartSeries}
               type="line"
-              height={350}
+              height="100%"
               width="100%"
             />
           </div>
