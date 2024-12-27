@@ -8,7 +8,27 @@ const fadeIn = {
   visible: { opacity: 1, y: 0 }
 };
 
+const typewriter = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05
+    }
+  }
+};
+
+const letterAnimation = {
+  hidden: { opacity: 0, y: 50 },
+  visible: {
+    opacity: 1,
+    y: 0
+  }
+};
+
 export default function Home() {
+  const text = "Writer | Storyteller | Archiver";
+  
   return (
     <Layout>
       <div className="relative min-h-screen">
@@ -45,6 +65,23 @@ export default function Home() {
           >
             Bernice Arthur
           </motion.h1>
+
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={typewriter}
+            className="text-xl md:text-2xl text-gray-300 mb-8 font-light flex flex-wrap justify-center"
+          >
+            {text.split("").map((char, index) => (
+              <motion.span
+                key={index}
+                variants={letterAnimation}
+                className={char === " " ? "mr-1" : ""}
+              >
+                {char}
+              </motion.span>
+            ))}
+          </motion.div>
 
           <motion.div
             initial="hidden"
