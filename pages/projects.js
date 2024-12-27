@@ -55,47 +55,34 @@ const ProjectsPage = () => {
     >
       <Navbar />
       
-      {/* Hero Section */}
-      <motion.section 
-        className="relative h-60"
-        initial={{ opacity: 0, y: -50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-      >
-        <Image
-          src="/images/neosiam.jpg"
-          alt="Hero Banner"
-          fill
-          className="object-cover object-center"
-        />
-        <motion.div 
-        className="absolute inset-0 bg-gradient-to-b from-transparent to-black/80 flex flex-col items-center justify-center text-white"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.8 }}
-        >
-          <motion.h1 
-            className="text-4xl font-bold text-white"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.5, duration: 0.5 }}
-          >
-            My Projects
-          </motion.h1>
-          <motion.p 
-            className="text-xl mt-2 text-white"
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.7, duration: 0.5 }}
-          >
-            See the ideas I've brought to life.
-          </motion.p>
-        </motion.div>
-      </motion.section>
-
-      {/* Filter and Search Section */}
       <motion.div 
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+        className="text-center py-12"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        <motion.h1 
+          className="text-4xl font-bold text-primary mb-1"
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.3 }}
+        >
+          Projects
+        </motion.h1>
+        <div className="w-24 border-b border-gray-300 dark:border-gray-600 my-4 mx-auto" />
+        <motion.p 
+          className="text-sm text-secondary"
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.4 }}
+        >
+          See the ideas I've brought to life.
+        </motion.p>
+      </motion.div>
+
+      {/* */}
+      <motion.div 
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.8 }}
@@ -127,7 +114,7 @@ const ProjectsPage = () => {
 
         {/* Project Showcase */}
         <motion.div 
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16"
           variants={containerVariants}
           initial="hidden"
           animate="visible"

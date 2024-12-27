@@ -55,39 +55,33 @@ const StoriesPage = () => {
       className="min-h-screen bg-main"
     >
       <Navbar />
+
       <motion.div 
+        className="text-center py-12"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="relative h-60"
       >
-        <Image
-          src="/images/neosiam.jpg"
-          alt="Stories Banner"
-          fill
-          className="object-cover object-center"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/80 flex flex-col items-center justify-center text-white">
         <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="text-4xl font-bold text-white"
-          >
-            My Stories
-          </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="text-xl mt-2 text-white"
-          >
-            My Take on Life, Creativity, and Beyond.
-          </motion.p>
-        </div>
+          className="text-4xl font-bold text-primary mb-1"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          Stories
+        </motion.h1>
+        <div className="w-24 border-b border-gray-300 dark:border-gray-600 my-4 mx-auto" />
+        <motion.p 
+          className="text-sm text-secondary"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          My Take on Life, Creativity, and Beyond.
+        </motion.p>
       </motion.div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -122,7 +116,7 @@ const StoriesPage = () => {
           variants={container}
           initial="hidden"
           animate="show"
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 mb-16"
         >
           <AnimatePresence>
             {filteredStories.length > 0 ? (

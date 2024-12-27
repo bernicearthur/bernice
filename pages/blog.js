@@ -68,38 +68,31 @@ const BlogPage = () => {
       <Navbar />
       
       <motion.div 
+        className="text-center py-12"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="relative h-60"
       >
-        <Image
-          src="/images/neosiam.jpg"
-          alt="Blog Banner"
-          fill
-          className="object-cover object-center"
-        />
-        <div className="hero-overlay flex flex-col items-center justify-center text-white">
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="text-4xl font-bold text-white"
-          >
-            My Blogs
-          </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="text-xl mt-2 text-white"
-          >
-            My World, a Journey Through Ideas.
-          </motion.p>
-        </div>
+        <motion.h1 
+          className="text-4xl font-bold text-primary mb-1"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          Blogs
+        </motion.h1>
+        <div className="w-24 border-b border-gray-300 dark:border-gray-600 my-4 mx-auto" />
+        <motion.p 
+          className="text-sm text-secondary"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          My World, a Journey Through Ideas.
+        </motion.p>
       </motion.div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -138,7 +131,7 @@ const BlogPage = () => {
           variants={container}
           initial="hidden"
           animate="show"
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16"
         >
           {filteredBlogs.length > 0 ? (
             filteredBlogs.map(blog => (
