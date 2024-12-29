@@ -70,7 +70,7 @@ const StoriesPage = () => {
         >
           Stories
         </motion.h1>
-        <div className="w-24 border-b border-gray-300 dark:border-gray-600 my-4 mx-auto" />
+        <div className="w-24 border-b border-gray-300 dark:border-gray-600 my-3 mx-auto" />
         <motion.p 
           className="text-m text-secondary"
           initial={{ opacity: 0, y: 20 }}
@@ -81,7 +81,7 @@ const StoriesPage = () => {
         </motion.p>
       </motion.div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

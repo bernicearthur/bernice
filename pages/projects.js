@@ -69,7 +69,7 @@ const ProjectsPage = () => {
         >
           Projects
         </motion.h1>
-        <div className="w-24 border-b border-gray-300 dark:border-gray-600 my-4 mx-auto" />
+        <div className="w-24 border-b border-gray-300 dark:border-gray-600 my-3 mx-auto" />
         <motion.p 
           className="text-m text-secondary"
           initial={{ y: 20, opacity: 0 }}
@@ -82,7 +82,7 @@ const ProjectsPage = () => {
 
       {/* */}
       <motion.div 
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4"
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.8 }}

@@ -22,67 +22,10 @@ export default function About() {
     <div className="min-h-screen flex flex-col bg-main">
       <Navbar />
       
-      {/* Hero Section with Background Image */}
-      <div className="relative h-[60vh] md:h-[70vh]">
-        <Image
-          src="/images/neosiam.jpg"
-          alt="Bernice Arthur"
-          fill
-          className="object-cover object-center"
-          priority
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/70" />
-        <div className="absolute inset-0 flex flex-col items-center justify-center sm:items-start sm:justify-end max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-8 text-white text-center sm:text-left">
-          <motion.h1 
-            initial="hidden"
-            animate="visible"
-            variants={fadeIn}
-            transition={{ duration: 0.6 }}
-            className="text-4xl md:text-6xl font-bold mb-4 text-white"
-          >
-            Bernice Arthur
-          </motion.h1>
-          <motion.p
-            initial="hidden"
-            animate="visible"
-            variants={fadeIn}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-xl md:text-2xl text-gray-200"
-          >
-            Writer | Storyteller | Archiver
-          </motion.p>
-          <motion.button
-            initial="hidden"
-            animate="visible"
-            variants={fadeIn}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            onClick={() => window.location.href = 'mailto:bernice.arthur@gmail.com'}
-            className="mt-6 px-6 py-2 bg-accent hover:bg-accent-hover text-white rounded-full font-medium transition-colors duration-300 cursor-pointer"
-          >
-            Available for Freelance
-          </motion.button>
-        </div>
-        
-        {/* Scroll Down Icon */}
-        <motion.div 
-          className="absolute bottom-4 left-1/2 transform -translate-x-1/2 cursor-pointer"
-          initial={{ y: 0 }}
-          animate={{ y: [0, 10, 0] }}
-          transition={{ 
-            duration: 1.5,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-          onClick={scrollToFooter}
-        >
-          <FiChevronDown className="w-8 h-8 text-white hover:text-accent transition-colors duration-300" />
-        </motion.div>
-      </div>
-
       {/* Main Content */}
-      <main className="flex-grow">
+      <main className="flex-grow bg-main">
         {/* Biography Section */}
-        <section className="py-16 bg-secondary">
+        <section className="py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial="hidden"
@@ -93,12 +36,12 @@ export default function About() {
             >
               <div className="prose prose-lg dark:prose-invert max-w-none">
                 <h2 className="text-3xl font-bold text-primary mb-6">About the Author</h2>
-                <p className="text-secondary">
+                <p className="text-primary">
                   Bernice Arthur is a creative powerhouse whose passion for storytelling transforms words into immersive experiences. 
                   With a flair for writing, design, and project innovation, she has inspired audiences with her unique perspective 
                   and dedication to excellence.
                 </p>
-                <p className="text-secondary mt-4">
+                <p className="text-primary mt-4">
                   Based in [Location], Bernice draws inspiration from the vibrant tapestry of life, weaving stories that resonate 
                   with authenticity and depth. Her creative philosophy centers on the belief that every story has the power to 
                   inspire, connect, and transform.
@@ -136,7 +79,7 @@ export default function About() {
                         className="p-6 rounded-lg bg-card-bg border border-border"
                       >
                         <h4 className="text-xl font-semibold text-primary mb-4">Writing</h4>
-                        <ul className="space-y-2 text-secondary">
+                        <ul className="space-y-2 text-primary">
                           <li>• Blog Writing</li>
                           <li>• Creative Stories</li>
                           <li>• Content Creation</li>
@@ -150,7 +93,7 @@ export default function About() {
                         className="p-6 rounded-lg bg-card-bg border border-border"
                       >
                         <h4 className="text-xl font-semibold text-primary mb-4">Design</h4>
-                        <ul className="space-y-2 text-secondary">
+                        <ul className="space-y-2 text-primary">
                           <li>• Adobe Creative Suite</li>
                           <li>• Figma</li>
                           <li>• Canva</li>
@@ -164,7 +107,7 @@ export default function About() {
                         className="p-6 rounded-lg bg-card-bg border border-border"
                       >
                         <h4 className="text-xl font-semibold text-primary mb-4">Communication</h4>
-                        <ul className="space-y-2 text-secondary">
+                        <ul className="space-y-2 text-primary">
                           <li>• Public Speaking</li>
                           <li>• Storytelling</li>
                           <li>• Team Collaboration</li>
@@ -182,7 +125,7 @@ export default function About() {
                         className="p-6 rounded-lg bg-card-bg border border-border"
                       >
                         <h4 className="text-xl font-semibold text-primary mb-4">Web Development</h4>
-                        <ul className="space-y-2 text-secondary">
+                        <ul className="space-y-2 text-primary">
                           <li>• HTML/CSS</li>
                           <li>• JavaScript</li>
                           <li>• Responsive Design</li>
@@ -196,7 +139,7 @@ export default function About() {
                         className="p-6 rounded-lg bg-card-bg border border-border"
                       >
                         <h4 className="text-xl font-semibold text-primary mb-4">CMS</h4>
-                        <ul className="space-y-2 text-secondary">
+                        <ul className="space-y-2 text-primary">
                           <li>• WordPress</li>
                           <li>• Content Management</li>
                           <li>• SEO Optimization</li>
@@ -210,7 +153,7 @@ export default function About() {
                         className="p-6 rounded-lg bg-card-bg border border-border"
                       >
                         <h4 className="text-xl font-semibold text-primary mb-4">Tools</h4>
-                        <ul className="space-y-2 text-secondary">
+                        <ul className="space-y-2 text-primary">
                           <li>• Git Version Control</li>
                           <li>• VS Code</li>
                           <li>• Command Line</li>
@@ -228,7 +171,7 @@ export default function About() {
                         className="p-6 rounded-lg bg-card-bg border border-border"
                       >
                         <h4 className="text-xl font-semibold text-primary mb-4">Problem Solving</h4>
-                        <ul className="space-y-2 text-secondary">
+                        <ul className="space-y-2 text-primary">
                           <li>• Critical Thinking</li>
                           <li>• Analysis</li>
                           <li>• Decision Making</li>
@@ -242,7 +185,7 @@ export default function About() {
                         className="p-6 rounded-lg bg-card-bg border border-border"
                       >
                         <h4 className="text-xl font-semibold text-primary mb-4">Adaptability</h4>
-                        <ul className="space-y-2 text-secondary">
+                        <ul className="space-y-2 text-primary">
                           <li>• Flexibility</li>
                           <li>• Quick Learning</li>
                           <li>• Change Management</li>
@@ -256,7 +199,7 @@ export default function About() {
                         className="p-6 rounded-lg bg-card-bg border border-border"
                       >
                         <h4 className="text-xl font-semibold text-primary mb-4">Time Management</h4>
-                        <ul className="space-y-2 text-secondary">
+                        <ul className="space-y-2 text-primary">
                           <li>• Project Planning</li>
                           <li>• Task Prioritization</li>
                           <li>• Deadline Management</li>
@@ -653,7 +596,7 @@ export default function About() {
                       <FiLinkedin className="w-7 h-7" />
                     </a>
                   </div>
-                  <p className="text-secondary text-center font-medium">
+                  <p className="text-primary text-center font-medium mb-8">
                     Get in touch:{' '}
                     <a 
                       href="mailto:bernice.arthur@gmail.com" 
@@ -662,6 +605,16 @@ export default function About() {
                       bernice.arthur@gmail.com
                     </a>
                   </p>
+                  <motion.button
+                    initial="hidden"
+                    animate="visible"
+                    variants={fadeIn}
+                    transition={{ duration: 0.6, delay: 0.4 }}
+                    onClick={() => window.location.href = 'mailto:bernice.arthur@gmail.com'}
+                    className="px-6 py-2 bg-accent hover:bg-accent-hover text-white rounded-full font-medium transition-colors duration-300 cursor-pointer transform hover:scale-105"
+                  >
+                    Available for Freelance
+                  </motion.button>
                 </div>
               </div>
             </motion.div>
