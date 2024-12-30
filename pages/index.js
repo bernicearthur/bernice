@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Layout from '@/components/layout';
 import { useState, useEffect } from 'react';
+import { FaTwitter, FaInstagram, FaLinkedin, FaGithub, FaFacebookF } from 'react-icons/fa';
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
@@ -113,31 +114,58 @@ export default function Home() {
             animate="visible"
             variants={fadeIn}
             transition={{ duration: 0.6, delay: 0.4 }}
+            className="flex flex-col items-center"
           >
             <Link
               href="/bio"
-              className="inline-block px-8 py-3 bg-accent hover:bg-accent-hover text-white rounded-full transition-all duration-300 transform hover:scale-105"
+              className="inline-block px-8 py-3 bg-accent hover:bg-accent-hover text-white rounded-full transition-all duration-300 transform hover:scale-105 mb-6 md:mb-0"
             >
               About Me
             </Link>
-          </motion.div>
-        </div>
 
-        {/* Scroll Indicator */}
-        <motion.div
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1, y: [0, 10, 0] }}
-          transition={{
-            duration: 1.5,
-            repeat: Infinity,
-            delay: 1
-          }}
-        >
-          <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
-            <div className="w-1 h-3 bg-white/50 rounded-full mt-2" />
+            {/* Social Media Links */}
+            <div className="flex md:hidden gap-6 mt-6">
+              <a href="#" className="text-white/70 hover:text-white transition-colors">
+                <FaFacebookF size={24} />
+              </a>
+              <a href="#" className="text-white/70 hover:text-white transition-colors">
+                <FaInstagram size={24} />
+              </a>
+              <a href="#" className="text-white/70 hover:text-white transition-colors">
+                <FaLinkedin size={24} />
+              </a>
+              <a href="#" className="text-white/70 hover:text-white transition-colors">
+                <FaTwitter size={24} />
+              </a>
+            </div>
+          </motion.div>
+
+          {/* Vertical Social Media Links for Desktop */}
+          <div className="hidden md:block fixed left-0 top-1/2 transform -translate-y-1/2 w-full">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <motion.div
+                initial="hidden"
+                animate="visible"
+                variants={fadeIn}
+                transition={{ duration: 0.6, delay: 0.6 }}
+                className="flex flex-col gap-6"
+              >
+                <a href="#" className="text-white/70 hover:text-white transition-colors">
+                  <FaFacebookF size={24} />
+                </a>
+                <a href="#" className="text-white/70 hover:text-white transition-colors">
+                  <FaInstagram size={24} />
+                </a>
+                <a href="#" className="text-white/70 hover:text-white transition-colors">
+                  <FaLinkedin size={24} />
+                </a>
+                <a href="#" className="text-white/70 hover:text-white transition-colors">
+                  <FaTwitter size={24} />
+                </a>
+              </motion.div>
+            </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </Layout>
   );

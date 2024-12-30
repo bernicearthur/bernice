@@ -13,9 +13,18 @@ const fadeIn = {
 
 export default function About() {
   const [activeTab, setActiveTab] = useState(0);
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   const scrollToFooter = () => {
     document.querySelector('footer').scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev === 2 ? 0 : prev + 1));
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev === 0 ? 2 : prev - 1));
   };
 
   return (
@@ -25,7 +34,7 @@ export default function About() {
       {/* Main Content */}
       <main className="flex-grow bg-main">
         {/* Biography Section */}
-        <section className="py-16">
+        <section className="py-10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial="hidden"
@@ -35,7 +44,19 @@ export default function About() {
               className="space-y-8 flex flex-col items-center text-center max-w-4xl mx-auto"
             >
               <div className="prose prose-lg dark:prose-invert max-w-none">
-                <h2 className="text-3xl font-bold text-primary mb-6">About the Author</h2>
+                <div className="flex justify-center mb-8">
+                  <div className="relative w-48 h-48">
+                    <Image
+                      src="/images/profile.jpg"
+                      alt="Bernice Arthur"
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded-full shadow-lg"
+                      priority
+                    />
+                  </div>
+                </div>
+                <h2 className="text-3xl font-bold text-primary mb-6">About Me</h2>
                 <p className="text-primary">
                   Bernice Arthur is a creative powerhouse whose passion for storytelling transforms words into immersive experiences. 
                   With a flair for writing, design, and project innovation, she has inspired audiences with her unique perspective 
@@ -49,8 +70,8 @@ export default function About() {
               </div>
 
               {/* Skills Section */}
-              <div className="mt-16 w-full">
-                <h3 className="text-2xl font-bold text-primary mb-8 text-center">Skills & Expertise</h3>
+              <div className="mt-24 w-full">
+                <h3 className="text-2xl font-bold text-primary mb-8 mt-8 text-center">Skills & Expertise</h3>
                 
                 {/* Tabs */}
                 <div className="flex flex-wrap justify-center gap-2 mb-8">
@@ -70,7 +91,238 @@ export default function About() {
                 </div>
 
                 {/* Skills Content */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                <div className="block md:hidden">
+                  {activeTab === 0 && (
+                    <motion.div
+                      className="relative px-4"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                    >
+                      <div className="overflow-hidden relative">
+                        <motion.div
+                          className="flex transition-transform duration-300 ease-in-out space-x-4"
+                          animate={{ x: -currentSlide * 100 + '%' }}
+                          drag="x"
+                          dragConstraints={{ left: -600, right: 0 }}
+                          style={{ touchAction: 'pan-x' }}
+                        >
+                          <motion.div className="w-full flex-shrink-0">
+                            <div className="p-6 rounded-lg bg-card-bg border border-border shadow-sm">
+                              <h4 className="text-xl font-semibold text-primary mb-4">Writing</h4>
+                              <ul className="space-y-2 text-primary">
+                                <li>• Blog Writing</li>
+                                <li>• Creative Stories</li>
+                                <li>• Content Creation</li>
+                                <li>• Editorial Writing</li>
+                              </ul>
+                            </div>
+                          </motion.div>
+                          <motion.div className="w-full flex-shrink-0">
+                            <div className="p-6 rounded-lg bg-card-bg border border-border shadow-sm">
+                              <h4 className="text-xl font-semibold text-primary mb-4">Design</h4>
+                              <ul className="space-y-2 text-primary">
+                                <li>• Adobe Creative Suite</li>
+                                <li>• Figma</li>
+                                <li>• Canva</li>
+                                <li>• Visual Design</li>
+                              </ul>
+                            </div>
+                          </motion.div>
+                          <motion.div className="w-full flex-shrink-0">
+                            <div className="p-6 rounded-lg bg-card-bg border border-border shadow-sm">
+                              <h4 className="text-xl font-semibold text-primary mb-4">Communication</h4>
+                              <ul className="space-y-2 text-primary">
+                                <li>• Public Speaking</li>
+                                <li>• Storytelling</li>
+                                <li>• Team Collaboration</li>
+                                <li>• Presentation</li>
+                              </ul>
+                            </div>
+                          </motion.div>
+                        </motion.div>
+                        <button 
+                          onClick={prevSlide}
+                          className="absolute left-2 top-1/2 -translate-y-1/2 bg-accent text-white p-2.5 rounded-full z-10 shadow-lg hover:bg-accent-hover transition-all duration-300"
+                        >
+                          <FiChevronDown className="w-5 h-5 rotate-90" />
+                        </button>
+                        <button 
+                          onClick={nextSlide}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 bg-accent text-white p-2.5 rounded-full z-10 shadow-lg hover:bg-accent-hover transition-all duration-300"
+                        >
+                          <FiChevronDown className="w-5 h-5 -rotate-90" />
+                        </button>
+                      </div>
+                      <div className="flex justify-center mt-6 gap-3">
+                        {[0, 1, 2].map((dot) => (
+                          <button
+                            key={dot}
+                            onClick={() => setCurrentSlide(dot)}
+                            className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                              currentSlide === dot ? 'bg-accent w-6' : 'bg-accent/50 hover:bg-accent/70'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {activeTab === 1 && (
+                    <motion.div
+                      className="relative px-4"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                    >
+                      <div className="overflow-hidden relative">
+                        <motion.div
+                          className="flex transition-transform duration-300 ease-in-out space-x-4"
+                          animate={{ x: -currentSlide * 100 + '%' }}
+                          drag="x"
+                          dragConstraints={{ left: -600, right: 0 }}
+                          style={{ touchAction: 'pan-x' }}
+                        >
+                          <motion.div className="w-full flex-shrink-0">
+                            <div className="p-6 rounded-lg bg-card-bg border border-border shadow-sm">
+                              <h4 className="text-xl font-semibold text-primary mb-4">Web Development</h4>
+                              <ul className="space-y-2 text-primary">
+                                <li>• HTML/CSS</li>
+                                <li>• JavaScript</li>
+                                <li>• Responsive Design</li>
+                                <li>• Web Accessibility</li>
+                              </ul>
+                            </div>
+                          </motion.div>
+                          <motion.div className="w-full flex-shrink-0">
+                            <div className="p-6 rounded-lg bg-card-bg border border-border shadow-sm">
+                              <h4 className="text-xl font-semibold text-primary mb-4">CMS</h4>
+                              <ul className="space-y-2 text-primary">
+                                <li>• WordPress</li>
+                                <li>• Content Management</li>
+                                <li>• SEO Optimization</li>
+                                <li>• Plugin Management</li>
+                              </ul>
+                            </div>
+                          </motion.div>
+                          <motion.div className="w-full flex-shrink-0">
+                            <div className="p-6 rounded-lg bg-card-bg border border-border shadow-sm">
+                              <h4 className="text-xl font-semibold text-primary mb-4">Tools</h4>
+                              <ul className="space-y-2 text-primary">
+                                <li>• Git Version Control</li>
+                                <li>• VS Code</li>
+                                <li>• Command Line</li>
+                                <li>• Development Tools</li>
+                              </ul>
+                            </div>
+                          </motion.div>
+                        </motion.div>
+                        <button 
+                          onClick={prevSlide}
+                          className="absolute left-2 top-1/2 -translate-y-1/2 bg-accent text-white p-2.5 rounded-full z-10 shadow-lg hover:bg-accent-hover transition-all duration-300"
+                        >
+                          <FiChevronDown className="w-5 h-5 rotate-90" />
+                        </button>
+                        <button 
+                          onClick={nextSlide}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 bg-accent text-white p-2.5 rounded-full z-10 shadow-lg hover:bg-accent-hover transition-all duration-300"
+                        >
+                          <FiChevronDown className="w-5 h-5 -rotate-90" />
+                        </button>
+                      </div>
+                      <div className="flex justify-center mt-6 gap-3">
+                        {[0, 1, 2].map((dot) => (
+                          <button
+                            key={dot}
+                            onClick={() => setCurrentSlide(dot)}
+                            className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                              currentSlide === dot ? 'bg-accent w-6' : 'bg-accent/50 hover:bg-accent/70'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {activeTab === 2 && (
+                    <motion.div
+                      className="relative px-4"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                    >
+                      <div className="overflow-hidden relative">
+                        <motion.div
+                          className="flex transition-transform duration-300 ease-in-out space-x-4"
+                          animate={{ x: -currentSlide * 100 + '%' }}
+                          drag="x"
+                          dragConstraints={{ left: -600, right: 0 }}
+                          style={{ touchAction: 'pan-x' }}
+                        >
+                          <motion.div className="w-full flex-shrink-0">
+                            <div className="p-6 rounded-lg bg-card-bg border border-border shadow-sm">
+                              <h4 className="text-xl font-semibold text-primary mb-4">Problem Solving</h4>
+                              <ul className="space-y-2 text-primary">
+                                <li>• Critical Thinking</li>
+                                <li>• Analysis</li>
+                                <li>• Decision Making</li>
+                                <li>• Innovation</li>
+                              </ul>
+                            </div>
+                          </motion.div>
+                          <motion.div className="w-full flex-shrink-0">
+                            <div className="p-6 rounded-lg bg-card-bg border border-border shadow-sm">
+                              <h4 className="text-xl font-semibold text-primary mb-4">Adaptability</h4>
+                              <ul className="space-y-2 text-primary">
+                                <li>• Flexibility</li>
+                                <li>• Quick Learning</li>
+                                <li>• Change Management</li>
+                                <li>• Resilience</li>
+                              </ul>
+                            </div>
+                          </motion.div>
+                          <motion.div className="w-full flex-shrink-0">
+                            <div className="p-6 rounded-lg bg-card-bg border border-border shadow-sm">
+                              <h4 className="text-xl font-semibold text-primary mb-4">Time Management</h4>
+                              <ul className="space-y-2 text-primary">
+                                <li>• Project Planning</li>
+                                <li>• Task Prioritization</li>
+                                <li>• Deadline Management</li>
+                                <li>• Organization</li>
+                              </ul>
+                            </div>
+                          </motion.div>
+                        </motion.div>
+                        <button 
+                          onClick={prevSlide}
+                          className="absolute left-2 top-1/2 -translate-y-1/2 bg-accent text-white p-2.5 rounded-full z-10 shadow-lg hover:bg-accent-hover transition-all duration-300"
+                        >
+                          <FiChevronDown className="w-5 h-5 rotate-90" />
+                        </button>
+                        <button 
+                          onClick={nextSlide}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 bg-accent text-white p-2.5 rounded-full z-10 shadow-lg hover:bg-accent-hover transition-all duration-300"
+                        >
+                          <FiChevronDown className="w-5 h-5 -rotate-90" />
+                        </button>
+                      </div>
+                      <div className="flex justify-center mt-6 gap-3">
+                        {[0, 1, 2].map((dot) => (
+                          <button
+                            key={dot}
+                            onClick={() => setCurrentSlide(dot)}
+                            className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                              currentSlide === dot ? 'bg-accent w-6' : 'bg-accent/50 hover:bg-accent/70'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </div>
+
+                {/* Desktop Grid View */}
+                <div className="hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
                   {activeTab === 0 && (
                     <>
                       <motion.div
@@ -213,7 +465,7 @@ export default function About() {
 
               {/* Professional Journey Section */}
               <div className="mt-24 w-full max-w-3xl mx-auto">
-                <h3 className="text-2xl font-bold text-primary mb-16 text-center">Professional Journey</h3>
+                <h3 className="text-2xl font-bold text-primary mb-8 mt-8 text-center">Professional Journey</h3>
                 
                 {/* Timeline */}
                 <div className="relative">
@@ -284,7 +536,7 @@ export default function About() {
 
               {/* Education Section */}
               <div className="mt-24 w-full max-w-3xl mx-auto">
-                <h3 className="text-2xl font-bold text-primary mb-16 text-center">Education</h3>
+                <h3 className="text-2xl font-bold text-primary mb-8 mt-8 text-center">Education</h3>
                 
                 {/* Education Timeline */}
                 <div className="relative">
@@ -353,7 +605,7 @@ export default function About() {
 
               {/* Achievements and Awards Section */}
               <div className="mt-24 w-full max-w-3xl mx-auto">
-                <h3 className="text-2xl font-bold text-primary mb-16 text-center">Achievements & Awards</h3>
+                <h3 className="text-2xl font-bold text-primary mb-8 text-center">Achievements & Awards</h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {/* Awards */}
@@ -464,7 +716,7 @@ export default function About() {
 
               {/* Future Goals Section */}
               <div className="mt-24 w-full max-w-3xl mx-auto">
-                <h3 className="text-2xl font-bold text-primary mb-16 text-center">Future Goals</h3>
+                <h3 className="text-2xl font-bold text-primary mb-8 mt-8 text-center">Future Goals</h3>
                 
                 <div className="space-y-12">
                   {/* Personal Statement */}

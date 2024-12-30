@@ -3,6 +3,7 @@ import Navbar from '../components/navbar';
 import Footer from '../components/footer';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
+import Pagination from '../components/pagination';
 
 const stories = [
   {
@@ -17,9 +18,12 @@ const stories = [
 
 const genres = ['All', 'Fantasy', 'Personal', 'Adventure', 'Mystery'];
 
+const ITEMS_PER_PAGE = 6;
+
 const StoriesPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('All');
+  const [currentPage, setCurrentPage] = useState(1);
 
   const container = {
     hidden: { opacity: 0 },
@@ -47,6 +51,23 @@ const StoriesPage = () => {
     const matchesGenre = selectedGenre === 'All' || story.genre === selectedGenre;
     return matchesSearch && matchesGenre;
   });
+
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredStories.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentStories = filteredStories.slice(startIndex, endIndex);
+
+  // Reset to first page when filters change
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
+
+  const handleGenreChange = (genre) => {
+    setSelectedGenre(genre);
+    setCurrentPage(1);
+  };
 
   return (
     <motion.div 
@@ -92,7 +113,7 @@ const StoriesPage = () => {
             {genres.map(genre => (
               <motion.button
                 key={genre}
-                onClick={() => setSelectedGenre(genre)}
+                onClick={() => handleGenreChange(genre)}
                 className={`px-4 py-2 rounded-full text-sm ${selectedGenre === genre ? 'bg-accent text-white' : 'bg-border text-primary hover:bg-accent hover:text-white'} transition-all`}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -105,7 +126,7 @@ const StoriesPage = () => {
             type="text"
             placeholder="Search stories..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => handleSearch(e.target.value)}
             className="w-full md:w-64 px-4 py-2 rounded-full border border-border bg-main text-primary placeholder-secondary focus:outline-none focus:ring-2 focus:ring-accent"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
@@ -116,11 +137,11 @@ const StoriesPage = () => {
           variants={container}
           initial="hidden"
           animate="show"
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 mb-16"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 mb-8"
         >
           <AnimatePresence>
-            {filteredStories.length > 0 ? (
-              filteredStories.map(story => (
+            {currentStories.length > 0 ? (
+              currentStories.map(story => (
                 <motion.div
                   key={story.id}
                   variants={item}
@@ -183,6 +204,14 @@ const StoriesPage = () => {
             )}
           </AnimatePresence>
         </motion.div>
+
+        {filteredStories.length > ITEMS_PER_PAGE && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        )}
       </div>
 
       <Footer />

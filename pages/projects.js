@@ -4,6 +4,7 @@ import Footer from '../components/footer';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiMoreHorizontal, FiShare2 } from 'react-icons/fi';
+import Pagination from '../components/pagination';
 
 const projects = [
   {
@@ -18,10 +19,13 @@ const projects = [
 
 const projectTypes = ['All', 'Archive'];
 
+const ITEMS_PER_PAGE = 6;
+
 const ProjectsPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState('All');
   const [openMenuId, setOpenMenuId] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const handleShare = (project) => {
     // Add share functionality here
@@ -34,6 +38,23 @@ const ProjectsPage = () => {
     const matchesType = selectedType === 'All' || project.type === selectedType;
     return matchesSearch && matchesType;
   });
+
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredProjects.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const endIndex = startIndex + ITEMS_PER_PAGE;
+  const currentProjects = filteredProjects.slice(startIndex, endIndex);
+
+  // Reset to first page when filters change
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
+
+  const handleTypeChange = (type) => {
+    setSelectedType(type);
+    setCurrentPage(1);
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -80,7 +101,6 @@ const ProjectsPage = () => {
         </motion.p>
       </motion.div>
 
-      {/* */}
       <motion.div 
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
         initial={{ opacity: 0, y: -20 }}
@@ -92,7 +112,7 @@ const ProjectsPage = () => {
             {projectTypes.map(type => (
               <motion.button
                 key={type}
-                onClick={() => setSelectedType(type)}
+                onClick={() => handleTypeChange(type)}
                 className={`px-4 py-2 rounded-full text-sm ${selectedType === type ? 'bg-accent text-white' : 'bg-border text-primary hover:bg-accent hover:text-white'} transition-all`}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -105,23 +125,22 @@ const ProjectsPage = () => {
             type="text"
             placeholder="Search projects..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => handleSearch(e.target.value)}
             className="w-full md:w-64 px-4 py-2 rounded-full border border-border bg-main text-primary placeholder-secondary focus:outline-none focus:ring-2 focus:ring-accent"
             whileFocus={{ scale: 1.02 }}
             transition={{ duration: 0.2 }}
           />
         </div>
 
-        {/* Project Showcase */}
         <motion.div 
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
         >
           <AnimatePresence>
-            {filteredProjects.length > 0 ? (
-              filteredProjects.map((project, index) => (
+            {currentProjects.length > 0 ? (
+              currentProjects.map((project, index) => (
                 <motion.div
                   key={project.id}
                   className="bg-card-bg rounded-lg shadow-md overflow-hidden"
@@ -218,6 +237,14 @@ const ProjectsPage = () => {
             )}
           </AnimatePresence>
         </motion.div>
+
+        {filteredProjects.length > ITEMS_PER_PAGE && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        )}
       </motion.div>
 
       <Footer />

@@ -4,29 +4,6 @@ import { useRouter } from 'next/router';
 import { useTheme } from '../components/theme';
 import { FiSun, FiMoon, FiMenu, FiX } from 'react-icons/fi';
 import Head from 'next/head';
-import { motion, AnimatePresence } from 'framer-motion';
-
-const menuItemVariants = {
-  hidden: { 
-    opacity: 0,
-    x: 50
-  },
-  visible: (i) => ({
-    opacity: 1,
-    x: 0,
-    transition: {
-      delay: i * 0.1,
-      duration: 0.3
-    }
-  }),
-  exit: {
-    opacity: 0,
-    x: 50,
-    transition: {
-      duration: 0.2
-    }
-  }
-};
 
 const Navbar = () => {
   const [mounted, setMounted] = useState(false);
@@ -101,38 +78,20 @@ const Navbar = () => {
         </div>
 
         {/* Mobile menu */}
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div 
-              initial={{ opacity: 0, x: '100%' }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: '100%' }}
-              transition={{ duration: 0.3 }}
-              className="md:hidden bg-main shadow-lg w-1/2 absolute right-0 top-[5rem]"
-            >
-              <div className="px-4 py-3 space-y-0">
-                <motion.div custom={0} variants={menuItemVariants} initial="hidden" animate="visible" exit="exit">
-                  <Link href="/" className={`block px-3 py-3 border-y border-border transform transition-all duration-200 text-center hover:bg-border ${isActive('/') ? 'bg-border text-accent' : 'text-primary'}`}>Home</Link>
-                </motion.div>
-                <motion.div custom={1} variants={menuItemVariants} initial="hidden" animate="visible" exit="exit">
-                  <Link href="/bio" className={`block px-3 py-3 border-b border-border transform transition-all duration-200 text-center hover:bg-border ${isActive('/bio') ? 'bg-border text-accent' : 'text-primary'}`}>Bio</Link>
-                </motion.div>
-                <motion.div custom={2} variants={menuItemVariants} initial="hidden" animate="visible" exit="exit">
-                  <Link href="/blog" className={`block px-3 py-3 border-b border-border transform transition-all duration-200 text-center hover:bg-border ${isActive('/blog') ? 'bg-border text-accent' : 'text-primary'}`}>Blog</Link>
-                </motion.div>
-                <motion.div custom={3} variants={menuItemVariants} initial="hidden" animate="visible" exit="exit">
-                  <Link href="/stories" className={`block px-3 py-3 border-b border-border transform transition-all duration-200 text-center hover:bg-border ${isActive('/stories') ? 'bg-border text-accent' : 'text-primary'}`}>Stories</Link>
-                </motion.div>
-                <motion.div custom={4} variants={menuItemVariants} initial="hidden" animate="visible" exit="exit">
-                  <Link href="/projects" className={`block px-3 py-3 border-b border-border transform transition-all duration-200 text-center hover:bg-border ${isActive('/projects') ? 'bg-border text-accent' : 'text-primary'}`}>Projects</Link>
-                </motion.div>
-                <motion.div custom={5} variants={menuItemVariants} initial="hidden" animate="visible" exit="exit">
-                  <Link href="/login" className={`block px-3 py-3 border-b border-border transform transition-all duration-200 text-center hover:bg-border ${isActive('/login') ? 'bg-border text-accent' : 'text-primary'}`}>Login</Link>
-                </motion.div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <div 
+          className={`md:hidden transform transition-all duration-300 ease-in-out ${
+            isOpen ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full'
+          } ${isOpen ? 'block' : 'hidden'} bg-main shadow-lg w-1/2 absolute right-0 top-[5rem]`}
+        >
+          <div className="px-4 py-3 space-y-0">
+            <Link href="/" className={`block px-3 py-3 border-y border-border transform transition-all duration-200 text-center hover:bg-border ${isActive('/') ? 'bg-border text-accent' : 'text-primary'}`}>Home</Link>
+            <Link href="/bio" className={`block px-3 py-3 border-b border-border transform transition-all duration-200 text-center hover:bg-border ${isActive('/bio') ? 'bg-border text-accent' : 'text-primary'}`}>Bio</Link>
+            <Link href="/blog" className={`block px-3 py-3 border-b border-border transform transition-all duration-200 text-center hover:bg-border ${isActive('/blog') ? 'bg-border text-accent' : 'text-primary'}`}>Blog</Link>
+            <Link href="/stories" className={`block px-3 py-3 border-b border-border transform transition-all duration-200 text-center hover:bg-border ${isActive('/stories') ? 'bg-border text-accent' : 'text-primary'}`}>Stories</Link>
+            <Link href="/projects" className={`block px-3 py-3 border-b border-border transform transition-all duration-200 text-center hover:bg-border ${isActive('/projects') ? 'bg-border text-accent' : 'text-primary'}`}>Projects</Link>
+            <Link href="/login" className={`block px-3 py-3 border-b border-border transform transition-all duration-200 text-center hover:bg-border ${isActive('/login') ? 'bg-border text-accent' : 'text-primary'}`}>Login</Link>
+          </div>
+        </div>
       </nav>
     </>
   );
