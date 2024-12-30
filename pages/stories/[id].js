@@ -1,78 +1,83 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { FaRegHeart, FaHeart, FaRegComment, FaRegEye, FaShare, FaReply, FaUser } from 'react-icons/fa';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import Navbar from '../../components/navbar';
 import Footer from '../../components/footer';
+import Link from 'next/link';
 
 // Mock data - In a real application, this would come from an API
-const blogPost = {
+const story = {
   id: 1,
-  title: 'How to Write Engaging Stories',
+  title: 'The Enchanted Forest',
   content: `
-    <p>Writing engaging stories is an art that combines creativity, technique, and understanding of human nature. In this blog post, we'll explore the essential elements that make a story captivating and memorable.</p>
+    <p>Deep within the heart of an ancient woodland, where shadows danced between gnarled trees and whispers of magic hung thick in the air, there lay a secret that had remained untold for centuries.</p>
     
-    <h2>1. Start with a Hook</h2>
-    <p>Your opening paragraph should grab the reader's attention immediately. Consider starting with an intriguing question, a shocking statement, or an vivid scene that pulls the reader into your world.</p>
+    <p>The forest was unlike any other. Its trees seemed to breathe with an otherworldly rhythm, their leaves shimmering with an iridescent glow that defied natural explanation. As I stepped deeper into its embrace, I could feel the weight of countless untold stories pressing in around me.</p>
     
-    <h2>2. Develop Complex Characters</h2>
-    <p>Characters are the heart of any story. They should be multi-dimensional, with their own desires, fears, and contradictions. Let your readers connect with them on an emotional level.</p>
+    <p>This was where my journey began, though I didn't know it then. The path ahead wound like a ribbon through the undergrowth, beckoning me forward with promises of adventure and discovery.</p>
   `,
   author: {
     name: 'Bernice Arthur',
     image: '/images/profile.jpg',
-    bio: 'Writer, Storyteller, Creative Coach'
+    bio: 'Published on 15/10/2023'
   },
-  publishDate: '2023-10-01',
-  category: 'Tutorials',
-  readTime: '5 min',
-  image: '/images/blog.jpg',
-  likes: 120,
+  publishDate: '2023-10-15',
+  genre: 'Fantasy',
+  readTime: '10 min',
+  image: '/images/story.jpg',
+  likes: 245,
   comments: [
     {
       id: 1,
-      author: 'John Doe',
-      content: 'This was incredibly helpful! Thank you for sharing your insights.',
-      date: '2023-10-02',
+      author: 'Sarah Johnson',
+      content: 'This story transported me to another world. The imagery is absolutely breathtaking!',
+      date: '2023-10-16',
       replies: [
         {
           id: 1,
           author: 'Bernice Arthur',
-          content: "Thank you, John! I'm glad you found it helpful.",
-          date: '2023-10-02'
+          content: "Thank you, Sarah! I'm so glad you enjoyed the journey through the enchanted forest.",
+          date: '2023-10-16'
         }
       ]
-    }
-  ],
-  views: 300,
-  relatedPosts: [
+    },
     {
       id: 2,
-      title: 'Character Development Tips',
-      image: '/images/blog2.jpg',
-      category: 'Writing Tips',
-      likes: 85,
-      comments: 12,
-      views: 250,
-      publishDate: '2023-09-28'
+      author: 'Michael Chen',
+      content: 'The way you described the forest breathing with otherworldly rhythm gave me chills. Beautiful writing!',
+      date: '2023-10-17',
+      replies: []
+    }
+  ],
+  views: 567,
+  relatedStories: [
+    {
+      id: 2,
+      title: 'The Last Dragon',
+      image: '/images/story2.jpg',
+      genre: 'Fantasy',
+      likes: 189,
+      comments: 23,
+      views: 420,
+      publishDate: '2023-10-10'
     },
     {
       id: 3,
-      title: 'Finding Your Writing Voice',
-      image: '/images/blog3.jpg',
-      category: 'Personal',
-      likes: 92,
-      comments: 8,
-      views: 180,
-      publishDate: '2023-09-25'
+      title: 'Whispers in the Wind',
+      image: '/images/story3.jpg',
+      genre: 'Mystery',
+      likes: 156,
+      comments: 18,
+      views: 380,
+      publishDate: '2023-10-05'
     }
   ]
 };
 
-const BlogPost = () => {
+const StoryPost = () => {
   const router = useRouter();
   const { id } = router.query;
   const [isLiked, setIsLiked] = useState(false);
@@ -80,27 +85,6 @@ const BlogPost = () => {
   const [commentText, setCommentText] = useState('');
   const [replyingTo, setReplyingTo] = useState(null);
   const [replyText, setReplyText] = useState('');
-
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { 
-      opacity: 1, 
-      y: 0,
-      transition: {
-        duration: 0.5
-      }
-    }
-  };
 
   const handleLike = () => {
     setIsLiked(!isLiked);
@@ -132,36 +116,89 @@ const BlogPost = () => {
     setReplyingTo(null);
   };
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        duration: 0.5
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-main">
       <Navbar />
 
-      <article className="flex-grow">
-        {/* Hero Image */}
-        <div className="relative w-full h-[60vh]">
+      <article className="flex-grow mb-16">
+        {/* Hero Section */}
+        <div className="relative w-full h-[70vh]">
           <Image
-            src={blogPost.image}
-            alt={blogPost.title}
+            src={story.image}
+            alt={story.title}
             fill
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-black bg-opacity-30" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/80 to-black/50" />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+              <motion.h1 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-4"
+              >
+                {story.title}
+              </motion.h1>
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="flex items-center justify-center gap-4 text-white/90"
+              >
+                <span>{story.genre}</span>
+                <span>•</span>
+                <span>{story.readTime} read</span>
+              </motion.div>
+            </div>
+          </div>
         </div>
 
         {/* Content */}
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-32 relative z-10">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="card p-6 sm:p-8 bg-main"
           >
-            {/* Header */}
-            <div className="mb-8">
-              <div className="flex items-center justify-between mb-4">
-                <span className={`px-4 py-2 rounded-full text-sm bg-border text-primary hover:bg-accent hover:text-white transition-all`}>
-                  {blogPost.category}
-                </span>
+            {/* Author Info */}
+            <div className="p-6 border-b border-border">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <Image
+                    src={story.author.image}
+                    alt={story.author.name}
+                    width={48}
+                    height={48}
+                    className="rounded-full"
+                  />
+                  <div>
+                    <p className="text-primary font-medium">{story.author.name}</p>
+                    <p className="text-secondary text-sm">{story.author.bio}</p>
+                  </div>
+                </div>
                 <div className="relative">
                   <button
                     onClick={handleShare}
@@ -176,38 +213,18 @@ const BlogPost = () => {
                       className="absolute right-0 mt-2 w-48 bg-border shadow-lg rounded-lg overflow-hidden"
                     >
                       <button className="w-full text-left px-4 py-3 hover:bg-main text-primary flex items-center gap-2 transition-colors">
-                        <FaShare className="text-accent" /> Share Post
+                        <FaShare className="text-accent" /> Share Story
                       </button>
                     </motion.div>
                   )}
                 </div>
               </div>
-              <h1 className="text-3xl sm:text-4xl font-bold text-primary mb-4">{blogPost.title}</h1>
-              
-              {/* Author Info */}
-              <div className="flex items-center gap-4">
-                <Image
-                  src={blogPost.author.image}
-                  alt={blogPost.author.name}
-                  width={48}
-                  height={48}
-                  className="rounded-full"
-                />
-                <div>
-                  <p className="text-primary font-medium">{blogPost.author.name}</p>
-                  <div className="flex items-center text-secondary text-sm gap-2">
-                    <span>{new Date(blogPost.publishDate).toLocaleDateString()}</span>
-                    <span>•</span>
-                    <span>{blogPost.readTime} read</span>
-                  </div>
-                </div>
-              </div>
             </div>
 
-            {/* Blog Content */}
+            {/* Story Content */}
             <div 
-              className="prose prose-lg dark:prose-invert max-w-none mb-8 bg-main/30 p-6 rounded-lg"
-              dangerouslySetInnerHTML={{ __html: blogPost.content }}
+              className="prose prose-lg dark:prose-invert max-w-none p-6 sm:p-8 lg:p-10"
+              dangerouslySetInnerHTML={{ __html: story.content }}
             />
 
             {/* Engagement Section */}
@@ -222,15 +239,15 @@ const BlogPost = () => {
                   ) : (
                     <FaRegHeart />
                   )}
-                  {blogPost.likes}
+                  {story.likes}
                 </button>
                 <div className="flex items-center gap-2 text-secondary">
                   <FaRegComment />
-                  {blogPost.comments.length}
+                  {story.comments.length}
                 </div>
                 <div className="flex items-center gap-2 text-secondary">
                   <FaRegEye />
-                  {blogPost.views}
+                  {story.views}
                 </div>
               </div>
             </div>
@@ -238,41 +255,31 @@ const BlogPost = () => {
             {/* Comments Section */}
             <div className="border-t border-border p-6">
               <h3 className="text-xl font-semibold text-primary mb-4">Comments</h3>
-              <form onSubmit={handleComment} className="mb-6">
+              <form onSubmit={handleComment} className="mb-8">
                 <textarea
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
-                  placeholder="Add a comment..."
-                  className="w-full p-3 rounded-lg bg-main border border-border text-primary focus:outline-none focus:ring-2 focus:ring-accent placeholder-secondary/50"
+                  placeholder="Share your thoughts..."
+                  className="w-full p-4 rounded-lg bg-main border border-border text-primary focus:outline-none focus:ring-2 focus:ring-accent placeholder-secondary/50 resize-none"
                   rows={3}
                 />
                 <button
                   type="submit"
-                  className="mt-2 px-6 py-2 bg-accent text-white rounded-full hover:bg-opacity-90 transition-colors"
+                  className="mt-3 px-6 py-2 bg-accent text-white rounded-full hover:bg-opacity-90 transition-colors"
                 >
                   Post Comment
                 </button>
               </form>
 
               <div className="space-y-6">
-                {blogPost.comments.map((comment, index) => (
+                {story.comments.map((comment, index) => (
                   <div key={comment.id}>
                     <div className="space-y-4">
                       <div className="p-4 rounded-lg border border-border">
                         <div className="flex items-start gap-3">
-                          {comment.author === blogPost.author.name ? (
-                            <Image
-                              src={blogPost.author.image}
-                              alt={comment.author}
-                              width={40}
-                              height={40}
-                              className="rounded-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-10 h-10 rounded-full bg-border flex items-center justify-center">
-                              <FaUser className="text-secondary w-5 h-5" />
-                            </div>
-                          )}
+                          <div className="w-10 h-10 rounded-full bg-border flex items-center justify-center">
+                            <FaUser className="text-secondary w-5 h-5" />
+                          </div>
                           <div className="flex-grow">
                             <div className="flex items-start justify-between">
                               <div>
@@ -333,9 +340,9 @@ const BlogPost = () => {
                             {comment.replies.map((reply) => (
                               <div key={reply.id} className="p-4 rounded-lg border border-border">
                                 <div className="flex items-start gap-3">
-                                  {reply.author === blogPost.author.name ? (
+                                  {reply.author === story.author.name ? (
                                     <Image
-                                      src={blogPost.author.image}
+                                      src={story.author.image}
                                       alt={reply.author}
                                       width={40}
                                       height={40}
@@ -360,7 +367,7 @@ const BlogPost = () => {
                         </>
                       )}
                     </div>
-                    {index < blogPost.comments.length - 1 && (
+                    {index < story.comments.length - 1 && (
                       <div className="w-full h-px bg-border my-6" />
                     )}
                   </div>
@@ -379,17 +386,17 @@ const BlogPost = () => {
             animate="show"
             className="grid grid-cols-1 sm:grid-cols-2 gap-8"
           >
-            {blogPost.relatedPosts.map((post) => (
+            {story.relatedStories.map((relatedStory) => (
               <motion.div
-                key={post.id}
+                key={relatedStory.id}
                 variants={item}
                 className="card p-6 hover:transform hover:scale-105 transition-transform duration-300"
               >
-                <Link href={`/blogpost/${post.id}`} className="block">
+                <Link href={`/stories/${relatedStory.id}`} className="block">
                   <div className="relative overflow-hidden">
                     <Image
-                      src={post.image}
-                      alt={post.title}
+                      src={relatedStory.image}
+                      alt={relatedStory.title}
                       width={500}
                       height={300}
                       className="w-full h-48 sm:h-56 object-cover transform hover:scale-110 transition-transform duration-500"
@@ -402,21 +409,21 @@ const BlogPost = () => {
                       transition={{ duration: 0.3 }}
                     >
                       <p className="text-secondary text-xs italic mb-2">
-                        On {new Date(post.publishDate).getDate()}, {new Date(post.publishDate).toLocaleString('default', { month: 'short' })}, {new Date(post.publishDate).getFullYear()}
+                        On {new Date(relatedStory.publishDate).getDate()}, {new Date(relatedStory.publishDate).toLocaleString('default', { month: 'short' })}, {new Date(relatedStory.publishDate).getFullYear()}
                       </p>
-                      <h3 className="text-primary font-semibold text-lg sm:text-xl uppercase tracking-wider mb-2 font-['Times_New_Roman']">{post.title}</h3>
+                      <h3 className="text-primary font-semibold text-lg sm:text-xl uppercase tracking-wider mb-2 font-['Times_New_Roman']">{relatedStory.title}</h3>
                       <div className="border-b border-gray-300 dark:border-gray-600 my-2"></div>
                       <div className="flex flex-wrap items-center text-secondary text-xs sm:text-sm uppercase gap-y-2">
-                        <span className="font-medium mr-4 text-primary">{post.category}</span>
+                        <span className="font-medium mr-4 text-primary">{relatedStory.genre}</span>
                         <span className="hidden sm:inline text-secondary">|</span>
                         <span className="ml-0 sm:ml-4 flex items-center gap-1">
-                          <FaRegComment className="text-base sm:text-lg" /> {post.comments}
+                          <FaRegComment className="text-base sm:text-lg" /> {relatedStory.comments}
                         </span>
                         <span className="mx-4 flex items-center gap-1">
-                          <FaRegEye className="text-base sm:text-lg" /> {post.views}
+                          <FaRegEye className="text-base sm:text-lg" /> {relatedStory.views}
                         </span>
                         <span className="flex items-center gap-1">
-                          <FaRegHeart className="text-base sm:text-lg" /> {post.likes}
+                          <FaRegHeart className="text-base sm:text-lg" /> {relatedStory.likes}
                         </span>
                       </div>
                     </motion.div>
@@ -433,4 +440,4 @@ const BlogPost = () => {
   );
 };
 
-export default BlogPost; 
+export default StoryPost; 
