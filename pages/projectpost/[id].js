@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiHeart, FiShare2, FiEye, FiFacebook, FiInstagram, FiLinkedin, FiChevronLeft, FiChevronRight, FiMessageCircle, FiYoutube, FiTwitter } from 'react-icons/fi';
-import { FaUser, FaReply } from 'react-icons/fa';
+import { FiHeart, FiShare2, FiEye, FiFacebook, FiInstagram, FiLinkedin, FiChevronLeft, FiChevronRight, FiMessageCircle, FiYoutube, FiTwitter, FiLink } from 'react-icons/fi';
+import { FaUser, FaReply, FaWhatsapp } from 'react-icons/fa';
 import Navbar from '../../components/navbar';
 import Footer from '../../components/footer';
 
@@ -65,11 +65,27 @@ const ProjectPost = () => {
   const [touchEnd, setTouchEnd] = useState(0);
   const [replyingTo, setReplyingTo] = useState(null);
   const [replyText, setReplyText] = useState('');
+  const [showToast, setShowToast] = useState(false);
+  const [showShareMenu, setShowShareMenu] = useState(false);
+  const shareMenuRef = useRef(null);
 
   useEffect(() => {
     // Increment view count when page loads
     // This would typically be an API call
     console.log('View counted');
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (shareMenuRef.current && !shareMenuRef.current.contains(event.target)) {
+        setShowShareMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   const handleLike = () => {
@@ -94,19 +110,32 @@ const ProjectPost = () => {
   };
 
   const handleShare = (platform) => {
-    // Implement sharing logic for each platform
     const url = window.location.href;
+    const title = projectData.title;
+    
     switch (platform) {
       case 'facebook':
         window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`);
+        setShowShareMenu(false);
         break;
       case 'linkedin':
         window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`);
+        setShowShareMenu(false);
+        break;
+      case 'whatsapp':
+        window.open(`https://wa.me/?text=${encodeURIComponent(`${title}\n${url}`)}`);
+        setShowShareMenu(false);
         break;
       case 'instagram':
-        // Instagram sharing typically requires a different approach
-        // Maybe copy link to clipboard
-        navigator.clipboard.writeText(url);
+        window.open(`https://www.instagram.com/direct/new/?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`);
+        setShowShareMenu(false);
+        break;
+      case 'copy':
+        navigator.clipboard.writeText(url).then(() => {
+          setShowToast(true);
+          setTimeout(() => setShowToast(false), 3000);
+          setShowShareMenu(false);
+        });
         break;
     }
   };
@@ -176,16 +205,24 @@ const ProjectPost = () => {
     setReplyingTo(null);
   };
 
+  const toggleShareMenu = () => {
+    setShowShareMenu(!showShareMenu);
+  };
+
   return (
     <div className="min-h-screen bg-main">
       <Navbar />
 
+      {/* Toast Notification */}
+      {showToast && (
+        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-accent text-white px-6 py-3 rounded-full shadow-lg z-50 flex items-center transition-all duration-300 opacity-100">
+          <FiLink className="w-5 h-5 mr-2" />
+          Link copied to clipboard!
+        </div>
+      )}
+
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
+        <div>
           {/* Project Header */}
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold text-primary mb-4">{projectData.title}</h1>
@@ -301,250 +338,253 @@ const ProjectPost = () => {
 
           {/* Metrics and Actions */}
           <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-8 mb-12 py-6 border-y border-border">
-            <motion.button
+            <button
               onClick={handleLike}
-              className={`flex items-center ${liked ? 'text-red-500' : 'text-secondary hover:text-red-500'} transition-colors`}
-              whileHover={{ scale: 1.05 }}
+              className={`flex items-center ${liked ? 'text-red-500' : 'text-secondary hover:text-red-500'} transition-colors hover:scale-105`}
               title="Like this project"
             >
               <FiHeart className={`w-5 h-5 ${liked ? 'fill-current' : ''}`} />
               <span className="ml-2 hidden sm:inline">{projectData.likes + (liked ? 1 : 0)} likes</span>
               <span className="ml-2 sm:hidden">{projectData.likes + (liked ? 1 : 0)}</span>
-            </motion.button>
+            </button>
 
-            <motion.div 
-              className="flex items-center text-secondary hover:text-primary transition-colors"
-              whileHover={{ scale: 1.05 }}
+            <div 
+              className="flex items-center text-secondary hover:text-primary transition-colors hover:scale-105"
               title="Comments"
             >
               <FiMessageCircle className="w-5 h-5" />
               <span className="ml-2 hidden sm:inline">{comments.length} comments</span>
               <span className="ml-2 sm:hidden">{comments.length}</span>
-            </motion.div>
+            </div>
             
-            <motion.div 
-              className="flex items-center text-secondary hover:text-primary transition-colors"
-              whileHover={{ scale: 1.05 }}
+            <div 
+              className="flex items-center text-secondary hover:text-primary transition-colors hover:scale-105"
               title="View count"
             >
               <FiEye className="w-5 h-5" />
               <span className="ml-2 hidden sm:inline">{projectData.views} views</span>
               <span className="ml-2 sm:hidden">{projectData.views}</span>
-            </motion.div>
+            </div>
 
-            <motion.div className="relative group">
-              <motion.button
-                onClick={() => handleShare('facebook')}
-                className="flex items-center text-secondary hover:text-primary transition-colors"
-                whileHover={{ scale: 1.05 }}
+            <div className="relative group" ref={shareMenuRef}>
+              <button
+                onClick={toggleShareMenu}
+                className="flex items-center text-secondary hover:text-primary transition-colors hover:scale-105"
                 title="Share project"
               >
                 <FiShare2 className="w-5 h-5" />
                 <span className="ml-2 hidden sm:inline">Share</span>
-              </motion.button>
+              </button>
               
               {/* Share Dropdown */}
-              <div className="absolute right-0 mt-2 py-2 w-48 bg-card-bg rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
+              <div className={`absolute right-0 mt-2 py-2 w-48 bg-card-bg rounded-lg shadow-xl transition-all duration-200 z-10 overflow-hidden ${showShareMenu ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
                 <button
-                  onClick={() => handleShare('facebook')}
-                  className="w-full px-4 py-2 text-left flex items-center space-x-3 hover:bg-accent/10 text-primary"
+                  onClick={() => handleShare('whatsapp')}
+                  className="w-full px-4 py-2 text-left flex items-center space-x-3 hover:bg-accent hover:text-white text-primary transition-all duration-200"
                 >
-                  <FiFacebook className="w-5 h-5" />
-                  <span>Facebook</span>
+                  <FaWhatsapp className="w-5 h-5" />
+                  <span>WhatsApp</span>
                 </button>
                 <button
                   onClick={() => handleShare('instagram')}
-                  className="w-full px-4 py-2 text-left flex items-center space-x-3 hover:bg-accent/10 text-primary"
+                  className="w-full px-4 py-2 text-left flex items-center space-x-3 hover:bg-accent hover:text-white text-primary transition-all duration-200"
                 >
                   <FiInstagram className="w-5 h-5" />
                   <span>Instagram</span>
                 </button>
                 <button
+                  onClick={() => handleShare('facebook')}
+                  className="w-full px-4 py-2 text-left flex items-center space-x-3 hover:bg-accent hover:text-white text-primary transition-all duration-200"
+                >
+                  <FiFacebook className="w-5 h-5" />
+                  <span>Facebook</span>
+                </button>
+                <button
                   onClick={() => handleShare('linkedin')}
-                  className="w-full px-4 py-2 text-left flex items-center space-x-3 hover:bg-accent/10 text-primary"
+                  className="w-full px-4 py-2 text-left flex items-center space-x-3 hover:bg-accent hover:text-white text-primary transition-all duration-200"
                 >
                   <FiLinkedin className="w-5 h-5" />
                   <span>LinkedIn</span>
                 </button>
+                <button
+                  onClick={() => handleShare('copy')}
+                  className="w-full px-4 py-2 text-left flex items-center space-x-3 hover:bg-accent hover:text-white text-primary transition-all duration-200"
+                >
+                  <FiLink className="w-5 h-5" />
+                  <span>Copy Link</span>
+                </button>
               </div>
-            </motion.div>
+            </div>
           </div>
 
           {/* Social Links */}
           <div className="mb-12">
             <h2 className="text-2xl font-bold text-primary mb-6 text-center">Also On</h2>
             <div className="flex justify-center space-x-6">
-              <motion.a
+              <a
                 href={projectData.social.youtube}
                 target="_blank"
                 rel="noopener noreferrer"
-                whileHover={{ scale: 1.1 }}
-                className="text-primary hover:text-accent"
+                className="text-primary hover:text-accent transition-all duration-200 hover:scale-110"
               >
                 <FiYoutube className="w-6 h-6" />
-              </motion.a>
-              <motion.a
+              </a>
+              <a
                 href={projectData.social.twitter}
                 target="_blank"
                 rel="noopener noreferrer"
-                whileHover={{ scale: 1.1 }}
-                className="text-primary hover:text-accent"
+                className="text-primary hover:text-accent transition-all duration-200 hover:scale-110"
               >
                 <FiTwitter className="w-6 h-6" />
-              </motion.a>
-              <motion.a
+              </a>
+              <a
                 href={projectData.social.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
-                whileHover={{ scale: 1.1 }}
-                className="text-primary hover:text-accent"
+                className="text-primary hover:text-accent transition-all duration-200 hover:scale-110"
               >
                 <FiFacebook className="w-6 h-6" />
-              </motion.a>
-              <motion.a
+              </a>
+              <a
                 href={projectData.social.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                whileHover={{ scale: 1.1 }}
-                className="text-primary hover:text-accent"
+                className="text-primary hover:text-accent transition-all duration-200 hover:scale-110"
               >
                 <FiInstagram className="w-6 h-6" />
-              </motion.a>
-              <motion.a
+              </a>
+              <a
                 href={projectData.social.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
-                whileHover={{ scale: 1.1 }}
-                className="text-primary hover:text-accent"
+                className="text-primary hover:text-accent transition-all duration-200 hover:scale-110"
               >
                 <FiLinkedin className="w-6 h-6" />
-              </motion.a>
+              </a>
             </div>
           </div>
 
           {/* Comments Section */}
-          <div className="border-t border-border p-6">
-            <h3 className="text-xl font-semibold text-primary mb-4">Comments</h3>
-            <form onSubmit={handleComment} className="mb-8">
-              <textarea
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                placeholder="Share your thoughts..."
-                className="w-full p-4 rounded-lg bg-main border border-border text-primary focus:outline-none focus:ring-2 focus:ring-accent placeholder-secondary/50 resize-none"
-                rows={3}
-              />
-              <button
-                type="submit"
-                className="mt-3 px-6 py-2 bg-accent text-white rounded-full hover:bg-opacity-90 transition-colors"
-              >
-                Post Comment
-              </button>
-            </form>
+          <div className="border-t border-border py-6">
+              <h3 className="text-xl font-semibold text-primary mb-4">Comments</h3>
+              <form onSubmit={handleComment} className="mb-8">
+                <textarea
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder="Share your thoughts..."
+                  className="w-full p-4 rounded-lg bg-main border border-border text-primary focus:outline-none focus:ring-2 focus:ring-accent placeholder-secondary/50 resize-none"
+                  rows={3}
+                />
+                <button
+                  type="submit"
+                  className="mt-3 px-6 py-2 bg-accent text-white rounded-full hover:bg-opacity-90 transition-colors"
+                >
+                  Post Comment
+                </button>
+              </form>
 
-            <div className="space-y-6">
-              {comments.map((comment, index) => (
-                <div key={comment.id}>
-                  <div className="space-y-4">
-                    <div className="p-4 rounded-lg border border-border">
-                      <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-full bg-border flex items-center justify-center">
-                          <FaUser className="text-secondary w-5 h-5" />
-                        </div>
-                        <div className="flex-grow">
-                          <div className="flex items-start justify-between">
-                            <div>
-                              <p className="font-medium text-primary">{comment.author}</p>
-                              <p className="text-secondary text-sm">
-                                {new Date(comment.date).toLocaleDateString()}
-                              </p>
-                            </div>
-                            <button
-                              onClick={() => handleReply(comment.id)}
-                              className="text-secondary hover:text-accent text-sm flex items-center gap-1"
-                            >
-                              <FaReply /> Reply
-                            </button>
+              <div className="space-y-6">
+                {comments.map((comment, index) => (
+                  <div key={comment.id}>
+                    <div className="space-y-4">
+                      <div className="p-4 rounded-lg border border-border">
+                        <div className="flex items-start gap-3">
+                          <div className="w-10 h-10 rounded-full bg-border flex items-center justify-center">
+                            <FaUser className="text-secondary w-5 h-5" />
                           </div>
-                          <p className="text-primary mt-2">{comment.content}</p>
+                          <div className="flex-grow">
+                            <div className="flex items-start justify-between">
+                              <div>
+                                <p className="font-medium text-primary">{comment.author}</p>
+                                <p className="text-secondary text-sm">
+                                  {new Date(comment.date).toLocaleDateString()}
+                                </p>
+                              </div>
+                              <button
+                                onClick={() => handleReply(comment.id)}
+                                className="text-secondary hover:text-accent text-sm flex items-center gap-1"
+                              >
+                                <FaReply /> Reply
+                              </button>
+                            </div>
+                            <p className="text-primary mt-2">{comment.content}</p>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    {replyingTo === comment.id && (
-                      <motion.form
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        onSubmit={(e) => submitReply(e, comment.id)}
-                        className="ml-14 mt-3"
-                      >
-                        <textarea
-                          value={replyText}
-                          onChange={(e) => setReplyText(e.target.value)}
-                          placeholder="Write a reply..."
-                          className="w-full p-3 rounded-lg bg-main border border-border text-primary focus:outline-none focus:ring-2 focus:ring-accent placeholder-secondary/50"
-                          rows={2}
-                        />
-                        <div className="flex gap-2 mt-2">
-                          <button
-                            type="submit"
-                            className="px-4 py-1.5 bg-accent text-white rounded-full hover:bg-opacity-90 text-sm"
-                          >
-                            Post Reply
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setReplyingTo(null)}
-                            className="px-4 py-1.5 bg-border text-primary rounded-full hover:bg-opacity-90 text-sm"
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      </motion.form>
-                    )}
+                      {replyingTo === comment.id && (
+                        <form
+                          onSubmit={(e) => submitReply(e, comment.id)}
+                          className="ml-14 mt-3 transition-all duration-200"
+                        >
+                          <textarea
+                            value={replyText}
+                            onChange={(e) => setReplyText(e.target.value)}
+                            placeholder="Write a reply..."
+                            className="w-full p-3 rounded-lg bg-main border border-border text-primary focus:outline-none focus:ring-2 focus:ring-accent placeholder-secondary/50"
+                            rows={2}
+                          />
+                          <div className="flex gap-2 mt-2">
+                            <button
+                              type="submit"
+                              className="px-4 py-1.5 bg-accent text-white rounded-full hover:bg-opacity-90 text-sm"
+                            >
+                              Post Reply
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setReplyingTo(null)}
+                              className="px-4 py-1.5 bg-border text-primary rounded-full hover:bg-opacity-90 text-sm"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </form>
+                      )}
 
-                    {/* Replies */}
-                    {comment.replies && comment.replies.length > 0 && (
-                      <>
-                        <div className="ml-14 w-px h-4 bg-border" />
-                        <div className="ml-14 space-y-3">
-                          {comment.replies.map((reply) => (
-                            <div key={reply.id} className="p-4 rounded-lg border border-border">
-                              <div className="flex items-start gap-3">
-                                {reply.author === 'Bernice Arthur' ? (
-                                  <Image
-                                    src="/images/profile.jpg"
-                                    alt={reply.author}
-                                    width={40}
-                                    height={40}
-                                    className="rounded-full object-cover"
-                                  />
-                                ) : (
-                                  <div className="w-10 h-10 rounded-full bg-border flex items-center justify-center">
-                                    <FaUser className="text-secondary w-5 h-5" />
+                      {/* Replies */}
+                      {comment.replies && comment.replies.length > 0 && (
+                        <>
+                          <div className="ml-14 w-px h-4 bg-border" />
+                          <div className="ml-14 space-y-3">
+                            {comment.replies.map((reply) => (
+                              <div key={reply.id} className="p-4 rounded-lg border border-border">
+                                <div className="flex items-start gap-3">
+                                  {reply.author === 'Bernice Arthur' ? (
+                                    <Image
+                                      src="/images/profile.jpg"
+                                      alt={reply.author}
+                                      width={40}
+                                      height={40}
+                                      className="rounded-full object-cover"
+                                    />
+                                  ) : (
+                                    <div className="w-10 h-10 rounded-full bg-border flex items-center justify-center">
+                                      <FaUser className="text-secondary w-5 h-5" />
+                                    </div>
+                                  )}
+                                  <div>
+                                    <p className="font-medium text-primary">{reply.author}</p>
+                                    <p className="text-secondary text-sm">
+                                      {new Date(reply.date).toLocaleDateString()}
+                                    </p>
+                                    <p className="text-primary mt-2">{reply.content}</p>
                                   </div>
-                                )}
-                                <div>
-                                  <p className="font-medium text-primary">{reply.author}</p>
-                                  <p className="text-secondary text-sm">
-                                    {new Date(reply.date).toLocaleDateString()}
-                                  </p>
-                                  <p className="text-primary mt-2">{reply.content}</p>
                                 </div>
                               </div>
-                            </div>
-                          ))}
-                        </div>
-                      </>
+                            ))}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                    {index < comments.length - 1 && (
+                      <div className="w-full h-px bg-border my-6" />
                     )}
                   </div>
-                  {index < comments.length - 1 && (
-                    <div className="w-full h-px bg-border my-6" />
-                  )}
-                </div>
-              ))}
+                ))}
             </div>
           </div>
-        </motion.div>
+        </div>
       </main>
 
       <Footer />
