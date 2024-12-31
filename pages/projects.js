@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useRouter } from 'next/router';
 import Navbar from '../components/navbar';
 import Footer from '../components/footer';
 import Image from 'next/image';
@@ -22,6 +23,7 @@ const projectTypes = ['All', 'Archive'];
 const ITEMS_PER_PAGE = 6;
 
 const ProjectsPage = () => {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState('All');
   const [openMenuId, setOpenMenuId] = useState(null);
@@ -54,6 +56,10 @@ const ProjectsPage = () => {
   const handleTypeChange = (type) => {
     setSelectedType(type);
     setCurrentPage(1);
+  };
+
+  const handleViewProject = (projectId) => {
+    router.push(`/projectpost/${projectId}`);
   };
 
   const containerVariants = {
@@ -218,6 +224,7 @@ const ProjectsPage = () => {
                         className="bg-purple-600 hover:bg-purple-700 text-white py-2 px-8 rounded-full text-sm font-medium transition-colors"
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
+                        onClick={() => handleViewProject(project.id)}
                       >
                         View Project
                       </motion.button>
