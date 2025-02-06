@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { FaRegHeart, FaHeart, FaRegComment, FaRegEye, FaShare, FaReply, FaUser } from 'react-icons/fa';
-import { BsThreeDotsVertical } from 'react-icons/bs';
+import { FiHeart, FiShare2, FiEye, FiFacebook, FiInstagram, FiLinkedin, FiMessageCircle, FiYoutube, FiTwitter, FiLink } from 'react-icons/fi';
+import { FaUser, FaReply, FaWhatsapp } from 'react-icons/fa';
 import Navbar from '../../components/navbar';
 import Footer from '../../components/footer';
 
@@ -42,9 +42,13 @@ const blogPost = {
           id: 1,
           author: 'Bernice Arthur',
           content: "Thank you, John! I'm glad you found it helpful.",
-          date: '2023-10-02'
+          date: '2023-10-02',
+          liked: false,
+          likes: 0
         }
-      ]
+      ],
+      liked: false,
+      likes: 0
     }
   ],
   views: 300,
@@ -75,11 +79,146 @@ const blogPost = {
 const BlogPost = () => {
   const router = useRouter();
   const { id } = router.query;
-  const [isLiked, setIsLiked] = useState(false);
+  const [liked, setLiked] = useState(false);
   const [showShareMenu, setShowShareMenu] = useState(false);
-  const [commentText, setCommentText] = useState('');
+  const [showToast, setShowToast] = useState(false);
+  const [comment, setComment] = useState('');
   const [replyingTo, setReplyingTo] = useState(null);
   const [replyText, setReplyText] = useState('');
+  const [replyingToReply, setReplyingToReply] = useState(null);
+  const [replyToReplyText, setReplyToReplyText] = useState('');
+  const shareMenuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (shareMenuRef.current && !shareMenuRef.current.contains(event.target)) {
+        setShowShareMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleLike = () => {
+    setLiked(!liked);
+    // Add API call to update likes
+  };
+
+  const handleShare = (platform) => {
+    const url = window.location.href;
+    const title = blogPost.title;
+    
+    switch (platform) {
+      case 'facebook':
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`);
+        setShowShareMenu(false);
+        break;
+      case 'linkedin':
+        window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`);
+        setShowShareMenu(false);
+        break;
+      case 'whatsapp':
+        window.open(`https://wa.me/?text=${encodeURIComponent(`${title}\n${url}`)}`);
+        setShowShareMenu(false);
+        break;
+      case 'instagram':
+        window.open(`https://www.instagram.com/direct/new/?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`);
+        setShowShareMenu(false);
+        break;
+      case 'copy':
+        navigator.clipboard.writeText(url).then(() => {
+          setShowToast(true);
+          setTimeout(() => setShowToast(false), 3000);
+          setShowShareMenu(false);
+        });
+        break;
+    }
+  };
+
+  const toggleShareMenu = () => {
+    setShowShareMenu(!showShareMenu);
+  };
+
+  const handleComment = (e) => {
+    e.preventDefault();
+    // Add API call to post comment
+    setComment('');
+  };
+
+  const handleReply = (id) => {
+    if (replyingTo === id) {
+      setReplyingTo(null);
+    } else {
+      setReplyingTo(id);
+      setReplyText('');
+    }
+  };
+
+  const submitReply = (e, id) => {
+    e.preventDefault();
+    // Add API call to post reply
+    setReplyText('');
+    setReplyingTo(null);
+  };
+
+  const handleCommentLike = (id) => {
+    const commentIndex = blogPost.comments.findIndex((comment) => comment.id === id);
+    if (commentIndex !== -1) {
+      blogPost.comments[commentIndex].liked = !blogPost.comments[commentIndex].liked;
+      if (blogPost.comments[commentIndex].liked) {
+        blogPost.comments[commentIndex].likes++;
+      } else {
+        blogPost.comments[commentIndex].likes--;
+      }
+    }
+  };
+
+  const handleReplyLike = (commentId, replyId) => {
+    const commentIndex = blogPost.comments.findIndex((comment) => comment.id === commentId);
+    if (commentIndex !== -1) {
+      const replyIndex = blogPost.comments[commentIndex].replies.findIndex((reply) => reply.id === replyId);
+      if (replyIndex !== -1) {
+        blogPost.comments[commentIndex].replies[replyIndex].liked = !blogPost.comments[commentIndex].replies[replyIndex].liked;
+        if (blogPost.comments[commentIndex].replies[replyIndex].liked) {
+          blogPost.comments[commentIndex].replies[replyIndex].likes++;
+        } else {
+          blogPost.comments[commentIndex].replies[replyIndex].likes--;
+        }
+      }
+    }
+  };
+
+  const handleReplyToReply = (commentId, replyId, replyAuthor) => {
+    if (replyingToReply?.commentId === commentId && replyingToReply?.replyId === replyId) {
+      setReplyingToReply(null);
+      setReplyToReplyText('');
+    } else {
+      setReplyingToReply({ commentId, replyId, replyAuthor });
+      setReplyToReplyText(`@${replyAuthor} `);
+    }
+  };
+
+  const submitReplyToReply = (e, commentId) => {
+    e.preventDefault();
+    const comment = blogPost.comments.find(c => c.id === commentId);
+    if (comment) {
+      const newReply = {
+        id: Date.now(),
+        author: 'Current User', // Replace with actual user name
+        content: replyToReplyText,
+        date: new Date().toISOString(),
+        liked: false,
+        likes: 0,
+        replyingTo: replyingToReply.replyAuthor // Store who this reply is responding to
+      };
+      comment.replies.push(newReply);
+      setReplyToReplyText('');
+      setReplyingToReply(null);
+    }
+  };
 
   const container = {
     hidden: { opacity: 0 },
@@ -100,36 +239,6 @@ const BlogPost = () => {
         duration: 0.5
       }
     }
-  };
-
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-  };
-
-  const handleShare = () => {
-    setShowShareMenu(!showShareMenu);
-  };
-
-  const handleComment = (e) => {
-    e.preventDefault();
-    // Handle comment submission
-    setCommentText('');
-  };
-
-  const handleReply = (commentId) => {
-    if (replyingTo === commentId) {
-      setReplyingTo(null);
-    } else {
-      setReplyingTo(commentId);
-      setReplyText('');
-    }
-  };
-
-  const submitReply = (e, commentId) => {
-    e.preventDefault();
-    // Handle reply submission
-    setReplyText('');
-    setReplyingTo(null);
   };
 
   return (
@@ -164,19 +273,47 @@ const BlogPost = () => {
                 </span>
                 <div className="relative">
                   <button
-                    onClick={handleShare}
+                    onClick={toggleShareMenu}
                     className="text-secondary hover:text-accent p-2 rounded-full hover:bg-border/50"
                   >
-                    <BsThreeDotsVertical className="text-xl" />
+                    <FiShare2 className="text-xl" />
                   </button>
                   {showShareMenu && (
                     <motion.div 
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
+                      ref={shareMenuRef}
                       className="absolute right-0 mt-2 w-48 bg-border shadow-lg rounded-lg overflow-hidden"
                     >
-                      <button className="w-full text-left px-4 py-3 hover:bg-main text-primary flex items-center gap-2 transition-colors">
-                        <FaShare className="text-accent" /> Share Post
+                      <button 
+                        onClick={() => handleShare('facebook')} 
+                        className="w-full text-left px-4 py-3 hover:bg-main text-primary flex items-center gap-2 transition-colors"
+                      >
+                        <FiFacebook className="text-accent" /> Facebook
+                      </button>
+                      <button 
+                        onClick={() => handleShare('linkedin')} 
+                        className="w-full text-left px-4 py-3 hover:bg-main text-primary flex items-center gap-2 transition-colors"
+                      >
+                        <FiLinkedin className="text-accent" /> LinkedIn
+                      </button>
+                      <button 
+                        onClick={() => handleShare('whatsapp')} 
+                        className="w-full text-left px-4 py-3 hover:bg-main text-primary flex items-center gap-2 transition-colors"
+                      >
+                        <FaWhatsapp className="text-accent" /> WhatsApp
+                      </button>
+                      <button 
+                        onClick={() => handleShare('instagram')} 
+                        className="w-full text-left px-4 py-3 hover:bg-main text-primary flex items-center gap-2 transition-colors"
+                      >
+                        <FiInstagram className="text-accent" /> Instagram
+                      </button>
+                      <button 
+                        onClick={() => handleShare('copy')} 
+                        className="w-full text-left px-4 py-3 hover:bg-main text-primary flex items-center gap-2 transition-colors"
+                      >
+                        <FiLink className="text-accent" /> Copy Link
                       </button>
                     </motion.div>
                   )}
@@ -211,50 +348,56 @@ const BlogPost = () => {
             />
 
             {/* Engagement Section */}
-            <div className="border-t border-border p-6">
-              <div className="flex items-center gap-6">
-                <button
-                  onClick={handleLike}
-                  className="flex items-center gap-2 text-secondary hover:text-accent transition-colors"
-                >
-                  {isLiked ? (
-                    <FaHeart className="text-accent" />
-                  ) : (
-                    <FaRegHeart />
-                  )}
-                  {blogPost.likes}
-                </button>
-                <div className="flex items-center gap-2 text-secondary">
-                  <FaRegComment />
-                  {blogPost.comments.length}
-                </div>
-                <div className="flex items-center gap-2 text-secondary">
-                  <FaRegEye />
-                  {blogPost.views}
-                </div>
+            <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-8 mb-4 py-6 border-y border-border">
+              <button
+                onClick={handleLike}
+                className={`flex items-center ${liked ? 'text-red-500' : 'text-secondary hover:text-red-500'} transition-colors hover:scale-105`}
+                title="Like this post"
+              >
+                <FiHeart className={`w-5 h-5 ${liked ? 'fill-current' : ''}`} />
+                <span className="ml-2 hidden sm:inline">{blogPost.likes + (liked ? 1 : 0)} likes</span>
+                <span className="ml-2 sm:hidden">{blogPost.likes + (liked ? 1 : 0)}</span>
+              </button>
+
+              <div 
+                className="flex items-center text-secondary hover:text-primary transition-colors hover:scale-105"
+                title="Comments"
+              >
+                <FiMessageCircle className="w-5 h-5" />
+                <span className="ml-2 hidden sm:inline">{blogPost.comments.length} comments</span>
+                <span className="ml-2 sm:hidden">{blogPost.comments.length}</span>
+              </div>
+              
+              <div 
+                className="flex items-center text-secondary hover:text-primary transition-colors hover:scale-105"
+                title="View count"
+              >
+                <FiEye className="w-5 h-5" />
+                <span className="ml-2 hidden sm:inline">{blogPost.views} views</span>
+                <span className="ml-2 sm:hidden">{blogPost.views}</span>
               </div>
             </div>
 
             {/* Comments Section */}
-            <div className="border-t border-border p-6">
+            <div className="py-6">
               <h3 className="text-xl font-semibold text-primary mb-4">Comments</h3>
-              <form onSubmit={handleComment} className="mb-6">
+              <form onSubmit={handleComment} className="mb-8">
                 <textarea
-                  value={commentText}
-                  onChange={(e) => setCommentText(e.target.value)}
-                  placeholder="Add a comment..."
-                  className="w-full p-3 rounded-lg bg-main border border-border text-primary focus:outline-none focus:ring-2 focus:ring-accent placeholder-secondary/50"
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder="Share your thoughts..."
+                  className="w-full p-4 rounded-lg bg-main border border-border text-primary focus:outline-none focus:ring-2 focus:ring-accent placeholder-secondary/50 resize-none"
                   rows={3}
                 />
                 <button
                   type="submit"
-                  className="mt-2 px-6 py-2 bg-accent text-white rounded-full hover:bg-opacity-90 transition-colors"
+                  className="mt-3 px-6 py-2 bg-accent text-white rounded-full hover:bg-opacity-90 transition-colors"
                 >
                   Post Comment
                 </button>
               </form>
 
-              <div className="space-y-6">
+              <div className="space-y-6 flex-grow">
                 {blogPost.comments.map((comment, index) => (
                   <div key={comment.id}>
                     <div className="space-y-4">
@@ -268,43 +411,59 @@ const BlogPost = () => {
                               height={40}
                               className="rounded-full object-cover"
                             />
+                          ) : comment.profileImage ? (
+                            <Image
+                              src={comment.profileImage}
+                              alt={comment.author}
+                              width={40}
+                              height={40}
+                              className="rounded-full object-cover"
+                            />
                           ) : (
-                            <div className="w-10 h-10 rounded-full bg-border flex items-center justify-center">
-                              <FaUser className="text-secondary w-5 h-5" />
-                            </div>
+                            <Image
+                              src="/icons/user.png"
+                              alt={comment.author}
+                              width={40}
+                              height={40}
+                              className="rounded-full object-cover"
+                            />
                           )}
                           <div className="flex-grow">
-                            <div className="flex items-start justify-between">
-                              <div>
-                                <p className="font-medium text-primary">{comment.author}</p>
-                                <p className="text-secondary text-sm">
-                                  {new Date(comment.date).toLocaleDateString()}
-                                </p>
-                              </div>
-                              <button
-                                onClick={() => handleReply(comment.id)}
-                                className="text-secondary hover:text-accent text-sm flex items-center gap-1"
-                              >
-                                <FaReply /> Reply
-                              </button>
+                            <div className="flex items-center justify-between">
+                              <p className="font-medium text-primary">{comment.author}</p>
+                              <p className="text-secondary text-sm">{new Date(comment.date).toLocaleDateString()}</p>
                             </div>
                             <p className="text-primary mt-2">{comment.content}</p>
+                            <div className="flex items-center gap-4 mt-2">
+                              <button
+                                onClick={() => handleCommentLike(comment.id)}
+                                className={`text-secondary hover:text-red-500 text-sm flex items-center gap-1 transition-colors`}
+                              >
+                                <FiHeart className={`w-4 h-4 ${comment.liked ? 'fill-current text-red-500' : ''}`} />
+                                <span>{comment.likes || 0}</span>
+                              </button>
+                              <button
+                                onClick={() => handleReply(comment.id, comment.author)}
+                                className="flex items-center gap-1 text-secondary hover:text-primary"
+                              >
+                                <FaReply className="w-4 h-4" />
+                                <span>Reply</span>
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
 
                       {replyingTo === comment.id && (
-                        <motion.form
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
+                        <form
                           onSubmit={(e) => submitReply(e, comment.id)}
-                          className="ml-14 mt-3"
+                          className="ml-4 sm:ml-14 mt-3"
                         >
                           <textarea
                             value={replyText}
                             onChange={(e) => setReplyText(e.target.value)}
                             placeholder="Write a reply..."
-                            className="w-full p-3 rounded-lg bg-main border border-border text-primary focus:outline-none focus:ring-2 focus:ring-accent placeholder-secondary/50"
+                            className="w-full p-4 rounded-lg bg-main border border-border text-primary focus:outline-none focus:ring-2 focus:ring-accent placeholder-secondary/50"
                             rows={2}
                           />
                           <div className="flex gap-2 mt-2">
@@ -322,14 +481,14 @@ const BlogPost = () => {
                               Cancel
                             </button>
                           </div>
-                        </motion.form>
+                        </form>
                       )}
 
                       {/* Replies */}
                       {comment.replies && comment.replies.length > 0 && (
                         <>
-                          <div className="ml-14 w-px h-4 bg-border" />
-                          <div className="ml-14 space-y-3">
+                          <div className="ml-4 sm:ml-14 w-px h-4 bg-border" />
+                          <div className="ml-4 sm:ml-14 space-y-3">
                             {comment.replies.map((reply) => (
                               <div key={reply.id} className="p-4 rounded-lg border border-border">
                                 <div className="flex items-start gap-3">
@@ -341,21 +500,86 @@ const BlogPost = () => {
                                       height={40}
                                       className="rounded-full object-cover"
                                     />
+                                  ) : reply.profileImage ? (
+                                    <Image
+                                      src={reply.profileImage}
+                                      alt={reply.author}
+                                      width={40}
+                                      height={40}
+                                      className="rounded-full object-cover"
+                                    />
                                   ) : (
-                                    <div className="w-10 h-10 rounded-full bg-border flex items-center justify-center">
-                                      <FaUser className="text-secondary w-5 h-5" />
-                                    </div>
+                                    <Image
+                                      src="/icons/user.png"
+                                      alt={reply.author}
+                                      width={40}
+                                      height={40}
+                                      className="rounded-full object-cover"
+                                    />
                                   )}
-                                  <div>
-                                    <p className="font-medium text-primary">{reply.author}</p>
-                                    <p className="text-secondary text-sm">
-                                      {new Date(reply.date).toLocaleDateString()}
+                                  <div className="flex-grow">
+                                    <div className="flex items-center justify-between">
+                                      <p className="font-medium text-primary">{reply.author}</p>
+                                      <p className="text-secondary text-sm">{new Date(reply.date).toLocaleDateString()}</p>
+                                    </div>
+                                    <p className="text-primary mt-2">
+                                    {reply.replyingTo && (
+                                        <span className="text-accent font-medium">@{reply.replyingTo} </span>
+                                    )}
+                                      {reply.content}
                                     </p>
-                                    <p className="text-primary mt-2">{reply.content}</p>
+                                    <div className="flex items-center gap-4 mt-2">
+                                      <button
+                                        onClick={() => handleReplyLike(comment.id, reply.id)}
+                                        className={`text-secondary hover:text-red-500 text-sm flex items-center gap-1 transition-colors`}
+                                      >
+                                        <FiHeart className={`w-4 h-4 ${reply.liked ? 'fill-current text-red-500' : ''}`} />
+                                        <span>{reply.likes || 0}</span>
+                                      </button>
+                                      <button
+                                        onClick={() => handleReplyToReply(comment.id, reply.author)}
+                                        className="flex items-center gap-1 text-secondary hover:text-primary"
+                                      >
+                                        <FaReply className="w-4 h-4" />
+                                        <span>Reply</span>
+                                      </button>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
                             ))}
+                            {replyingToReply && replyingToReply.commentId === comment.id && (
+                              <form
+                                onSubmit={(e) => submitReplyToReply(e, comment.id)}
+                                className="ml-0 mt-3"
+                              >
+                                <textarea
+                                  value={replyToReplyText}
+                                  onChange={(e) => setReplyToReplyText(e.target.value)}
+                                  placeholder="Write a reply..."
+                                  className="w-full p-4 rounded-lg bg-main border border-border text-primary focus:outline-none focus:ring-2 focus:ring-accent placeholder-secondary/50"
+                                  rows={2}
+                                />
+                                <div className="flex gap-2 mt-2">
+                                  <button
+                                    type="submit"
+                                    className="px-4 py-1.5 bg-accent text-white rounded-full hover:bg-opacity-90 text-sm"
+                                  >
+                                    Post Reply
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setReplyingToReply(null);
+                                      setReplyToReplyText('');
+                                    }}
+                                    className="px-4 py-1.5 bg-border text-primary rounded-full hover:bg-opacity-90 text-sm"
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
+                              </form>
+                            )}
                           </div>
                         </>
                       )}
@@ -410,13 +634,13 @@ const BlogPost = () => {
                         <span className="font-medium mr-4 text-primary">{post.category}</span>
                         <span className="hidden sm:inline text-secondary">|</span>
                         <span className="ml-0 sm:ml-4 flex items-center gap-1">
-                          <FaRegComment className="text-base sm:text-lg" /> {post.comments}
+                          <FiMessageCircle className="text-base sm:text-lg" /> {post.comments}
                         </span>
                         <span className="mx-4 flex items-center gap-1">
-                          <FaRegEye className="text-base sm:text-lg" /> {post.views}
+                          <FiEye className="text-base sm:text-lg" /> {post.views}
                         </span>
                         <span className="flex items-center gap-1">
-                          <FaRegHeart className="text-base sm:text-lg" /> {post.likes}
+                          <FiHeart className="text-base sm:text-lg" /> {post.likes}
                         </span>
                       </div>
                     </motion.div>
@@ -433,4 +657,4 @@ const BlogPost = () => {
   );
 };
 
-export default BlogPost; 
+export default BlogPost;

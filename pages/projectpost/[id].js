@@ -67,6 +67,7 @@ const ProjectPost = () => {
   const [replyText, setReplyText] = useState('');
   const [showToast, setShowToast] = useState(false);
   const [showShareMenu, setShowShareMenu] = useState(false);
+  const [isMobileView, setIsMobileView] = useState(false);
   const shareMenuRef = useRef(null);
 
   useEffect(() => {
@@ -86,6 +87,17 @@ const ProjectPost = () => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
+  }, []);
+
+  useEffect(() => {
+    const checkMobileView = () => {
+      setIsMobileView(window.innerWidth < 640);
+    };
+    
+    checkMobileView();
+    window.addEventListener('resize', checkMobileView);
+    
+    return () => window.removeEventListener('resize', checkMobileView);
   }, []);
 
   const handleLike = () => {
@@ -146,16 +158,12 @@ const ProjectPost = () => {
 
   const handleNextImage = (e) => {
     e.stopPropagation();
-    setSelectedImageIndex((prev) => 
-      prev === projectData.images.length - 1 ? 0 : prev + 1
-    );
+    setSelectedImageIndex((prev) => (prev < projectData.images.length - 1 ? prev + 1 : prev));
   };
 
   const handlePrevImage = (e) => {
     e.stopPropagation();
-    setSelectedImageIndex((prev) => 
-      prev === 0 ? projectData.images.length - 1 : prev - 1
-    );
+    setSelectedImageIndex((prev) => (prev > 0 ? prev - 1 : prev));
   };
 
   const handleCloseModal = () => {
@@ -209,6 +217,18 @@ const ProjectPost = () => {
     setShowShareMenu(!showShareMenu);
   };
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (selectedImageIndex === null) return;
+      if (e.key === 'ArrowLeft') handlePrevImage(e);
+      if (e.key === 'ArrowRight') handleNextImage(e);
+      if (e.key === 'Escape') handleCloseModal();
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedImageIndex]);
+
   return (
     <div className="min-h-screen bg-main">
       <Navbar />
@@ -233,108 +253,148 @@ const ProjectPost = () => {
             <p className="text-primary">{projectData.description}</p>
           </div>
 
-          {/* Image Gallery - Desktop Grid and Mobile Carousel */}
-          <div className="mb-12">
-            {/* Desktop Grid - Hidden on Mobile */}
-            <div className="hidden md:grid grid-cols-12 gap-4 auto-rows-[200px]">
-              {projectData.images.map((image, index) => {
-                let sizeClass = '';
-                if (index === 0) {
-                  sizeClass = 'col-span-8 row-span-2'; // Large feature image
-                } else if (index === 1) {
-                  sizeClass = 'col-span-4 row-span-2'; // Tall image
-                } else if (index % 3 === 0) {
-                  sizeClass = 'col-span-6 row-span-1'; // Wide image
-                } else {
-                  sizeClass = 'col-span-3 row-span-1'; // Standard image
-                }
-
-                return (
-                  <motion.div
+          {/* Image Display Section */}
+          {isMobileView ? (
+            /* Mobile Gallery/Slideshow */
+            <div className="relative w-full mb-8">
+              <div 
+                className="relative aspect-[4/3] w-full cursor-pointer"
+                onClick={() => handleImageClick(currentSlide)}
+              >
+                <Image
+                  src={projectData.images[currentSlide]}
+                  alt={`Project image ${currentSlide + 1}`}
+                  fill
+                  className="object-cover rounded-lg"
+                  priority
+                />
+                {/* Navigation Arrows */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handlePrevSlide();
+                  }}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full z-10"
+                  disabled={currentSlide === 0}
+                >
+                  <FiChevronLeft className="w-6 h-6" />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleNextSlide();
+                  }}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full z-10"
+                  disabled={currentSlide === projectData.images.length - 1}
+                >
+                  <FiChevronRight className="w-6 h-6" />
+                </button>
+                {/* Image Counter */}
+                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
+                  {currentSlide + 1} / {projectData.images.length}
+                </div>
+              </div>
+              {/* Thumbnail Strip */}
+              <div className="flex overflow-x-auto gap-2 mt-4 pb-2 scrollbar-hide">
+                {projectData.images.map((image, index) => (
+                  <div
                     key={index}
-                    className={`${sizeClass} group relative overflow-hidden rounded-lg cursor-pointer`}
-                    whileHover={{ scale: 1.02 }}
-                    onClick={() => handleImageClick(index)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCurrentSlide(index);
+                    }}
+                    className={`relative w-20 flex-shrink-0 cursor-pointer ${
+                      currentSlide === index ? 'ring-2 ring-accent' : ''
+                    }`}
                   >
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
-                    <motion.div
-                      className="absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100"
-                      initial={{ opacity: 0 }}
-                      whileHover={{ opacity: 1 }}
-                    >
-                      <span className="text-white text-lg font-medium">View Image</span>
-                    </motion.div>
+                    <div className="relative aspect-[4/3]">
+                      <Image
+                        src={image}
+                        alt={`Thumbnail ${index + 1}`}
+                        fill
+                        className="object-cover rounded-sm"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            /* Desktop Grid Layout */
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+              {projectData.images.map((image, index) => (
+                <div 
+                  key={index}
+                  className={`relative cursor-pointer hover:opacity-90 transition-opacity ${
+                    index === 0 ? 'row-span-2 col-span-2 lg:col-span-1 lg:row-span-1' : ''
+                  }`}
+                  onClick={() => handleImageClick(index)}
+                >
+                  <div className={`relative ${index === 0 ? 'aspect-[3/4]' : 'aspect-[4/3]'}`}>
                     <Image
                       src={image}
                       alt={`Project image ${index + 1}`}
                       fill
-                      className="object-cover transition-transform duration-300 group-hover:scale-110"
-                      sizes="(max-width: 1024px) 33vw, 25vw"
+                      className="object-cover rounded-lg"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       priority={index === 0}
                     />
-                  </motion.div>
-                );
-              })}
+                  </div>
+                </div>
+              ))}
             </div>
+          )}
 
-            {/* Mobile Carousel - Hidden on Desktop */}
-            <div className="md:hidden relative h-[400px] overflow-hidden rounded-lg">
-              <div
-                className="relative h-full touch-pan-y"
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
-              >
-                <AnimatePresence initial={false} custom={currentSlide}>
-                  <motion.div
-                    key={currentSlide}
-                    className="absolute inset-0"
-                    initial={{ opacity: 0, x: 300 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -300 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                    onClick={() => handleImageClick(currentSlide)}
-                  >
-                    <Image
-                      src={projectData.images[currentSlide]}
-                      alt={`Project image ${currentSlide + 1}`}
-                      fill
-                      className="object-cover"
-                      priority
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/30" />
-                  </motion.div>
-                </AnimatePresence>
-
-                {/* Carousel Navigation */}
+          {/* Image Modal */}
+          {selectedImageIndex !== null && (
+            <div 
+              className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center"
+              onClick={handleCloseModal}
+            >
+              <div className="relative w-full h-full flex items-center justify-center">
                 <button
-                  onClick={(e) => { e.stopPropagation(); handlePrevSlide(); }}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 p-3 rounded-full transition-colors z-10"
+                  onClick={handleCloseModal}
+                  className="absolute top-4 right-4 text-white hover:text-accent z-50 p-2 rounded-full bg-black/20 hover:bg-black/40 transition-colors"
                 >
-                  <FiChevronLeft className="w-6 h-6 text-white" />
-                </button>
-                <button
-                  onClick={(e) => { e.stopPropagation(); handleNextSlide(); }}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 p-3 rounded-full transition-colors z-10"
-                >
-                  <FiChevronRight className="w-6 h-6 text-white" />
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
                 </button>
 
-                {/* Carousel Indicators */}
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 z-10">
-                  {projectData.images.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={(e) => { e.stopPropagation(); setCurrentSlide(index); }}
-                      className={`w-2 h-2 rounded-full transition-all ${
-                        index === currentSlide ? 'bg-white w-4' : 'bg-white/50'
-                      }`}
-                    />
-                  ))}
+                <button
+                  onClick={handlePrevImage}
+                  className="absolute left-4 text-white hover:text-accent z-50 p-2 rounded-full bg-black/20 hover:bg-black/40 transition-colors"
+                  disabled={selectedImageIndex === 0}
+                >
+                  <FiChevronLeft className="h-8 w-8" />
+                </button>
+
+                <div className="relative w-full h-full max-w-5xl max-h-[90vh] mx-4" onClick={e => e.stopPropagation()}>
+                  <Image
+                    src={projectData.images[selectedImageIndex]}
+                    alt={`Project image ${selectedImageIndex + 1}`}
+                    fill
+                    className="object-contain"
+                    sizes="(max-width: 1024px) 100vw, 80vw"
+                    priority
+                  />
+                </div>
+
+                <button
+                  onClick={handleNextImage}
+                  className="absolute right-4 text-white hover:text-accent z-50 p-2 rounded-full bg-black/20 hover:bg-black/40 transition-colors"
+                  disabled={selectedImageIndex === projectData.images.length - 1}
+                >
+                  <FiChevronRight className="h-8 w-8" />
+                </button>
+
+                {/* Image Counter */}
+                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white bg-black/20 px-4 py-2 rounded-full">
+                  {selectedImageIndex + 1} / {projectData.images.length}
                 </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Metrics and Actions */}
           <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-8 mb-12 py-6 border-y border-border">

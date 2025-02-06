@@ -5,8 +5,8 @@
 :root {
   --background: #ffffff;
   --background-secondary: #f9fafb;
-  --text-primary: #27272a;
-  --text-secondary: #4a4a4a;
+  --text-primary: #111111;
+  --text-secondary: #2d2d2d;
   --accent: #006FEE;
   --accent-hover: #005bc4;
   --border: #e4e4e7;
@@ -16,16 +16,16 @@
 }
 
 .dark {
-  --background: #18181b;
-  --background-secondary: #1f1f23;
-  --text-primary: #fafafa;
-  --text-secondary: #a1a1aa;
+  --background: #000000;
+  --background-secondary: #0a0a0c;
+  --text-primary: #ffffff;
+  --text-secondary: #9ca3af;
   --accent: #006FEE;
   --accent-hover: #005bc4;
-  --border: #27272a;
-  --card-background: #27272a;
-  --nav-background: rgba(24, 24, 27, 0.9);
-  --hero-overlay: rgba(0, 0, 0, 0.8);
+  --border: #18181b;
+  --card-background: #0f0f11;
+  --nav-background: rgba(0, 0, 0, 0.95);
+  --hero-overlay: rgba(0, 0, 0, 0.9);
 }
 
 @layer base {
