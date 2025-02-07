@@ -6,9 +6,9 @@ import { FaTwitter, FaInstagram, FaLinkedin, FaGithub, FaFacebookF } from 'react
 import Image from 'next/image';
 
 const heroItems = [
-  { title: "Writer", icon: "✍️" },
-  { title: "Storyteller", icon: "📚" },
-  { title: "Archiver", icon: "📑" }
+  { title: "Writer" },
+  { title: "Digital Archivist" },
+  { title: "Storyteller" }
 ];
 
 const projects = [
@@ -69,7 +69,7 @@ export default function Home() {
       setTimeout(() => {
         setCurrentHeroItem((prev) => (prev + 1) % heroItems.length);
         setIsVisible(true);
-      }, 500);
+      }, 300);
     }, 3000);
 
     return () => clearInterval(interval);
@@ -79,17 +79,17 @@ export default function Home() {
     <Layout>
       <div className="relative min-h-screen overflow-hidden">
         {/* Animated Background */}
-        <div className="fixed inset-0 -z-10 bg-gradient-to-br from-accent/20 via-black to-accent-hover/20">
+        <div className="fixed inset-0 -z-10 bg-gradient-to-br from-accent/10 via-main to-accent-hover/10">
           {/* Animated Gradient Orbs */}
           <motion.div
             className="absolute w-full h-full"
             animate={{
               background: [
-                'radial-gradient(circle at 0% 0%, rgba(var(--accent-rgb), 0.4) 0%, transparent 50%)',
-                'radial-gradient(circle at 100% 100%, rgba(var(--accent-rgb), 0.4) 0%, transparent 50%)',
-                'radial-gradient(circle at 50% 50%, rgba(var(--accent-rgb), 0.4) 0%, transparent 50%)',
-                'radial-gradient(circle at 0% 100%, rgba(var(--accent-rgb), 0.4) 0%, transparent 50%)',
-                'radial-gradient(circle at 100% 0%, rgba(var(--accent-rgb), 0.4) 0%, transparent 50%)',
+                'radial-gradient(circle at 0% 0%, rgba(var(--accent-rgb), 0.15) 0%, transparent 50%)',
+                'radial-gradient(circle at 100% 100%, rgba(var(--accent-rgb), 0.15) 0%, transparent 50%)',
+                'radial-gradient(circle at 50% 50%, rgba(var(--accent-rgb), 0.15) 0%, transparent 50%)',
+                'radial-gradient(circle at 0% 100%, rgba(var(--accent-rgb), 0.15) 0%, transparent 50%)',
+                'radial-gradient(circle at 100% 0%, rgba(var(--accent-rgb), 0.15) 0%, transparent 50%)',
               ]
             }}
             transition={{
@@ -105,7 +105,7 @@ export default function Home() {
         {[...Array(5)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute rounded-full bg-accent/20"
+            className="absolute rounded-full bg-accent/10"
             initial={{
               width: `${20 + i * 10}px`,
               height: `${20 + i * 10}px`,
@@ -127,7 +127,7 @@ export default function Home() {
         ))}
 
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black/90" />
+        <div className="absolute inset-0 bg-gradient-to-b from-main/30 via-main/50 to-main/90" />
 
         {/* Main Content */}
         <div className="relative z-10 flex flex-col items-center justify-center min-h-screen pt-48 md:pt-32">
@@ -151,7 +151,7 @@ export default function Home() {
                 </motion.p>
 
                 <motion.h1
-                  className="text-5xl md:text-7xl font-bold text-white mb-6"
+                  className="text-5xl md:text-7xl font-bold text-primary mb-6"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
@@ -160,27 +160,32 @@ export default function Home() {
                 </motion.h1>
 
                 {/* Fixed height container for hero items */}
-                <div className="h-20 relative mb-8">
+                <div className="h-16 relative mb-8">
                   <AnimatePresence mode="wait">
                     {isVisible && (
                       <motion.div
                         key={currentHeroItem}
                         className="absolute top-0 left-0 w-full"
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.3, ease: "easeOut" }}
                       >
-                        <div className="flex items-center space-x-4 text-2xl text-white/90">
-                          <span className="text-4xl">{heroItems[currentHeroItem].icon}</span>
-                          <span className="font-light">{heroItems[currentHeroItem].title}</span>
-                        </div>
+                        <motion.div 
+                          className="text-2xl text-primary/90 font-light"
+                          initial={{ backgroundPosition: "0% 50%" }}
+                          animate={{ backgroundPosition: "100% 50%" }}
+                          transition={{ duration: 3, ease: "linear" }}
+                        >
+                          {heroItems[currentHeroItem].title}
+                        </motion.div>
                       </motion.div>
                     )}
                   </AnimatePresence>
                 </div>
 
                 <motion.p
-                  className="text-gray-300 text-lg mb-8 max-w-lg"
+                  className="text-secondary text-lg mb-8 max-w-lg"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.6 }}
@@ -189,21 +194,32 @@ export default function Home() {
                 </motion.p>
 
                 <motion.div
-                  className="flex space-x-4"
+                  className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.8 }}
                 >
-                  <Link href="/bio" className="px-8 py-3 bg-accent hover:bg-accent-hover text-white rounded-full transition-all duration-300 transform hover:scale-105 flex items-center space-x-2">
+                  <Link 
+                    href="/bio" 
+                    className="px-8 py-3 bg-accent hover:bg-accent-hover text-white rounded-full transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 group"
+                  >
                     <span>Explore My Work</span>
                     <motion.span
                       animate={{ x: [0, 5, 0] }}
-                      transition={{ duration: 1.5, repeat: Infinity }}
+                      transition={{ 
+                        duration: 1.5, 
+                        repeat: Infinity,
+                        ease: "easeInOut" 
+                      }}
+                      className="group-hover:translate-x-1 transition-transform"
                     >
                       →
                     </motion.span>
                   </Link>
-                  <Link href="/contact" className="px-8 py-3 border border-white/30 text-white rounded-full hover:bg-white/10 transition-all duration-300">
+                  <Link 
+                    href="/contact" 
+                    className="px-8 py-3 border-2 border-accent/20 hover:border-accent text-primary hover:text-accent rounded-full transition-all duration-300 text-center hover:shadow-lg hover:shadow-accent/5"
+                  >
                     Get in Touch
                   </Link>
                 </motion.div>
@@ -280,7 +296,7 @@ export default function Home() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <h2 className="text-3xl font-bold text-white mb-2">Featured Projects</h2>
+              <h2 className="text-3xl font-bold text-primary mb-2">Featured Projects</h2>
               <motion.div 
                 className="w-24 h-1 bg-accent rounded-full"
                 initial={{ width: 0 }}
@@ -294,7 +310,7 @@ export default function Home() {
               {projects.slice(0, 3).map((project, index) => (
                 <motion.div
                   key={project.id}
-                  className="bg-card-bg rounded-lg shadow-lg overflow-hidden"
+                  className="bg-card-bg border border-border rounded-lg shadow-lg overflow-hidden"
                   initial={{ opacity: 0, y: 50 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -321,14 +337,14 @@ export default function Home() {
                       viewport={{ once: true }}
                       transition={{ duration: 0.6, delay: 0.4 + index * 0.1 }}
                     >
-                      <span className="bg-accent text-white px-3 py-1 rounded-full text-sm">
+                      <span className="bg-accent hover:bg-accent-hover text-white px-3 py-1 rounded-full text-sm transition-colors duration-300">
                         {project.type}
                       </span>
                     </motion.div>
                   </div>
                   <div className="p-6">
                     <motion.h3 
-                      className="text-xl font-semibold text-white mb-2"
+                      className="text-xl font-semibold text-primary mb-2"
                       initial={{ opacity: 0, y: 10 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
@@ -337,7 +353,7 @@ export default function Home() {
                       {project.title}
                     </motion.h3>
                     <motion.p 
-                      className="text-gray-300 mb-4 line-clamp-2"
+                      className="text-secondary mb-4 line-clamp-2"
                       initial={{ opacity: 0, y: 10 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
@@ -380,7 +396,7 @@ export default function Home() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              <h2 className="text-3xl font-bold text-white mb-2">Featured Stories</h2>
+              <h2 className="text-3xl font-bold text-primary mb-2">Featured Stories</h2>
               <motion.div 
                 className="w-24 h-1 bg-accent rounded-full"
                 initial={{ width: 0 }}
@@ -394,7 +410,7 @@ export default function Home() {
               {stories.slice(0, 3).map((story, index) => (
                 <motion.div
                   key={story.id}
-                  className="relative bg-card-bg rounded-lg shadow-lg overflow-hidden aspect-[3/4] cursor-pointer"
+                  className="relative bg-card-bg border border-border rounded-lg shadow-lg overflow-hidden aspect-[3/4] cursor-pointer group"
                   initial={{ opacity: 0, y: 50 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -403,9 +419,7 @@ export default function Home() {
                   onClick={() => window.location.href = `/stories/${story.id}`}
                 >
                   <motion.div 
-                    className="absolute inset-0"
-                    whileHover={{ scale: 1.1 }}
-                    transition={{ duration: 0.6 }}
+                    className="absolute inset-0 group-hover:scale-110 transition-transform duration-500"
                   >
                     <Image
                       src={story.image}
@@ -414,20 +428,22 @@ export default function Home() {
                       className="object-cover"
                     />
                   </motion.div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent">
+                  {/* Dark overlay for better text visibility */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent dark:from-black/90 dark:via-black/60 dark:to-transparent group-hover:via-black/50 dark:group-hover:via-black/70 transition-all duration-300" />
+                  
+                  <div className="absolute inset-0 flex flex-col justify-between p-6">
                     <motion.div 
-                      className="absolute top-4 right-4"
+                      className="self-end"
                       initial={{ opacity: 0, x: 20 }}
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.6, delay: 0.4 + index * 0.1 }}
                     >
-                      <span className="inline-block bg-accent text-white px-3 py-1 rounded-full text-sm">
+                      <span className="bg-accent hover:bg-accent-hover text-white px-3 py-1 rounded-full text-sm transition-colors duration-300">
                         {story.genre}
                       </span>
                     </motion.div>
                     <motion.div 
-                      className="absolute bottom-0 left-0 right-0 p-6"
                       initial={{ opacity: 0, y: 20 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
@@ -443,7 +459,7 @@ export default function Home() {
                         {story.title}
                       </motion.h3>
                       <motion.p 
-                        className="text-gray-300 line-clamp-2"
+                        className="text-gray-200 line-clamp-2"
                         initial={{ opacity: 0, y: 10 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
@@ -469,14 +485,14 @@ export default function Home() {
               <motion.a
                 key={index}
                 href="#"
-                className="text-white/70 hover:text-white transition-colors"
+                className="text-primary/70 hover:text-primary transition-colors"
                 whileHover={{ scale: 1.2 }}
                 whileTap={{ scale: 0.9 }}
               >
                 <Icon size={24} />
               </motion.a>
             ))}
-            <motion.div className="w-px h-24 bg-white/20 mx-auto" />
+            <motion.div className="w-px h-24 bg-border mx-auto" />
           </motion.div>
 
           {/* Scroll Indicator */}
@@ -485,9 +501,9 @@ export default function Home() {
             animate={{ y: [0, 10, 0] }}
             transition={{ duration: 1.5, repeat: Infinity }}
           >
-            <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
+            <div className="w-6 h-10 border-2 border-border rounded-full flex justify-center">
               <motion.div
-                className="w-1 h-2 bg-white rounded-full mt-2"
+                className="w-1 h-2 bg-primary rounded-full mt-2"
                 animate={{ y: [0, 12, 0] }}
                 transition={{ duration: 1.5, repeat: Infinity }}
               />
