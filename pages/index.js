@@ -133,17 +133,17 @@ export default function Home() {
     <Layout>
       <div className="relative min-h-screen overflow-x-hidden">
         {/* Animated Background */}
-        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-accent/10 via-main to-accent-hover/10">
+        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-accent/20 via-main/20 to-accent-hover/20 dark:from-accent/5 dark:via-main/5 dark:to-accent-hover/5">
           {/* Animated Gradient Orbs */}
           <motion.div
             className="absolute w-full h-full pointer-events-none"
             animate={{
               background: [
-                'radial-gradient(circle at 0% 0%, rgba(var(--accent-rgb), 0.15) 0%, transparent 50%)',
-                'radial-gradient(circle at 100% 100%, rgba(var(--accent-rgb), 0.15) 0%, transparent 50%)',
-                'radial-gradient(circle at 50% 50%, rgba(var(--accent-rgb), 0.15) 0%, transparent 50%)',
-                'radial-gradient(circle at 0% 100%, rgba(var(--accent-rgb), 0.15) 0%, transparent 50%)',
-                'radial-gradient(circle at 100% 0%, rgba(var(--accent-rgb), 0.15) 0%, transparent 50%)',
+                'radial-gradient(circle at 0% 0%, var(--gradient-orb-color) 0%, transparent 50%)',
+                'radial-gradient(circle at 100% 100%, var(--gradient-orb-color) 0%, transparent 50%)',
+                'radial-gradient(circle at 50% 50%, var(--gradient-orb-color) 0%, transparent 50%)',
+                'radial-gradient(circle at 0% 100%, var(--gradient-orb-color) 0%, transparent 50%)',
+                'radial-gradient(circle at 100% 0%, var(--gradient-orb-color) 0%, transparent 50%)',
               ]
             }}
             transition={{
@@ -152,6 +152,9 @@ export default function Home() {
               repeatType: "reverse",
               ease: "linear"
             }}
+            style={{
+              '--gradient-orb-color': 'rgba(var(--accent-rgb), 0.15)'
+            }}
           />
         </div>
 
@@ -159,10 +162,11 @@ export default function Home() {
         {floatingElements.map((element, i) => (
           <motion.div
             key={i}
-            className="absolute rounded-full bg-accent/10 pointer-events-none"
+            className="absolute rounded-full bg-accent/20 dark:bg-accent/10 backdrop-blur-sm pointer-events-none"
             style={{
               width: `${element.width}px`,
               height: `${element.height}px`,
+              boxShadow: '0 4px 12px rgba(var(--accent-rgb), 0.15)',
             }}
             initial={{
               x: element.initialX,
@@ -194,7 +198,7 @@ export default function Home() {
         ))}
 
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-main/30 via-main/50 to-main/90" />
+        <div className="absolute inset-0 bg-gradient-to-b from-main/30 via-main/50 to-main/80 dark:from-main/10 dark:via-main/30 dark:to-main/60" />
 
         {/* Main Content */}
         <div className="relative z-10 flex flex-col items-center justify-center min-h-screen pt-24 md:pt-32 overflow-hidden">
