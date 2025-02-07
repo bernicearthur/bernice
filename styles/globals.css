@@ -5,8 +5,8 @@
 :root {
   --background: #ffffff;
   --background-secondary: #f9fafb;
-  --text-primary: #111111;
-  --text-secondary: #2d2d2d;
+  --text-primary: #000000;
+  --text-secondary: #1a1a1a;
   --accent: #006FEE;
   --accent-hover: #005bc4;
   --border: #e4e4e7;
