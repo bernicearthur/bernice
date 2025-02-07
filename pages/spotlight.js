@@ -93,7 +93,7 @@ function SpotlightPage() {
 
       <div className="min-h-screen pt-8">
         {/* Minimal Search */}
-        <div className="max-w-xl mx-auto px-4 mb-12">
+        <div className="max-w-xl mx-auto px-4 mb-12 mt-8">
           <div className="relative">
             <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
