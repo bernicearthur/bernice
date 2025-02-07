@@ -193,19 +193,19 @@ const Bio = () => {
           </div>
         </motion.section>
 
-        {/* Scroll Indicator */}
+        {/* Scroll Indicator - Hidden on mobile */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.5 }}
-          className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2"
+          className="absolute bottom-6 sm:bottom-10 left-1/2 transform -translate-x-1/2 hidden md:flex flex-col items-center gap-2"
         >
-          <span className="text-sm text-secondary">Scroll to explore</span>
+          <span className="text-xs sm:text-sm text-secondary">Scroll to explore</span>
           <motion.div
             animate={{ y: [0, 5, 0] }}
             transition={{ duration: 1.5, repeat: Infinity }}
           >
-            <HiOutlineArrowNarrowDown className="text-2xl text-accent" />
+            <HiOutlineArrowNarrowDown className="text-xl sm:text-2xl text-accent" />
           </motion.div>
         </motion.div>
 
@@ -214,8 +214,8 @@ const Bio = () => {
         <div className="absolute bottom-20 right-10 w-48 h-48 bg-purple-500/5 rounded-full blur-3xl" />
 
         {/* About Section */}
-        <section className="py-12 bg-main">
-          <div className="container mx-auto px-4">
+        <section className="py-8 sm:py-12 bg-main">
+          <div className="container mx-auto px-4 sm:px-6">
             <motion.div
               initial={{ opacity: 0, y: 100 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -223,11 +223,11 @@ const Bio = () => {
               viewport={{ once: true }}
               className="max-w-4xl mx-auto"
             >
-              <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 sm:mb-8 text-center">
                 The Story So Far
               </h2>
-              <div className="prose prose-lg dark:prose-invert max-w-none">
-                <p className="text-secondary leading-relaxed">
+              <div className="prose prose-lg dark:prose-invert max-w-none px-4 sm:px-0 text-center">
+                <p className="text-base sm:text-lg text-secondary leading-relaxed mx-auto max-w-2xl">
                   As a creative powerhouse with a passion for storytelling, I transform words into immersive experiences. 
                   My journey in digital storytelling has led me to collaborate with global brands, create viral content, 
                   and inspire audiences worldwide.
