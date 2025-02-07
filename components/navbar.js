@@ -8,10 +8,37 @@ import Head from 'next/head';
 const Navbar = () => {
   const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [show, setShow] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const { theme, toggleTheme } = useTheme();
   const router = useRouter();
 
   useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    const controlNavbar = () => {
+      if (typeof window !== 'undefined') {
+        const currentScrollY = window.scrollY;
+        
+        if (currentScrollY > lastScrollY && currentScrollY > 100) { // scrolling down & past threshold
+          setShow(false);
+        } else { // scrolling up
+          setShow(true);
+        }
+        
+        setLastScrollY(currentScrollY);
+      }
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('scroll', controlNavbar);
+
+      // cleanup function
+      return () => {
+        window.removeEventListener('scroll', controlNavbar);
+      };
+    }
+  }, [lastScrollY]);
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
@@ -22,7 +49,8 @@ const Navbar = () => {
       <Head>
         <link rel="icon" href="/icons/favicon.png" type="image/png" />
       </Head>
-      <nav className="sticky top-0 z-50 nav-background shadow-md py-4 transition-all duration-300">
+      <div className="h-24" /> {/* Spacer to prevent content jump */}
+      <nav className={`fixed top-0 left-0 right-0 z-50 bg-main shadow-md py-4 transition-transform duration-300 ${show ? 'translate-y-0' : '-translate-y-full'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex-shrink-0 flex items-center">

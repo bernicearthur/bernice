@@ -70,16 +70,16 @@ export default function Home() {
         setCurrentHeroItem((prev) => (prev + 1) % heroItems.length);
         setIsVisible(true);
       }, 300);
-    }, 3000);
+    }, []);
 
     return () => clearInterval(interval);
   }, []);
 
   return (
     <Layout>
-      <div className="relative min-h-screen overflow-hidden">
+      <div className="relative min-h-screen overflow-x-hidden">
         {/* Animated Background */}
-        <div className="fixed inset-0 -z-10 bg-gradient-to-br from-accent/10 via-main to-accent-hover/10">
+        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-accent/10 via-main to-accent-hover/10">
           {/* Animated Gradient Orbs */}
           <motion.div
             className="absolute w-full h-full"
@@ -109,12 +109,12 @@ export default function Home() {
             initial={{
               width: `${20 + i * 10}px`,
               height: `${20 + i * 10}px`,
-              x: Math.random() * window.innerWidth,
-              y: Math.random() * window.innerHeight,
+              x: Math.random() * (window.innerWidth * 0.8),
+              y: Math.random() * (window.innerHeight * 0.8),
             }}
             animate={{
-              y: [0, -100, 0],
-              x: [0, Math.random() * 50, 0],
+              y: [0, -50, 0],
+              x: [0, Math.random() * 20, 0],
               scale: [1, 1.2, 1],
             }}
             transition={{
@@ -130,7 +130,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-main/30 via-main/50 to-main/90" />
 
         {/* Main Content */}
-        <div className="relative z-10 flex flex-col items-center justify-center min-h-screen pt-48 md:pt-32">
+        <div className="relative z-10 flex flex-col items-center justify-center min-h-screen pt-24 md:pt-32 overflow-hidden">
           {/* Hero Section */}
           <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col md:flex-row items-center justify-between">
@@ -283,7 +283,7 @@ export default function Home() {
 
           {/* Featured Projects Section */}
           <motion.div 
-            className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-24"
+            className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-24 overflow-hidden"
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -383,7 +383,7 @@ export default function Home() {
 
           {/* Featured Stories Section */}
           <motion.div 
-            className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-24 mb-24"
+            className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-24 mb-24 overflow-hidden"
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -476,7 +476,7 @@ export default function Home() {
 
           {/* Social Links */}
           <motion.div
-            className="fixed left-0 bottom-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col space-y-4"
+            className="fixed left-8 bottom-8 flex flex-col space-y-4 z-50"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 1 }}

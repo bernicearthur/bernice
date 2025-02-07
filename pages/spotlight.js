@@ -94,17 +94,19 @@ function SpotlightPage() {
       <div className="min-h-screen pt-8">
         {/* Minimal Search */}
         <div className="max-w-xl mx-auto px-4 mb-12 mt-8">
-          <div className="relative">
-            <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <motion.div className="relative"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-secondary" />
             <input
               type="text"
               placeholder="Search creations..."
-              className="w-full pl-12 pr-4 py-3 rounded-full border border-gray-200 dark:border-gray-700 
-                       bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-purple-500 
-                       dark:focus:ring-purple-400 outline-none transition-all text-sm"
+              value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-4 py-2 pl-12 rounded-full bg-border text-primary placeholder-secondary focus:outline-none focus:ring-2 focus:ring-accent transition-all text-sm"
             />
-          </div>
+          </motion.div>
         </div>
 
         {/* Content Grid */}

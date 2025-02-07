@@ -8,7 +8,6 @@ import Footer from '../components/footer';
 
 const Bio = () => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
   const [activeTab, setActiveTab] = useState('journey');
   const { scrollYProgress } = useScroll();
   
@@ -17,17 +16,6 @@ const Bio = () => {
   
   useEffect(() => {
     setIsLoaded(true);
-
-    const handleScroll = () => {
-      if (window.scrollY > 50) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const fadeInUp = {
@@ -45,15 +33,9 @@ const Bio = () => {
 
   return (
     <div className="min-h-screen bg-main text-primary overflow-hidden">
-      <div className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled 
-          ? 'bg-main/80 backdrop-blur-lg shadow-lg' 
-          : 'bg-transparent'
-      }`}>
-        <Navbar />
-      </div>
+      <Navbar />
 
-      <main className={`${isScrolled ? 'mt-16' : ''}`}>
+      <main className="-mt-24">
         {/* Hero Section */}
         <motion.section 
           className="relative min-h-screen flex items-center justify-center bg-main overflow-hidden"
@@ -205,446 +187,353 @@ const Bio = () => {
                       </motion.a>
                     ))}
                   </div>
-                              </div>
-                            </motion.div>
-                        </div>
-                        </div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
         </motion.section>
 
         {/* Scroll Indicator */}
-                        <motion.div
+        <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.5 }}
           className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2"
         >
           <span className="text-sm text-secondary">Scroll to explore</span>
-                        <motion.div
+          <motion.div
             animate={{ y: [0, 5, 0] }}
             transition={{ duration: 1.5, repeat: Infinity }}
           >
             <HiOutlineArrowNarrowDown className="text-2xl text-accent" />
-                          </motion.div>
-                        </motion.div>
+          </motion.div>
+        </motion.div>
 
         {/* Decorative Elements */}
         <div className="absolute top-20 left-10 w-32 h-32 bg-accent/5 rounded-full blur-3xl" />
         <div className="absolute bottom-20 right-10 w-48 h-48 bg-purple-500/5 rounded-full blur-3xl" />
 
-      {/* About Section */}
-      <section className="py-12 bg-main">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 100 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="max-w-4xl mx-auto"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">
-              The Story So Far
-            </h2>
-            <div className="prose prose-lg dark:prose-invert max-w-none">
-              <p className="text-secondary leading-relaxed">
-                As a creative powerhouse with a passion for storytelling, I transform words into immersive experiences. 
-                My journey in digital storytelling has led me to collaborate with global brands, create viral content, 
-                and inspire audiences worldwide.
-              </p>
-                      </div>
-                    </motion.div>
-        </div>
-      </section>
-
-      {/* Skills Section */}
-      <section className="py-12 bg-main">
-        <div className="container mx-auto px-4">
-          <motion.h2
-                      initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="text-3xl md:text-4xl font-bold mb-16 text-center"
-          >
-            Expertise
-          </motion.h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {[
-              {
-                title: "Writing",
-                skills: ["Creative Writing", "Content Strategy", "Storytelling", "Editorial"],
-                color: "from-purple-500 to-pink-500"
-              },
-              {
-                title: "Digital",
-                skills: ["Social Media", "SEO", "Content Marketing", "Analytics"],
-                color: "from-blue-500 to-teal-500"
-              },
-              {
-                title: "Design",
-                skills: ["UI/UX Writing", "Visual Design", "Brand Voice", "Typography"],
-                color: "from-orange-500 to-yellow-500"
-              }
-            ].map((category, index) => (
-                        <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.2 }}
-                viewport={{ once: true }}
-                className="relative group"
-              >
-                <div className="p-8 rounded-xl bg-card-bg border border-border hover:border-accent transition-all duration-300">
-                  <h3 className="text-2xl font-bold mb-6 text-accent">
-                    {category.title}
-                  </h3>
-                  <ul className="space-y-4">
-                    {category.skills.map((skill, skillIndex) => (
-                      <motion.li
-                        key={skillIndex}
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.3, delay: skillIndex * 0.1 }}
-                        className="flex items-center text-secondary"
-                      >
-                        <span className="w-2 h-2 rounded-full bg-accent mr-3" />
-                        {skill}
-                      </motion.li>
-                    ))}
-                              </ul>
-                            </div>
-                          </motion.div>
-                        ))}
-                      </div>
-                </div>
-      </section>
-
-      {/* Journey & Education Section */}
-      <section className="py-12 bg-main">
-        <div className="container mx-auto px-4">
-          <motion.h2
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="text-3xl md:text-4xl font-bold mb-8 text-center"
-          >
-            Experience & Education
-          </motion.h2>
-
-          {/* Tabs */}
-          <div className="flex justify-center gap-4 mb-12">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setActiveTab('journey')}
-              className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${
-                activeTab === 'journey' 
-                  ? 'bg-accent text-white shadow-lg' 
-                  : 'bg-card-bg text-secondary hover:bg-accent/10'
-              }`}
+        {/* About Section */}
+        <section className="py-12 bg-main">
+          <div className="container mx-auto px-4">
+            <motion.div
+              initial={{ opacity: 0, y: 100 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="max-w-4xl mx-auto"
             >
-              Journey
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setActiveTab('education')}
-              className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${
-                activeTab === 'education' 
-                  ? 'bg-accent text-white shadow-lg' 
-                  : 'bg-card-bg text-secondary hover:bg-accent/10'
-              }`}
-            >
-              Education
-            </motion.button>
+              <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center">
+                The Story So Far
+              </h2>
+              <div className="prose prose-lg dark:prose-invert max-w-none">
+                <p className="text-secondary leading-relaxed">
+                  As a creative powerhouse with a passion for storytelling, I transform words into immersive experiences. 
+                  My journey in digital storytelling has led me to collaborate with global brands, create viral content, 
+                  and inspire audiences worldwide.
+                </p>
+              </div>
+            </motion.div>
           </div>
+        </section>
 
-          <div className="max-w-4xl mx-auto">
-            {/* Journey Content */}
-                      <motion.div
-              initial={false}
-              animate={{ 
-                opacity: activeTab === 'journey' ? 1 : 0,
-                x: activeTab === 'journey' ? 0 : -20
-              }}
-              transition={{ duration: 0.3 }}
-              className={`${activeTab === 'journey' ? 'block' : 'hidden'}`}
+        {/* Skills Section */}
+        <section className="py-12 bg-main">
+          <div className="container mx-auto px-4">
+            <motion.h2
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              className="text-3xl md:text-4xl font-bold mb-16 text-center"
             >
+              Expertise
+            </motion.h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
               {[
                 {
-                  year: "2021 - Present",
-                  title: "Senior Content Strategist",
-                  description: "Leading content strategy and storytelling initiatives for major brands."
+                  title: "Writing",
+                  skills: ["Creative Writing", "Content Strategy", "Storytelling", "Editorial"],
+                  color: "from-purple-500 to-pink-500"
                 },
                 {
-                  year: "2018 - 2021",
-                  title: "Content Writer & Editor",
-                  description: "Created engaging content for digital platforms and managed editorial workflows."
+                  title: "Digital",
+                  skills: ["Social Media", "SEO", "Content Marketing", "Analytics"],
+                  color: "from-blue-500 to-teal-500"
                 },
                 {
-                  year: "2016 - 2018",
-                  title: "Freelance Writer",
-                  description: "Built a diverse portfolio working with startups and established brands."
+                  title: "Design",
+                  skills: ["UI/UX Writing", "Visual Design", "Brand Voice", "Typography"],
+                  color: "from-orange-500 to-yellow-500"
                 }
-              ].map((experience, index) => (
-                      <motion.div
+              ].map((category, index) => (
+                <motion.div
                   key={index}
-                  initial={{ opacity: 0, x: -50 }}
-                  whileInView={{ opacity: 1, x: 0 }}
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.2 }}
                   viewport={{ once: true }}
-                  className="relative pl-8 pb-12 border-l-2 border-accent last:pb-0"
+                  className="relative group"
                 >
-                  <div className="absolute left-[-9px] top-0 w-4 h-4 rounded-full bg-accent" />
-                  <div className="bg-card-bg p-6 rounded-lg border border-border hover:border-accent transition-all duration-300">
-                    <span className="text-accent text-sm">{experience.year}</span>
-                    <h3 className="text-xl font-bold mt-2 mb-3">{experience.title}</h3>
-                    <p className="text-secondary">{experience.description}</p>
-                  </div>
-                      </motion.div>
-              ))}
-                      </motion.div>
-
-            {/* Education Content */}
-                      <motion.div
-              initial={false}
-              animate={{ 
-                opacity: activeTab === 'education' ? 1 : 0,
-                x: activeTab === 'education' ? 0 : -20
-              }}
-              transition={{ duration: 0.3 }}
-              className={`${activeTab === 'education' ? 'block' : 'hidden'}`}
-            >
-              {[
-                {
-                  degree: "Master of Arts in Creative Writing",
-                  school: "University of Creative Arts",
-                  year: "2018-2020",
-                  details: [
-                    "Specialized in Digital Storytelling",
-                    "Thesis: 'The Evolution of Digital Narratives'",
-                    "Graduate Writing Award Recipient"
-                  ]
-                },
-                {
-                  degree: "Bachelor of Arts in English Literature",
-                  school: "State University",
-                  year: "2014-2018",
-                  details: [
-                    "Minor in Digital Media",
-                    "Dean's List Scholar",
-                    "Editor, University Literary Magazine"
-                  ]
-                },
-                {
-                  degree: "Professional Certifications",
-                  school: "Various Institutions",
-                  year: "2020-Present",
-                  details: [
-                    "Digital Marketing Certification (Google)",
-                    "Advanced Content Strategy (HubSpot)",
-                    "Professional Storytelling Workshop (MasterClass)",
-                    "UX Writing Fundamentals (Udacity)"
-                  ]
-                }
-              ].map((education, index) => (
-                      <motion.div
-                  key={index}
-                  initial={{ opacity: 0, x: -50 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.2 }}
-                  viewport={{ once: true }}
-                  className="relative pl-8 pb-12 border-l-2 border-accent last:pb-0"
-                >
-                  <div className="absolute left-[-9px] top-0 w-4 h-4 rounded-full bg-accent" />
-                  <div className="bg-card-bg p-6 rounded-lg border border-border hover:border-accent transition-all duration-300">
-                    <span className="text-accent text-sm">{education.year}</span>
-                    <h3 className="text-xl font-bold mt-2">{education.degree}</h3>
-                    <p className="text-secondary mb-4">{education.school}</p>
-                    <ul className="space-y-2">
-                      {education.details.map((detail, detailIndex) => (
+                  <div className="p-8 rounded-xl bg-card-bg border border-border hover:border-accent transition-all duration-300">
+                    <h3 className="text-2xl font-bold mb-6 text-accent">
+                      {category.title}
+                    </h3>
+                    <ul className="space-y-4">
+                      {category.skills.map((skill, skillIndex) => (
                         <motion.li
-                          key={detailIndex}
+                          key={skillIndex}
                           initial={{ opacity: 0, x: -20 }}
                           whileInView={{ opacity: 1, x: 0 }}
-                          transition={{ duration: 0.3, delay: detailIndex * 0.1 }}
+                          transition={{ duration: 0.3, delay: skillIndex * 0.1 }}
                           className="flex items-center text-secondary"
                         >
                           <span className="w-2 h-2 rounded-full bg-accent mr-3" />
-                          {detail}
+                          {skill}
                         </motion.li>
                       ))}
-                            </ul>
+                    </ul>
                   </div>
                 </motion.div>
               ))}
-            </motion.div>
-                </div>
-              </div>
-      </section>
+            </div>
+          </div>
+        </section>
 
-      {/* Achievements Section */}
-      <section className="py-12 bg-main">
-        <div className="container mx-auto px-4">
-          <motion.h2
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="text-3xl md:text-4xl font-bold mb-16 text-center"
-          >
-            Achievements & Recognition
-          </motion.h2>
+        {/* Journey & Education Section */}
+        <section className="py-12 bg-main">
+          <div className="container mx-auto px-4">
+            <motion.h2
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              className="text-3xl md:text-4xl font-bold mb-8 text-center"
+            >
+              Experience & Education
+            </motion.h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {[
-              {
-                title: "Awards",
-                items: [
-                  {
-                    name: "Best Creative Writer of 2023",
-                    org: "Digital Writers Association"
-                  },
-                  {
-                    name: "Excellence in Digital Storytelling",
-                    org: "Content Creator Awards 2022"
-                  },
-                  {
-                    name: "Rising Star Award",
-                    org: "Young Writers Foundation 2021"
-                  }
-                ],
-                color: "from-purple-500 to-pink-500"
-              },
-              {
-                title: "Publications",
-                items: [
-                  {
-                    name: "The Digital Narrative",
-                    org: "Published in Tech Writers Monthly"
-                  },
-                  {
-                    name: "Future of Content Creation",
-                    org: "Featured in Content Strategy Journal"
-                  },
-                  {
-                    name: "Stories That Connect",
-                    org: "Medium Editorial Selection"
-                  }
-                ],
-                color: "from-blue-500 to-teal-500"
-              },
-              {
-                title: "Speaking & Features",
-                items: [
-                  {
-                    name: "TEDx Speaker",
-                    org: "The Art of Digital Storytelling, 2023"
-                  },
-                  {
-                    name: "Writers Conference Keynote",
-                    org: "Digital Writers Summit 2022"
-                  },
-                  {
-                    name: "Media Feature",
-                    org: "Creative Minds Magazine Cover Story"
-                  }
-                ],
-                color: "from-orange-500 to-yellow-500"
-              }
-            ].map((category, index) => (
-                  <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.2 }}
-                viewport={{ once: true }}
-                className="relative group"
+            {/* Tabs */}
+            <div className="flex justify-center gap-4 mb-12">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setActiveTab('journey')}
+                className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${
+                  activeTab === 'journey' 
+                    ? 'bg-accent text-white shadow-lg' 
+                    : 'bg-card-bg text-secondary hover:bg-accent/10'
+                }`}
               >
-                <div className="p-8 rounded-xl bg-card-bg border border-border hover:border-accent transition-all duration-300 h-full">
-                  <h3 className="text-2xl font-bold mb-6 text-accent">
-                    {category.title}
-                  </h3>
-                  <ul className="space-y-6">
-                    {category.items.map((item, itemIndex) => (
-                      <motion.li
-                        key={itemIndex}
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.3, delay: itemIndex * 0.1 }}
-                        className="text-secondary"
-                      >
-                        <p className="font-medium text-primary">{item.name}</p>
-                        <p className="text-sm opacity-80">{item.org}</p>
-                      </motion.li>
-                    ))}
+                Journey
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setActiveTab('education')}
+                className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${
+                  activeTab === 'education' 
+                    ? 'bg-accent text-white shadow-lg' 
+                    : 'bg-card-bg text-secondary hover:bg-accent/10'
+                }`}
+              >
+                Education
+              </motion.button>
+            </div>
+
+            <div className="max-w-4xl mx-auto">
+              {/* Journey Content */}
+              <motion.div
+                initial={false}
+                animate={{ 
+                  opacity: activeTab === 'journey' ? 1 : 0,
+                  x: activeTab === 'journey' ? 0 : -20
+                }}
+                transition={{ duration: 0.3 }}
+                className={`${activeTab === 'journey' ? 'block' : 'hidden'}`}
+              >
+                {[
+                  {
+                    year: "2021 - Present",
+                    title: "Senior Content Strategist",
+                    description: "Leading content strategy and storytelling initiatives for major brands."
+                  },
+                  {
+                    year: "2018 - 2021",
+                    title: "Content Writer & Editor",
+                    description: "Created engaging content for digital platforms and managed editorial workflows."
+                  },
+                  {
+                    year: "2016 - 2018",
+                    title: "Freelance Writer",
+                    description: "Built a diverse portfolio working with startups and established brands."
+                  }
+                ].map((experience, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, x: -50 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.2 }}
+                    viewport={{ once: true }}
+                    className="relative pl-8 pb-12 border-l-2 border-accent last:pb-0"
+                  >
+                    <div className="absolute left-[-9px] top-0 w-4 h-4 rounded-full bg-accent" />
+                    <div className="bg-card-bg p-6 rounded-lg border border-border hover:border-accent transition-all duration-300">
+                      <span className="text-accent text-sm">{experience.year}</span>
+                      <h3 className="text-xl font-bold mt-2 mb-3">{experience.title}</h3>
+                      <p className="text-secondary">{experience.description}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
+
+              {/* Education Content */}
+              <motion.div
+                initial={false}
+                animate={{ 
+                  opacity: activeTab === 'education' ? 1 : 0,
+                  x: activeTab === 'education' ? 0 : -20
+                }}
+                transition={{ duration: 0.3 }}
+                className={`${activeTab === 'education' ? 'block' : 'hidden'}`}
+              >
+                {[
+                  {
+                    degree: "Master of Arts in Creative Writing",
+                    school: "University of Creative Arts",
+                    year: "2018-2020",
+                    details: [
+                      "Specialized in Digital Storytelling",
+                      "Thesis: 'The Evolution of Digital Narratives'",
+                      "Graduate Writing Award Recipient"
+                    ]
+                  },
+                  {
+                    degree: "Bachelor of Arts in English Literature",
+                    school: "State University",
+                    year: "2014-2018",
+                    details: [
+                      "Minor in Digital Media",
+                      "Dean's List Scholar",
+                      "Editor, University Literary Magazine"
+                    ]
+                  },
+                  {
+                    degree: "Professional Certifications",
+                    school: "Various Institutions",
+                    year: "2020-Present",
+                    details: [
+                      "Digital Marketing Certification (Google)",
+                      "Advanced Content Strategy (HubSpot)",
+                      "Professional Storytelling Workshop (MasterClass)",
+                      "UX Writing Fundamentals (Udacity)"
+                    ]
+                  }
+                ].map((education, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, x: -50 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.2 }}
+                    viewport={{ once: true }}
+                    className="relative pl-8 pb-12 border-l-2 border-accent last:pb-0"
+                  >
+                    <div className="absolute left-[-9px] top-0 w-4 h-4 rounded-full bg-accent" />
+                    <div className="bg-card-bg p-6 rounded-lg border border-border hover:border-accent transition-all duration-300">
+                      <span className="text-accent text-sm">{education.year}</span>
+                      <h3 className="text-xl font-bold mt-2">{education.degree}</h3>
+                      <p className="text-secondary mb-4">{education.school}</p>
+                      <ul className="space-y-2">
+                        {education.details.map((detail, detailIndex) => (
+                          <motion.li
+                            key={detailIndex}
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.3, delay: detailIndex * 0.1 }}
+                            className="flex items-center text-secondary"
+                          >
+                            <span className="w-2 h-2 rounded-full bg-accent mr-3" />
+                            {detail}
+                          </motion.li>
+                        ))}
                       </ul>
                     </div>
                   </motion.div>
-            ))}
-                </div>
-              </div>
-      </section>
+                ))}
+              </motion.div>
+            </div>
+          </div>
+        </section>
 
-              {/* Future Goals Section */}
-      <section className="py-12 bg-main">
-        <div className="container mx-auto px-6 lg:px-8">
-          <motion.h2
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="text-3xl md:text-4xl font-bold mb-16 text-center"
-          >
-            Vision & Goals
-          </motion.h2>
-
-          <div className="max-w-6xl mx-auto space-y-12">
-                  <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+        {/* Achievements Section */}
+        <section className="py-12 bg-main">
+          <div className="container mx-auto px-4">
+            <motion.h2
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
-              className="bg-card-bg p-8 rounded-lg border border-border"
+              className="text-3xl md:text-4xl font-bold mb-16 text-center"
             >
-              <h3 className="text-2xl font-bold mb-6 text-accent">
-                Personal Statement
-              </h3>
-                    <p className="text-secondary leading-relaxed">
-                      As a storyteller and content creator, my vision extends beyond traditional boundaries. 
-                      I am passionate about exploring new mediums and pushing the boundaries of digital storytelling. 
-                      Through my work, I aim to create meaningful connections and inspire others to share their unique narratives.
-                    </p>
-                  </motion.div>
+              Achievements & Recognition
+            </motion.h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
               {[
                 {
-                  title: "Creative Expansion",
-                  goals: [
-                    "Writing and publishing a novel",
-                    "Launching a storytelling podcast",
-                    "Creating digital writing workshops"
+                  title: "Awards",
+                  items: [
+                    {
+                      name: "Best Creative Writer of 2023",
+                      org: "Digital Writers Association"
+                    },
+                    {
+                      name: "Excellence in Digital Storytelling",
+                      org: "Content Creator Awards 2022"
+                    },
+                    {
+                      name: "Rising Star Award",
+                      org: "Young Writers Foundation 2021"
+                    }
                   ],
                   color: "from-purple-500 to-pink-500"
                 },
                 {
-                  title: "Collaborations",
-                  goals: [
-                    "Partnering with creative brands",
-                    "Co-authoring multimedia projects",
-                    "Building creative communities"
+                  title: "Publications",
+                  items: [
+                    {
+                      name: "The Digital Narrative",
+                      org: "Published in Tech Writers Monthly"
+                    },
+                    {
+                      name: "Future of Content Creation",
+                      org: "Featured in Content Strategy Journal"
+                    },
+                    {
+                      name: "Stories That Connect",
+                      org: "Medium Editorial Selection"
+                    }
                   ],
                   color: "from-blue-500 to-teal-500"
                 },
                 {
-                  title: "New Horizons",
-                  goals: [
-                    "Exploring UX writing",
-                    "Venturing into animation",
-                    "Advanced content strategy"
+                  title: "Speaking & Features",
+                  items: [
+                    {
+                      name: "TEDx Speaker",
+                      org: "The Art of Digital Storytelling, 2023"
+                    },
+                    {
+                      name: "Writers Conference Keynote",
+                      org: "Digital Writers Summit 2022"
+                    },
+                    {
+                      name: "Media Feature",
+                      org: "Creative Minds Magazine Cover Story"
+                    }
                   ],
                   color: "from-orange-500 to-yellow-500"
                 }
               ].map((category, index) => (
-                  <motion.div
+                <motion.div
                   key={index}
                   initial={{ opacity: 0, y: 50 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -656,92 +545,185 @@ const Bio = () => {
                     <h3 className="text-2xl font-bold mb-6 text-accent">
                       {category.title}
                     </h3>
-                    <ul className="space-y-4">
-                      {category.goals.map((goal, goalIndex) => (
+                    <ul className="space-y-6">
+                      {category.items.map((item, itemIndex) => (
                         <motion.li
-                          key={goalIndex}
+                          key={itemIndex}
                           initial={{ opacity: 0, x: -20 }}
                           whileInView={{ opacity: 1, x: 0 }}
-                          transition={{ duration: 0.3, delay: goalIndex * 0.1 }}
-                          className="flex items-center text-secondary"
+                          transition={{ duration: 0.3, delay: itemIndex * 0.1 }}
+                          className="text-secondary"
                         >
-                          <span className="w-2 h-2 rounded-full bg-accent mr-3" />
-                          {goal}
+                          <p className="font-medium text-primary">{item.name}</p>
+                          <p className="text-sm opacity-80">{item.org}</p>
                         </motion.li>
                       ))}
+                    </ul>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Future Goals Section */}
+        <section className="py-12 bg-main">
+          <div className="container mx-auto px-6 lg:px-8">
+            <motion.h2
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              className="text-3xl md:text-4xl font-bold mb-16 text-center"
+            >
+              Vision & Goals
+            </motion.h2>
+
+            <div className="max-w-6xl mx-auto space-y-12">
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+                className="bg-card-bg p-8 rounded-lg border border-border"
+              >
+                <h3 className="text-2xl font-bold mb-6 text-accent">
+                  Personal Statement
+                </h3>
+                <p className="text-secondary leading-relaxed">
+                  As a storyteller and content creator, my vision extends beyond traditional boundaries. 
+                  I am passionate about exploring new mediums and pushing the boundaries of digital storytelling. 
+                  Through my work, I aim to create meaningful connections and inspire others to share their unique narratives.
+                </p>
+              </motion.div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {[
+                  {
+                    title: "Creative Expansion",
+                    goals: [
+                      "Writing and publishing a novel",
+                      "Launching a storytelling podcast",
+                      "Creating digital writing workshops"
+                    ],
+                    color: "from-purple-500 to-pink-500"
+                  },
+                  {
+                    title: "Collaborations",
+                    goals: [
+                      "Partnering with creative brands",
+                      "Co-authoring multimedia projects",
+                      "Building creative communities"
+                    ],
+                    color: "from-blue-500 to-teal-500"
+                  },
+                  {
+                    title: "New Horizons",
+                    goals: [
+                      "Exploring UX writing",
+                      "Venturing into animation",
+                      "Advanced content strategy"
+                    ],
+                    color: "from-orange-500 to-yellow-500"
+                  }
+                ].map((category, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 50 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.2 }}
+                    viewport={{ once: true }}
+                    className="relative group"
+                  >
+                    <div className="p-8 rounded-xl bg-card-bg border border-border hover:border-accent transition-all duration-300 h-full">
+                      <h3 className="text-2xl font-bold mb-6 text-accent">
+                        {category.title}
+                      </h3>
+                      <ul className="space-y-4">
+                        {category.goals.map((goal, goalIndex) => (
+                          <motion.li
+                            key={goalIndex}
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.3, delay: goalIndex * 0.1 }}
+                            className="flex items-center text-secondary"
+                          >
+                            <span className="w-2 h-2 rounded-full bg-accent mr-3" />
+                            {goal}
+                          </motion.li>
+                        ))}
                       </ul>
                     </div>
                   </motion.div>
-              ))}
-            </div>
+                ))}
+              </div>
 
-                  <motion.div
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+                className="relative mt-12"
+              >
+                <div className="p-8 rounded-lg bg-card-bg border border-border border-l-4 border-accent">
+                  <blockquote className="text-xl md:text-2xl text-primary font-medium italic">
+                    "My goal is to inspire, create, and leave an indelible mark on the world of storytelling."
+                  </blockquote>
+                  <p className="mt-4 text-secondary text-right">— Bernice Arthur</p>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
+        {/* Contact Section */}
+        <section className="py-12 bg-main">
+          <div className="container mx-auto px-4">
+            <motion.div
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
               viewport={{ once: true }}
-                    className="relative mt-12"
-                  >
-                    <div className="p-8 rounded-lg bg-card-bg border border-border border-l-4 border-accent">
-                      <blockquote className="text-xl md:text-2xl text-primary font-medium italic">
-                        "My goal is to inspire, create, and leave an indelible mark on the world of storytelling."
-                      </blockquote>
-                      <p className="mt-4 text-secondary text-right">— Bernice Arthur</p>
-                    </div>
-                  </motion.div>
-                </div>
-              </div>
-      </section>
-
-        {/* Contact Section */}
-      <section className="py-12 bg-main">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ once: true }}
-            className="text-center max-w-2xl mx-auto"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold mb-8">Let's Connect</h2>
-            <p className="text-secondary mb-12">
-              Available for freelance opportunities and creative collaborations.
-            </p>
-
-            <div className="flex justify-center space-x-8 mb-12">
-              {[
-                { icon: FiGithub, link: "https://github.com", label: "GitHub" },
-                { icon: FiTwitter, link: "https://twitter.com", label: "Twitter" },
-                { icon: FiLinkedin, link: "https://linkedin.com", label: "LinkedIn" },
-                { icon: FiInstagram, link: "https://instagram.com", label: "Instagram" }
-              ].map((social, index) => (
-                <motion.a
-                  key={index}
-                  href={social.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                  whileHover={{ scale: 1.2, color: "#7C3AED" }}
-                  className="text-3xl hover:text-accent transition-colors"
-                  aria-label={social.label}
-                >
-                  <social.icon />
-                </motion.a>
-              ))}
-                  </div>
-
-            <motion.a
-                      href="mailto:bernice.arthur@gmail.com" 
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="inline-block px-8 py-4 bg-accent hover:bg-accent-hover text-white rounded-full font-medium transition-colors duration-300 shadow-lg hover:shadow-xl"
+              className="text-center max-w-2xl mx-auto"
             >
-              Get in Touch
-            </motion.a>
+              <h2 className="text-3xl md:text-4xl font-bold mb-8">Let's Connect</h2>
+              <p className="text-secondary mb-12">
+                Available for freelance opportunities and creative collaborations.
+              </p>
+
+              <div className="flex justify-center space-x-8 mb-12">
+                {[
+                  { icon: FiGithub, link: "https://github.com", label: "GitHub" },
+                  { icon: FiTwitter, link: "https://twitter.com", label: "Twitter" },
+                  { icon: FiLinkedin, link: "https://linkedin.com", label: "LinkedIn" },
+                  { icon: FiInstagram, link: "https://instagram.com", label: "Instagram" }
+                ].map((social, index) => (
+                  <motion.a
+                    key={index}
+                    href={social.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    whileHover={{ scale: 1.2, color: "#7C3AED" }}
+                    className="text-3xl hover:text-accent transition-colors"
+                    aria-label={social.label}
+                  >
+                    <social.icon />
+                  </motion.a>
+                ))}
+              </div>
+
+              <motion.a
+                href="mailto:bernice.arthur@gmail.com" 
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="inline-block px-8 py-4 bg-accent hover:bg-accent-hover text-white rounded-full font-medium transition-colors duration-300 shadow-lg hover:shadow-xl"
+              >
+                Get in Touch
+              </motion.a>
             </motion.div>
           </div>
         </section>
 
-      <Footer />
+        <Footer />
       </main>
     </div>
   );

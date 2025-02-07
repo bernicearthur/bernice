@@ -151,7 +151,7 @@ const MasonryGrid = ({ items, onLoadMore }) => {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300">
                         <div className="absolute bottom-0 left-0 right-0 p-3 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                          <h3 className="text-sm font-semibold line-clamp-1">{item.title}</h3>
+                          <h3 className="text-sm font-semibold line-clamp-1 text-blue-400">{item.title}</h3>
                           <p className="text-xs text-gray-200 mt-1 line-clamp-2">{item.description}</p>
                           <div className="flex items-center justify-between mt-2 text-xs">
                             <span className="bg-white/20 px-2 py-1 rounded-full">

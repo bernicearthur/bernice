@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from '../components/navbar';
 import Footer from '../components/footer';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { FaRegHeart, FaHeart, FaRegComment, FaRegEye } from 'react-icons/fa';
+import { FaRegHeart, FaHeart, FaRegComment, FaRegEye, FaSearch, FaCalendarAlt, FaClock, FaChevronRight } from 'react-icons/fa';
 import Pagination from '../components/pagination';
 
 const categories = ['All', 'Tutorials', 'Personal', 'Writing Tips', 'Reviews'];
@@ -21,19 +21,290 @@ const blogs = [
     likes: 120,
     comments: 15,
     views: 300,
+    excerpt: 'Discover the secrets to crafting compelling narratives that captivate your readers from start to finish.',
+    featured: true,
   },
-
-  // Add more blog entries as needed
+  {
+    id: 2,
+    title: 'The Art of Character Development',
+    author: 'Bernice Arthur',
+    publishDate: '2023-09-28',
+    category: 'Writing Tips',
+    readTime: '7 min',
+    image: '/images/bg1.jpg',
+    likes: 95,
+    comments: 23,
+    views: 250,
+    excerpt: 'Learn how to create memorable characters that resonate with your readers and bring your stories to life.',
+  },
+  {
+    id: 3,
+    title: 'My Journey as a Writer',
+    author: 'Bernice Arthur',
+    publishDate: '2023-09-25',
+    category: 'Personal',
+    readTime: '4 min',
+    image: '/images/bg2.jpg',
+    likes: 150,
+    comments: 30,
+    views: 420,
+    excerpt: 'A personal reflection on my writing journey, challenges faced, and lessons learned along the way.',
+  },
+  {
+    id: 4,
+    title: 'Book Review: Modern Storytelling',
+    author: 'Bernice Arthur',
+    publishDate: '2023-09-22',
+    category: 'Reviews',
+    readTime: '6 min',
+    image: '/images/bg3.jpg',
+    likes: 88,
+    comments: 12,
+    views: 280,
+    excerpt: 'An in-depth review of the latest techniques and approaches in modern storytelling.',
+  },
+  {
+    id: 5,
+    title: 'Writing Workshop Experience',
+    author: 'Bernice Arthur',
+    publishDate: '2023-09-20',
+    category: 'Personal',
+    readTime: '5 min',
+    image: '/images/bg4.jpg',
+    likes: 110,
+    comments: 18,
+    views: 340,
+    excerpt: 'Sharing insights and experiences from my recent writing workshop attendance.',
+  },
+  {
+    id: 6,
+    title: 'Mastering Dialogue Writing',
+    author: 'Bernice Arthur',
+    publishDate: '2023-09-18',
+    category: 'Tutorials',
+    readTime: '8 min',
+    image: '/images/bg5.jpg',
+    likes: 135,
+    comments: 25,
+    views: 380,
+    excerpt: 'Tips and techniques for writing natural, engaging dialogue that moves your story forward.',
+  },
+  {
+    id: 7,
+    title: 'Finding Your Writing Voice',
+    author: 'Bernice Arthur',
+    publishDate: '2023-09-15',
+    category: 'Writing Tips',
+    readTime: '6 min',
+    image: '/images/bg6.jpg',
+    likes: 142,
+    comments: 28,
+    views: 410,
+    excerpt: 'Explore ways to develop and refine your unique writing voice and style.',
+  },
+  {
+    id: 8,
+    title: 'Creative Writing Software Review',
+    author: 'Bernice Arthur',
+    publishDate: '2023-09-12',
+    category: 'Reviews',
+    readTime: '7 min',
+    image: '/images/bg7.jpg',
+    likes: 98,
+    comments: 20,
+    views: 290,
+    excerpt: 'A comprehensive review of popular writing software tools and their features.',
+  },
+  {
+    id: 9,
+    title: 'World-Building Techniques',
+    author: 'Bernice Arthur',
+    publishDate: '2023-09-10',
+    category: 'Tutorials',
+    readTime: '9 min',
+    image: '/images/bg8.jpg',
+    likes: 165,
+    comments: 35,
+    views: 450,
+    excerpt: 'Learn how to create immersive and believable worlds for your stories.',
+  },
+  {
+    id: 10,
+    title: 'Overcoming Writer\'s Block',
+    author: 'Bernice Arthur',
+    publishDate: '2023-09-08',
+    category: 'Writing Tips',
+    readTime: '5 min',
+    image: '/images/bg9.jpg',
+    likes: 178,
+    comments: 40,
+    views: 520,
+    excerpt: 'Practical strategies to overcome writer\'s block and maintain creative flow.',
+  }
 ];
 
 const ITEMS_PER_PAGE = 6;
+
+const FeaturedPost = ({ blog, isLiked, onLike }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="relative h-[60vh] rounded-3xl overflow-hidden group"
+    >
+      <div className="absolute inset-0">
+        <Image
+          src={blog.image}
+          alt={blog.title}
+          fill
+          className="object-cover transition-transform duration-700 group-hover:scale-105"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+      </div>
+      <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-12">
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="space-y-4"
+        >
+          <div className="flex items-center space-x-4">
+            <span className="px-4 py-2 bg-accent/90 text-white text-sm rounded-full">
+              Featured Post
+            </span>
+            <span className="text-white/80 flex items-center">
+              <FaCalendarAlt className="mr-2" />
+              {new Date(blog.publishDate).toLocaleDateString('en-US', { 
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric'
+              })}
+            </span>
+          </div>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white font-['Playfair_Display'] leading-tight">
+            {blog.title}
+          </h1>
+          <p className="text-white/90 text-lg max-w-2xl">
+            {blog.excerpt}
+          </p>
+          <div className="flex items-center space-x-6 pt-4">
+            <Link href={`/blogpost/${blog.id}`}>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-6 py-3 bg-white text-black rounded-full font-medium flex items-center group"
+              >
+                Read Article
+                <FaChevronRight className="ml-2 transform group-hover:translate-x-1 transition-transform" />
+              </motion.button>
+            </Link>
+            <div className="flex items-center space-x-4 text-white/90">
+              <div className="flex items-center">
+                <FaRegEye className="mr-2" />
+                {blog.views}
+              </div>
+              <div className="flex items-center">
+                <FaRegComment className="mr-2" />
+                {blog.comments}
+              </div>
+              <motion.button
+                onClick={() => onLike(blog.id)}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                className="flex items-center"
+              >
+                {isLiked ? (
+                  <FaHeart className="text-red-500 mr-2" />
+                ) : (
+                  <FaRegHeart className="mr-2" />
+                )}
+                {blog.likes}
+              </motion.button>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </motion.div>
+  );
+};
+
+const BlogCard = ({ blog, isLiked, onLike, index }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.1 }}
+      className="group w-full"
+    >
+      <div className="bg-card rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 h-full flex flex-col">
+        <Link href={`/blogpost/${blog.id}`} className="flex flex-col h-full">
+          <div className="relative h-48 sm:h-56 md:h-64">
+            <Image
+              src={blog.image}
+              alt={blog.title}
+              fill
+              className="object-cover transition-transform duration-500 group-hover:scale-110"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+            <div className="absolute top-4 left-4">
+              <span className="px-3 py-1 bg-accent/80 text-white text-xs rounded-full">
+                {blog.category}
+              </span>
+            </div>
+          </div>
+          <div className="p-4 sm:p-6 flex flex-col flex-grow space-y-3 sm:space-y-4">
+            <div className="flex items-center text-xs sm:text-sm text-secondary space-x-3 sm:space-x-4">
+              <span className="flex items-center">
+                <FaCalendarAlt className="mr-1 sm:mr-2" />
+                {new Date(blog.publishDate).toLocaleDateString()}
+              </span>
+              <span className="flex items-center">
+                <FaClock className="mr-1 sm:mr-2" />
+                {blog.readTime}
+              </span>
+            </div>
+            <h2 className="text-lg sm:text-xl font-bold text-primary group-hover:text-accent transition-colors line-clamp-2">
+              {blog.title}
+            </h2>
+            <p className="text-secondary line-clamp-2 text-xs sm:text-sm flex-grow">
+              {blog.excerpt}
+            </p>
+            <div className="flex items-center justify-between pt-3 sm:pt-4 border-t border-border">
+              <div className="flex items-center space-x-3 sm:space-x-4 text-secondary text-xs sm:text-sm">
+                <span className="flex items-center">
+                  <FaRegEye className="mr-1" /> {blog.views}
+                </span>
+                <span className="flex items-center">
+                  <FaRegComment className="mr-1" /> {blog.comments}
+                </span>
+              </div>
+              <motion.button
+                onClick={() => onLike(blog.id)}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                className="flex items-center space-x-1"
+              >
+                {isLiked ? (
+                  <FaHeart className="text-red-500" />
+                ) : (
+                  <FaRegHeart className="text-secondary hover:text-accent" />
+                )}
+                <span className="text-secondary text-xs sm:text-sm">{blog.likes}</span>
+              </motion.button>
+            </div>
+          </div>
+        </Link>
+      </div>
+    </motion.div>
+  );
+};
 
 const BlogPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [likedPosts, setLikedPosts] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
-
+  
   const handleLike = (blogId) => {
     setLikedPosts(prev => ({
       ...prev,
@@ -41,195 +312,93 @@ const BlogPage = () => {
     }));
   };
 
-  const filteredBlogs = blogs.filter(blog => {
+  const featuredPost = blogs.find(blog => blog.featured);
+  const regularPosts = blogs.filter(blog => !blog.featured);
+
+  const filteredBlogs = regularPosts.filter(blog => {
     const matchesSearch = blog.title.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory === 'All' || blog.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
-  // Calculate pagination
-  const totalPages = Math.ceil(filteredBlogs.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const currentBlogs = filteredBlogs.slice(startIndex, endIndex);
-
-  // Reset to first page when filters change
-  const handleSearch = (query) => {
-    setSearchQuery(query);
-    setCurrentPage(1);
-  };
-
-  const handleCategoryChange = (category) => {
-    setSelectedCategory(category);
-    setCurrentPage(1);
-  };
-
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { 
-      opacity: 1, 
-      y: 0,
-      transition: {
-        duration: 0.5
-      }
-    }
-  };
+  const totalPages = Math.ceil(filteredBlogs.length / ITEMS_PER_PAGE);
 
   return (
     <div className="min-h-screen flex flex-col bg-main">
       <Navbar />
-      
-      <motion.div 
-        className="text-center py-12"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        <motion.h1 
-          className="text-4xl font-bold text-primary mb-1"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          Blogs
-        </motion.h1>
-        <div className="w-24 border-b border-gray-300 dark:border-gray-600 my-3 mx-auto" />
-        <motion.p 
-          className="text-m text-secondary"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          My World, a Journey Through Ideas.
-        </motion.p>
-      </motion.div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4"
-        >
-          <div className="flex gap-2 flex-wrap">
-            {categories.map(category => (
-              <motion.button
-                key={category}
-                onClick={() => handleCategoryChange(category)}
-                className={`px-4 py-2 rounded-full text-sm ${
-                  selectedCategory === category 
-                    ? 'bg-accent text-white' 
-                    : 'bg-border text-primary hover:bg-accent hover:text-white'
-                } transition-all`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {category}
-              </motion.button>
-            ))}
-          </div>
-          <motion.input
-            type="text"
-            placeholder="Search blogs..."
-            value={searchQuery}
-            onChange={(e) => handleSearch(e.target.value)}
-            className="w-full md:w-64 px-4 py-2 rounded-full border border-border bg-main text-primary placeholder-secondary focus:outline-none focus:ring-2 focus:ring-accent"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          />
-        </motion.div>
-
-        <motion.div
-          variants={container}
-          initial="hidden"
-          animate="show"
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8"
-        >
-          {currentBlogs.length > 0 ? (
-            currentBlogs.map(blog => (
-              <motion.div
-                key={blog.id}
-                variants={item}
-                className="card p-6"
-              >
-                <Link href={`/blogpost/${blog.id}`} className="block">
-                  <div className="relative overflow-hidden">
-                    <Image 
-                      src={blog.image} 
-                      alt={blog.title} 
-                      width={500} 
-                      height={300} 
-                      className="w-full h-48 sm:h-56 lg:h-64 object-cover transform hover:scale-110 transition-transform duration-500" 
-                    />
-                  </div>
-                  <div className="p-3 sm:p-4">
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <p className="text-secondary text-xs italic mb-2">On {new Date(blog.publishDate).getDate()}, {new Date(blog.publishDate).toLocaleString('default', { month: 'short' })}, {new Date(blog.publishDate).getFullYear()}</p>
-                      <h2 className="text-primary font-semibold text-lg sm:text-xl uppercase tracking-wider mb-2 font-['Times_New_Roman']">{blog.title}</h2>
-                      <div className="border-b border-gray-300 dark:border-gray-600 my-2"></div>
-                      <div className="flex flex-wrap items-center text-secondary text-xs sm:text-sm uppercase gap-y-2">
-                        <span className="font-medium mr-4 text-primary">{blog.category}</span>
-                        <span className="hidden sm:inline text-secondary">|</span>
-                        <span className="ml-0 sm:ml-4 flex items-center gap-1"><FaRegComment className="text-base sm:text-lg" /> {blog.comments}</span>
-                        <span className="mx-4 flex items-center gap-1"><FaRegEye className="text-base sm:text-lg" /> {blog.views}</span>
-                        <motion.button 
-                          onClick={() => handleLike(blog.id)} 
-                          className="ml-auto focus:outline-none flex items-center gap-1"
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
-                        >
-                          {likedPosts[blog.id] ? (
-                            <>
-                              <FaHeart className="text-accent text-base sm:text-xl" />
-                              <span className="text-accent">{blog.likes}</span>
-                            </>
-                          ) : (
-                            <>
-                              <FaRegHeart className="text-secondary text-base sm:text-xl hover:text-accent transition-colors" />
-                              <span className="text-secondary hover:text-accent transition-colors">{blog.likes}</span>
-                            </>
-                          )}
-                        </motion.button>
-                      </div>
-                    </motion.div>
-                  </div>
-                </Link>
-              </motion.div>
-            ))
-          ) : (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="col-span-full text-center py-12"
-            >
-              <p className="text-xl text-secondary">No blog posts found matching your criteria.</p>
-              <p className="text-sm text-secondary mt-2">Try adjusting your search or filter settings.</p>
-            </motion.div>
-          )}
-        </motion.div>
-
-        {filteredBlogs.length > ITEMS_PER_PAGE && (
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
+      <main className="flex-grow max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-6 sm:py-8 w-full">
+        {featuredPost && (
+          <FeaturedPost
+            blog={featuredPost}
+            isLiked={likedPosts[featuredPost.id]}
+            onLike={handleLike}
           />
         )}
-      </div>
+
+        <div className="mt-12 sm:mt-16 mb-8 sm:mb-12">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col md:flex-row justify-between items-center gap-4"
+          >
+            <div className="flex gap-2 flex-wrap w-full justify-center md:justify-start">
+              {categories.map(category => (
+                <motion.button
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
+                  className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm ${
+                    selectedCategory === category 
+                      ? 'bg-accent text-white' 
+                      : 'bg-border text-primary hover:bg-accent hover:text-white'
+                  } transition-all`}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {category}
+                </motion.button>
+              ))}
+            </div>
+            <motion.input
+              type="text"
+              placeholder="Search articles..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full md:w-64 px-4 py-2 rounded-full bg-border text-primary placeholder-secondary focus:outline-none focus:ring-2 focus:ring-accent transition-all text-sm"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            />
+          </motion.div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+          <AnimatePresence>
+            {currentBlogs.map((blog, index) => (
+              <BlogCard
+                key={blog.id}
+                blog={blog}
+                isLiked={likedPosts[blog.id]}
+                onLike={handleLike}
+                index={index}
+              />
+            ))}
+          </AnimatePresence>
+        </div>
+
+        {filteredBlogs.length > ITEMS_PER_PAGE && (
+          <div className="mt-8 sm:mt-12">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
+          </div>
+        )}
+      </main>
 
       <Footer />
     </div>
