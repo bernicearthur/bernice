@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import Layout from '@/components/layout';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { FaTwitter, FaInstagram, FaLinkedin, FaGithub, FaFacebookF } from 'react-icons/fa';
 import Image from 'next/image';
 
@@ -59,6 +59,25 @@ const stories = [
   },
 ];
 
+// Separate animation variants for text transitions
+const textVariants = {
+  enter: {
+    opacity: 0,
+    y: 20,
+    position: 'absolute',
+  },
+  center: {
+    opacity: 1,
+    y: 0,
+    position: 'absolute',
+  },
+  exit: {
+    opacity: 0,
+    y: -20,
+    position: 'absolute',
+  },
+};
+
 export default function Home() {
   const [currentHeroItem, setCurrentHeroItem] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
@@ -70,10 +89,45 @@ export default function Home() {
         setCurrentHeroItem((prev) => (prev + 1) % heroItems.length);
         setIsVisible(true);
       }, 300);
-    }, []);
+    }, 3000);
 
     return () => clearInterval(interval);
   }, []);
+
+  // Add window size state to handle responsive animations
+  const [windowSize, setWindowSize] = useState({
+    width: typeof window !== 'undefined' ? window.innerWidth : 0,
+    height: typeof window !== 'undefined' ? window.innerHeight : 0,
+  });
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize();
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Pre-calculate floating element positions
+  const floatingElements = useMemo(() => {
+    return [...Array(5)].map((_, i) => ({
+      width: 20 + i * 10,
+      height: 20 + i * 10,
+      initialX: typeof window !== 'undefined' ? Math.random() * ((windowSize.width * 0.8) || 0) : 0,
+      initialY: typeof window !== 'undefined' ? Math.random() * ((windowSize.height * 0.8) || 0) : 0,
+      animationDuration: 15 + i * 5,
+      xOffset: Math.random() * 100 - 50, // Random value between -50 and 50
+      yOffset: Math.random() * 100 - 50, // Random value between -50 and 50
+    }));
+  }, [windowSize]);
 
   return (
     <Layout>
@@ -82,7 +136,7 @@ export default function Home() {
         <div className="absolute inset-0 -z-10 bg-gradient-to-br from-accent/10 via-main to-accent-hover/10">
           {/* Animated Gradient Orbs */}
           <motion.div
-            className="absolute w-full h-full"
+            className="absolute w-full h-full pointer-events-none"
             animate={{
               background: [
                 'radial-gradient(circle at 0% 0%, rgba(var(--accent-rgb), 0.15) 0%, transparent 50%)',
@@ -102,26 +156,39 @@ export default function Home() {
         </div>
 
         {/* Floating Elements */}
-        {[...Array(5)].map((_, i) => (
+        {floatingElements.map((element, i) => (
           <motion.div
             key={i}
-            className="absolute rounded-full bg-accent/10"
+            className="absolute rounded-full bg-accent/10 pointer-events-none"
+            style={{
+              width: `${element.width}px`,
+              height: `${element.height}px`,
+            }}
             initial={{
-              width: `${20 + i * 10}px`,
-              height: `${20 + i * 10}px`,
-              x: Math.random() * (window.innerWidth * 0.8),
-              y: Math.random() * (window.innerHeight * 0.8),
+              x: element.initialX,
+              y: element.initialY,
             }}
             animate={{
-              y: [0, -50, 0],
-              x: [0, Math.random() * 20, 0],
-              scale: [1, 1.2, 1],
+              y: [
+                element.initialY,
+                element.initialY + element.yOffset,
+                element.initialY - element.yOffset,
+                element.initialY,
+              ],
+              x: [
+                element.initialX,
+                element.initialX - element.xOffset,
+                element.initialX + element.xOffset,
+                element.initialX,
+              ],
+              scale: [1, 1.1, 0.9, 1],
             }}
             transition={{
-              duration: 10 + i * 2,
+              duration: element.animationDuration,
               repeat: Infinity,
-              repeatType: "reverse",
+              repeatType: "loop",
               ease: "linear",
+              times: [0, 0.33, 0.66, 1]
             }}
           />
         ))}
@@ -161,26 +228,23 @@ export default function Home() {
 
                 {/* Fixed height container for hero items */}
                 <div className="h-16 relative mb-8">
-                  <AnimatePresence mode="wait">
-                    {isVisible && (
-                      <motion.div
-                        key={currentHeroItem}
-                        className="absolute top-0 left-0 w-full"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.3, ease: "easeOut" }}
-                      >
-                        <motion.div 
-                          className="text-2xl text-primary/90 font-light"
-                          initial={{ backgroundPosition: "0% 50%" }}
-                          animate={{ backgroundPosition: "100% 50%" }}
-                          transition={{ duration: 3, ease: "linear" }}
-                        >
-                          {heroItems[currentHeroItem].title}
-                        </motion.div>
-                      </motion.div>
-                    )}
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.div
+                      key={currentHeroItem}
+                      variants={textVariants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={{
+                        duration: 0.5,
+                        ease: "easeInOut"
+                      }}
+                      className="w-full"
+                    >
+                      <div className="text-2xl text-primary/90 font-light">
+                        {heroItems[currentHeroItem].title}
+                      </div>
+                    </motion.div>
                   </AnimatePresence>
                 </div>
 
@@ -200,7 +264,7 @@ export default function Home() {
                   transition={{ delay: 0.8 }}
                 >
                   <Link 
-                    href="/bio" 
+                    href="/projects" 
                     className="px-8 py-3 bg-accent hover:bg-accent-hover text-white rounded-full transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 group"
                   >
                     <span>Explore My Work</span>
@@ -217,10 +281,10 @@ export default function Home() {
                     </motion.span>
                   </Link>
                   <Link 
-                    href="/contact" 
+                    href="/bio" 
                     className="px-8 py-3 border-2 border-accent/20 hover:border-accent text-primary hover:text-accent rounded-full transition-all duration-300 text-center hover:shadow-lg hover:shadow-accent/5"
                   >
-                    Get in Touch
+                    About Me
                   </Link>
                 </motion.div>
               </motion.div>
