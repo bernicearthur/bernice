@@ -81,7 +81,7 @@ export default function Login() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent bg-main"
+                  className="w-full pl-10 pr-4 py-2 border border-border rounded-lg bg-main outline-none"
                   placeholder="Enter your email"
                   required
                 />
@@ -99,7 +99,7 @@ export default function Login() {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-12 py-2 border border-border rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent bg-main"
+                  className="w-full pl-10 pr-12 py-2 border border-border rounded-lg bg-main outline-none"
                   placeholder="Enter your password"
                   required
                 />
@@ -108,7 +108,7 @@ export default function Login() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                 >
-                  {showPassword ? <FiEyeOff /> : <FiEye />}
+                  {showPassword ? <FiEye /> : <FiEyeOff />}
                 </button>
               </div>
             </div>

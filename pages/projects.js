@@ -3,22 +3,20 @@ import { useRouter } from 'next/router';
 import Navbar from '../components/navbar';
 import Footer from '../components/footer';
 import Image from 'next/image';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { FiSearch, FiGrid, FiList, FiGithub, FiExternalLink, FiHeart, FiEye, FiAward, FiUsers, FiTrendingUp, FiActivity, FiMapPin } from 'react-icons/fi';
 
 const projectTypes = ['All', 'Archive', 'Platform', 'Documentation'];
 
 const ITEMS_PER_PAGE = 6;
 
-const ArchiveCard = ({ project, viewMode, onProjectClick }) => {
+const ArchiveCard = ({ project, onProjectClick }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
     <motion.div
-      className={`group relative bg-gradient-to-br from-card-bg via-card-bg to-accent/5 rounded-2xl shadow-lg overflow-hidden 
-        border border-white/[0.05] dark:border-white/[0.02] backdrop-blur-sm ${
-        viewMode === 'list' ? 'flex' : ''
-      }`}
+      className="group relative bg-gradient-to-br from-card-bg via-card-bg to-accent/5 rounded-2xl shadow-lg overflow-hidden 
+        border border-white/[0.05] dark:border-white/[0.02] backdrop-blur-sm"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
@@ -33,7 +31,7 @@ const ArchiveCard = ({ project, viewMode, onProjectClick }) => {
       <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full -mr-16 -mt-16 blur-2xl" />
       <div className="absolute bottom-0 left-0 w-24 h-24 bg-purple-500/5 rounded-full -ml-12 -mb-12 blur-2xl" />
 
-      <div className={`relative ${viewMode === 'list' ? 'w-1/3' : ''}`}>
+      <div className="relative">
         <div className="relative h-64 overflow-hidden">
           <motion.div
             animate={{
@@ -92,10 +90,10 @@ const ArchiveCard = ({ project, viewMode, onProjectClick }) => {
         </div>
       </div>
 
-      <div className={`p-6 relative ${viewMode === 'list' ? 'w-2/3' : ''}`}>
+      <div className="p-6 relative">
         {/* Title and Impact */}
         <div className="flex items-start justify-between mb-3">
-          <h3 className="text-2xl font-bold text-primary bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
+          <h3 className="text-2xl font-bold text-black dark:text-white">
             {project.title}
           </h3>
           {project.impact?.communityEngagement === 'growing' && (
@@ -206,7 +204,70 @@ const ProjectsPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState('All');
   const [currentPage, setCurrentPage] = useState(1);
-  const [viewMode, setViewMode] = useState('grid');
+  const { scrollY } = useScroll();
+  const [timeBasedGradient, setTimeBasedGradient] = useState('');
+
+  // Page transition variants
+  const pageVariants = {
+    initial: {
+      opacity: 0,
+      y: 20
+    },
+    animate: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: [0.43, 0.13, 0.23, 0.96],
+        staggerChildren: 0.1
+      }
+    },
+    exit: {
+      opacity: 0,
+      y: -20,
+      transition: {
+        duration: 0.5
+      }
+    }
+  };
+
+  const itemVariants = {
+    initial: { opacity: 0, y: 20 },
+    animate: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: "easeOut"
+      }
+    },
+    exit: { 
+      opacity: 0, 
+      y: -20,
+      transition: {
+        duration: 0.3
+      }
+    }
+  };
+
+  // Parallax effect for hero section
+  const heroOpacity = useTransform(scrollY, [0, 300], [1, 0]);
+  const heroScale = useTransform(scrollY, [0, 300], [1, 0.8]);
+  const titleY = useTransform(scrollY, [0, 300], [0, 100]);
+
+  // Dynamic background gradient based on time of day
+  useEffect(() => {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) {
+      setTimeBasedGradient('from-orange-400/20 via-yellow-300/10 to-transparent'); // Morning
+    } else if (hour >= 12 && hour < 17) {
+      setTimeBasedGradient('from-blue-400/20 via-cyan-300/10 to-transparent'); // Afternoon
+    } else if (hour >= 17 && hour < 20) {
+      setTimeBasedGradient('from-purple-400/20 via-pink-300/10 to-transparent'); // Evening
+    } else {
+      setTimeBasedGradient('from-indigo-400/20 via-purple-300/10 to-transparent'); // Night
+    }
+  }, []);
 
   const handleProjectClick = (projectId) => {
     router.push(`/projectpost/${projectId}`);
@@ -233,6 +294,11 @@ const ProjectsPage = () => {
                          project.description.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesType = selectedType === 'All' || project.type === selectedType;
     return matchesSearch && matchesType;
+  }).sort((a, b) => {
+    // Sort featured projects first
+    if (a.featured && !b.featured) return -1;
+    if (!a.featured && b.featured) return 1;
+    return 0;
   });
 
   const totalPages = Math.ceil(filteredProjects.length / ITEMS_PER_PAGE);
@@ -243,165 +309,157 @@ const ProjectsPage = () => {
   return (
     <motion.div 
       className="min-h-screen bg-main"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
+      variants={pageVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
     >
       <Navbar />
       
-      {/* Hero Section */}
-      <div className="relative overflow-hidden">
-        <motion.div 
-          className="absolute inset-0 bg-gradient-to-r from-accent/20 via-purple-500/20 to-accent/20"
-          animate={{
-            x: ['0%', '-100%'],
-            transition: {
-              duration: 15,
-              repeat: Infinity,
-              repeatType: 'reverse',
-              ease: 'linear'
-            }
-          }}
-        />
-        <motion.div 
-          className="absolute inset-0 bg-gradient-to-r from-accent/10 via-purple-500/10 to-accent/10"
-          animate={{
-            x: ['100%', '0%'],
-            transition: {
-              duration: 15,
-              repeat: Infinity,
-              repeatType: 'reverse',
-              ease: 'linear'
-            }
-          }}
-        />
-        <div className="relative py-20 px-4">
-          <div className="max-w-7xl mx-auto text-center">
+      {/* Interactive Hero Section */}
+      <motion.div 
+        style={{ opacity: heroOpacity, scale: heroScale }}
+        className={`relative bg-gradient-to-b ${timeBasedGradient} py-20 px-4 sm:px-6 lg:px-8 text-center overflow-hidden`}
+        variants={itemVariants}
+      >
+        <motion.div
+          style={{ y: titleY }}
+          className="relative z-10"
+        >
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: "spring", duration: 0.8 }}
+            className="mb-6"
+          >
+            <FiGrid className="mx-auto text-6xl text-accent" />
+          </motion.div>
+          <motion.h1 
+            className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 text-black dark:text-white"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            Disappearing Cultures
+          </motion.h1>
+          <motion.p 
+            className="text-lg sm:text-xl text-secondary max-w-2xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            Explore my portfolio of innovative digital experiences, interactive archives, and experimental projects.
+          </motion.p>
+        </motion.div>
+
+        {/* Floating Elements Animation */}
+        <div className="absolute inset-0 pointer-events-none">
+          {[...Array(20)].map((_, i) => (
             <motion.div
-              className="absolute inset-0 grid grid-cols-8 grid-rows-8 gap-2 opacity-20"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.2 }}
-              transition={{ duration: 1 }}
+              key={i}
+              className="absolute"
+              initial={{
+                x: Math.random() * 100 - 50 + '%',
+                y: Math.random() * 100 + '%',
+                scale: Math.random() * 0.5 + 0.5,
+                opacity: Math.random() * 0.3 + 0.1
+              }}
+              animate={{
+                y: [null, '-100%'],
+                opacity: [null, 0]
+              }}
+              transition={{
+                duration: Math.random() * 10 + 10,
+                repeat: Infinity,
+                ease: 'linear'
+              }}
             >
-              {Array.from({ length: 64 }).map((_, i) => (
-                <motion.div
-                  key={i}
-                  className="w-full h-full bg-accent rounded-full"
-                  initial={{ scale: 0 }}
-                  animate={{ scale: [0, 1, 0] }}
-                  transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    delay: i * 0.05,
-                    ease: "easeInOut"
-                  }}
-                />
-              ))}
+              {i % 3 === 0 ? '💻' : i % 3 === 1 ? '🎨' : '⚡'}
             </motion.div>
-            <motion.h1 
-              className="text-6xl font-bold mb-6 bg-gradient-to-r from-accent to-purple-500 bg-clip-text text-transparent relative z-10"
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.3 }}
-            >
-              Creative Works
-            </motion.h1>
-            <motion.p 
-              className="text-xl text-secondary max-w-2xl mx-auto relative z-10"
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.4 }}
-            >
-              Explore my portfolio of innovative digital experiences, interactive archives, and experimental projects.
-            </motion.p>
-          </div>
+          ))}
         </div>
-      </div>
+      </motion.div>
 
       {/* Main Content */}
       <motion.div 
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.8 }}
+        variants={itemVariants}
       >
-        {/* Filters and Controls */}
-        <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
-          <div className="flex items-center gap-4 w-full md:w-auto">
-            <div className="relative flex-1 md:flex-none">
-              <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary" />
-              <motion.input
-                type="text"
-                placeholder="Search projects..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full md:w-64 pl-10 pr-4 py-2 rounded-full border border-border bg-card-bg text-primary placeholder-secondary focus:outline-none focus:ring-2 focus:ring-accent"
-                whileFocus={{ scale: 1.02 }}
-                transition={{ duration: 0.2 }}
-              />
-            </div>
-            <div className="flex gap-2">
-              <motion.button
-                onClick={() => setViewMode('grid')}
-                className={`p-2 rounded-full ${viewMode === 'grid' ? 'bg-accent text-white' : 'bg-card-bg text-secondary hover:text-primary'}`}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <FiGrid className="w-5 h-5" />
-              </motion.button>
-              <motion.button
-                onClick={() => setViewMode('list')}
-                className={`p-2 rounded-full ${viewMode === 'list' ? 'bg-accent text-white' : 'bg-card-bg text-secondary hover:text-primary'}`}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <FiList className="w-5 h-5" />
-              </motion.button>
-            </div>
-          </div>
-
-          <div className="flex gap-4 w-full md:w-auto">
-            <select
-              value={selectedType}
-              onChange={(e) => setSelectedType(e.target.value)}
-              className="px-4 py-2 rounded-full border border-border bg-card-bg text-primary focus:outline-none focus:ring-2 focus:ring-accent"
-            >
-              {projectTypes.map(type => (
-                <option key={type} value={type}>{type}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        {/* Projects Grid/List */}
-        {loading ? (
-          <div className="flex justify-center items-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-accent"></div>
-          </div>
-        ) : (
+        {/* Enhanced Filters Section */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <motion.div 
-            className={viewMode === 'grid' 
-              ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-              : "space-y-6"
-            }
-            initial="hidden"
-            animate="visible"
+            variants={itemVariants}
+            className="flex flex-col md:flex-row justify-between items-center gap-4"
+          >
+            <div className="flex gap-2 flex-wrap w-full justify-center md:justify-start">
+              {projectTypes.map(type => (
+                <motion.button
+                  key={type}
+                  onClick={() => setSelectedType(type)}
+                  className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm ${
+                    selectedType === type 
+                      ? 'bg-accent text-white' 
+                      : 'bg-border text-primary hover:bg-accent hover:text-white'
+                  } transition-all`}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {type}
+                </motion.button>
+              ))}
+            </div>
+            <motion.input
+              type="text"
+              placeholder="Search projects..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full md:w-64 px-4 py-2 rounded-full bg-border text-primary placeholder-secondary focus:outline-none focus:ring-2 focus:ring-accent transition-all text-sm"
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            />
+          </motion.div>
+
+          {/* Projects Grid */}
+          <motion.div 
+            className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            variants={itemVariants}
           >
             <AnimatePresence mode="wait">
-              {currentProjects.length > 0 ? (
-                currentProjects.map((project) => (
-                  <ArchiveCard
+              {loading ? (
+                <motion.div
+                  key="loader"
+                  className="col-span-full flex justify-center items-center py-20"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                >
+                  <div className="relative w-20 h-20">
+                    <div className="absolute inset-0 border-4 border-accent/20 rounded-full"></div>
+                    <div className="absolute inset-0 border-4 border-accent rounded-full animate-spin border-t-transparent"></div>
+                  </div>
+                </motion.div>
+              ) : currentProjects.length > 0 ? (
+                currentProjects.map((project, index) => (
+                  <motion.div
                     key={project.id}
-                    project={project}
-                    viewMode={viewMode}
-                    onProjectClick={handleProjectClick}
-                  />
+                    variants={itemVariants}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    transition={{ delay: index * 0.1 }}
+                    layout
+                  >
+                    <ArchiveCard
+                      project={project}
+                      onProjectClick={handleProjectClick}
+                    />
+                  </motion.div>
                 ))
               ) : (
                 <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
+                  key="no-results"
                   className="col-span-full text-center py-12"
+                  variants={itemVariants}
                 >
                   <p className="text-xl text-secondary">No projects found matching your criteria.</p>
                   <p className="text-sm text-secondary mt-2">Try adjusting your search or filter settings.</p>
@@ -409,35 +467,33 @@ const ProjectsPage = () => {
               )}
             </AnimatePresence>
           </motion.div>
-        )}
 
-        {/* Pagination */}
-        {filteredProjects.length > ITEMS_PER_PAGE && (
-          <motion.div 
-            className="mt-12 flex justify-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-          >
-            <div className="flex gap-2">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                <motion.button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
-                    currentPage === page
-                      ? 'bg-accent text-white'
-                      : 'bg-card-bg text-secondary hover:text-primary'
-                  }`}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  {page}
-                </motion.button>
-              ))}
-            </div>
-          </motion.div>
-        )}
+          {/* Pagination */}
+          {filteredProjects.length > ITEMS_PER_PAGE && (
+            <motion.div 
+              className="mt-12 flex justify-center"
+              variants={itemVariants}
+            >
+              <div className="flex gap-2">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <motion.button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
+                      currentPage === page
+                        ? 'bg-accent text-white'
+                        : 'bg-card-bg text-secondary hover:text-primary'
+                    }`}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {page}
+                  </motion.button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </div>
       </motion.div>
 
       <Footer />

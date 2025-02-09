@@ -116,7 +116,7 @@ export default function Register() {
                   value={formData.fullName}
                   onChange={handleChange}
                   placeholder="John Doe"
-                  className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent ${
+                  className={`w-full pl-10 pr-4 py-2 border rounded-lg outline-none ${
                     errors.fullName ? 'border-red-500' : 'border-gray-300'
                   } bg-transparent`}
                 />
@@ -142,7 +142,7 @@ export default function Register() {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="your@email.com"
-                  className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent ${
+                  className={`w-full pl-10 pr-4 py-2 border rounded-lg outline-none ${
                     errors.email ? 'border-red-500' : 'border-gray-300'
                   } bg-transparent`}
                 />
@@ -167,7 +167,7 @@ export default function Register() {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  className={`w-full pl-10 pr-12 py-2 border rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent ${
+                  className={`w-full pl-10 pr-12 py-2 border rounded-lg outline-none ${
                     errors.password ? 'border-red-500' : 'border-gray-300'
                   } bg-transparent`}
                 />
@@ -176,7 +176,7 @@ export default function Register() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
-                  {showPassword ? <FiEyeOff /> : <FiEye />}
+                  {showPassword ? <FiEye /> : <FiEyeOff />}
                 </button>
               </div>
               {errors.password && (
@@ -199,7 +199,7 @@ export default function Register() {
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className={`w-full pl-10 pr-12 py-2 border rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent ${
+                  className={`w-full pl-10 pr-12 py-2 border rounded-lg outline-none ${
                     errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
                   } bg-transparent`}
                 />
@@ -208,7 +208,7 @@ export default function Register() {
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
-                  {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
+                  {showConfirmPassword ? <FiEye /> : <FiEyeOff />}
                 </button>
               </div>
               {errors.confirmPassword && (
@@ -225,7 +225,7 @@ export default function Register() {
                   name="agreeToTerms"
                   checked={formData.agreeToTerms}
                   onChange={handleChange}
-                  className="w-4 h-4 border border-gray-300 rounded bg-transparent focus:ring-3 focus:ring-accent"
+                  className="w-4 h-4 border border-gray-300 rounded bg-transparent outline-none"
                 />
               </div>
               <label className="ml-2 text-sm text-secondary" htmlFor="agreeToTerms">
