@@ -93,7 +93,7 @@ function SpotlightPage() {
 
       <div className="min-h-screen pt-8">
         {/* Minimal Search */}
-        <div className="max-w-xl mx-auto px-4 mb-12 mt-8">
+        <div className="max-w-xl mx-auto px-4 mb-12 mt-4">
           <motion.div className="relative"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}

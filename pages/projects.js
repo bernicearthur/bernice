@@ -12,6 +12,18 @@ const ITEMS_PER_PAGE = 6;
 
 const ArchiveCard = ({ project, onProjectClick }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    let interval;
+    if (project.images && project.images.length > 1) {
+      const randomInterval = Math.floor(Math.random() * (10000 - 5000 + 1) + 5000); // Random time between 5-10 seconds
+      interval = setInterval(() => {
+        setCurrentImageIndex((prev) => (prev + 1) % project.images.length);
+      }, randomInterval);
+    }
+    return () => clearInterval(interval);
+  }, [project.images]);
 
   return (
     <motion.div
@@ -33,22 +45,44 @@ const ArchiveCard = ({ project, onProjectClick }) => {
 
       <div className="relative">
         <div className="relative h-64 overflow-hidden">
-          <motion.div
-            animate={{
-              scale: isHovered ? 1.05 : 1,
-              transition: { duration: 0.6 }
-            }}
-            className="relative h-full"
-          >
-            <Image
-              src={project.images[0]}
-              alt={project.title}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-          </motion.div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentImageIndex}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.7 }}
+              className="relative h-full"
+            >
+              <Image
+                src={project.images[currentImageIndex]}
+                alt={`${project.title} - Image ${currentImageIndex + 1}`}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Image Navigation Dots */}
+          {project.images && project.images.length > 1 && (
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-1.5 z-10">
+              {project.images.map((_, index) => (
+                <motion.button
+                  key={index}
+                  className={`w-1.5 h-1.5 rounded-full transition-all ${
+                    currentImageIndex === index ? 'bg-white w-3' : 'bg-white/50'
+                  }`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentImageIndex(index);
+                  }}
+                  whileHover={{ scale: 1.2 }}
+                />
+              ))}
+            </div>
+          )}
 
           {/* Status Badge */}
           <motion.div 
@@ -119,22 +153,6 @@ const ArchiveCard = ({ project, onProjectClick }) => {
             >
               {method}
             </motion.span>
-          ))}
-        </div>
-
-        {/* Highlights */}
-        <div className="space-y-2 mb-6">
-          {project.highlights?.map((highlight, index) => (
-            <motion.div
-              key={index}
-              className="flex items-center gap-2 text-sm text-secondary"
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.1 }}
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-              {highlight}
-            </motion.div>
           ))}
         </div>
 
@@ -276,9 +294,63 @@ const ProjectsPage = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await fetch('/api/projects');
-        const data = await response.json();
-        setProjects(data);
+        // Simulated API response with example projects
+        const exampleProjects = [
+          {
+            id: 1,
+            title: "Cultural Heritage Archive",
+            description: "A comprehensive digital archive preserving the cultural heritage of indigenous communities through interactive storytelling and modern preservation techniques.",
+            type: "Archive",
+            status: "live",
+            location: "Kumasi",
+            featured: true,
+            images: [
+              "/images/projecthero.jpg",
+              "/images/projectbackground.jpg",
+              "/images/bg1.jpg"
+            ],
+            methods: ["Digital Preservation", "Oral History", "Interactive Mapping"],
+            impact: { communityEngagement: "growing" },
+            likes: 234,
+            views: 1200
+          },
+          {
+            id: 2,
+            title: "Indigenous Knowledge Platform",
+            description: "A collaborative platform for sharing and preserving indigenous knowledge systems, focusing on traditional practices and cultural wisdom.",
+            type: "Platform",
+            status: "beta",
+            location: "Tamale",
+            featured: false,
+            images: [
+              "/images/bg2.jpg",
+              "/images/bg3.jpg",
+              "/images/story.jpg"
+            ],
+            methods: ["Knowledge Management", "Community Engagement", "Digital Storytelling"],
+            likes: 189,
+            views: 890
+          },
+          {
+            id: 3,
+            title: "Cultural Documentation System",
+            description: "Advanced system for documenting and preserving cultural practices and traditions of local communities using modern technology.",
+            type: "Documentation",
+            status: "live",
+            location: "Cape Coast",
+            featured: true,
+            images: [
+              "/images/story.jpg",
+              "/images/projecthero.jpg",
+              "/images/bg2.jpg"
+            ],
+            methods: ["Video Documentation", "Audio Recording", "Cultural Mapping"],
+            impact: { communityEngagement: "growing" },
+            likes: 312,
+            views: 1500
+          }
+        ];
+        setProjects(exampleProjects);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching projects:', error);
@@ -386,7 +458,7 @@ const ProjectsPage = () => {
         variants={itemVariants}
       >
         {/* Enhanced Filters Section */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="w-full">
           <motion.div 
             variants={itemVariants}
             className="flex flex-col md:flex-row justify-between items-center gap-4"
@@ -421,7 +493,7 @@ const ProjectsPage = () => {
 
           {/* Projects Grid */}
           <motion.div 
-            className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
             variants={itemVariants}
           >
             <AnimatePresence mode="wait">

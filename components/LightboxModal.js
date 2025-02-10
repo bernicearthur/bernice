@@ -159,38 +159,38 @@ const LightboxModal = ({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-2 sm:p-4"
         onClick={onClose}
       >
         {/* Close button */}
         <button 
-          className="absolute top-4 right-4 z-50 p-2 text-white hover:bg-white/10 rounded-full"
+          className="absolute top-2 right-2 z-50 p-2 text-white hover:bg-white/10 rounded-full sm:top-4 sm:right-4"
           onClick={onClose}
         >
-          <AiOutlineClose className="w-6 h-6" />
+          <AiOutlineClose className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
 
-        {/* Navigation arrows */}
+        {/* Navigation arrows - Hidden on mobile, shown on swipe */}
         {hasPrevious && (
           <button 
-            className="absolute left-4 top-1/2 -translate-y-1/2 p-2 text-white hover:bg-white/10 rounded-full"
+            className="absolute left-2 top-1/2 -translate-y-1/2 p-2 text-white hover:bg-white/10 rounded-full hidden sm:block sm:left-4"
             onClick={(e) => {
               e.stopPropagation();
               onPrevious();
             }}
           >
-            <AiOutlineArrowLeft className="w-6 h-6" />
+            <AiOutlineArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
         )}
         {hasNext && (
           <button 
-            className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-white hover:bg-white/10 rounded-full"
+            className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-white hover:bg-white/10 rounded-full hidden sm:block sm:right-4"
             onClick={(e) => {
               e.stopPropagation();
               onNext();
             }}
           >
-            <AiOutlineArrowRight className="w-6 h-6" />
+            <AiOutlineArrowRight className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
         )}
 
@@ -199,14 +199,15 @@ const LightboxModal = ({
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
-          className="relative flex w-full max-w-7xl h-[80vh] mx-4 bg-white dark:bg-gray-900 rounded-lg overflow-hidden"
+          className="relative flex flex-col lg:flex-row w-full max-w-7xl h-[90vh] lg:h-[80vh] mx-auto 
+                     bg-white dark:bg-gray-900 rounded-lg overflow-hidden"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Left side - Image */}
-          <div className="relative flex-1 bg-black">
+          <div className="relative flex-1 bg-black h-[40vh] lg:h-full">
             {isPinned && (
-              <div className="absolute top-4 right-4 z-10">
-                <AiFillPushpin className="w-6 h-6 text-purple-500" />
+              <div className="absolute top-2 right-2 z-10 sm:top-4 sm:right-4">
+                <AiFillPushpin className="w-5 h-5 sm:w-6 sm:h-6 text-purple-500" />
               </div>
             )}
             <div className={`relative w-full h-full ${isZoomed ? 'cursor-zoom-out' : 'cursor-zoom-in'}`}
@@ -221,29 +222,29 @@ const LightboxModal = ({
               />
             </div>
             {/* Image controls */}
-            <div className="absolute bottom-4 right-4 flex gap-2">
+            <div className="absolute bottom-2 right-2 flex gap-1 sm:bottom-4 sm:right-4 sm:gap-2">
               <button 
                 onClick={() => setIsZoomed(!isZoomed)}
-                className="p-2 bg-black/50 hover:bg-black/70 rounded-full text-white"
+                className="p-1.5 sm:p-2 bg-black/50 hover:bg-black/70 rounded-full text-white"
               >
                 {isZoomed ? (
-                  <AiOutlineZoomOut className="w-5 h-5" />
+                  <AiOutlineZoomOut className="w-4 h-4 sm:w-5 sm:h-5" />
                 ) : (
-                  <AiOutlineZoomIn className="w-5 h-5" />
+                  <AiOutlineZoomIn className="w-4 h-4 sm:w-5 sm:h-5" />
                 )}
               </button>
               <button 
                 onClick={handleDownload}
-                className="p-2 bg-black/50 hover:bg-black/70 rounded-full text-white"
+                className="p-1.5 sm:p-2 bg-black/50 hover:bg-black/70 rounded-full text-white"
               >
-                <BsDownload className="w-5 h-5" />
+                <BsDownload className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
               <div className="relative" ref={shareMenuRef}>
                 <button 
                   onClick={() => setShowShareMenu(!showShareMenu)}
-                  className="p-2 bg-black/50 hover:bg-black/70 rounded-full text-white"
+                  className="p-1.5 sm:p-2 bg-black/50 hover:bg-black/70 rounded-full text-white"
                 >
-                  <AiOutlineShareAlt className="w-5 h-5" />
+                  <AiOutlineShareAlt className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
                 {showShareMenu && (
                   <div className="absolute bottom-full right-0 mb-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
@@ -291,17 +292,17 @@ const LightboxModal = ({
           </div>
 
           {/* Right side - Info */}
-          <div className="w-96 flex flex-col border-l border-gray-200 dark:border-gray-700">
+          <div className="w-full lg:w-96 flex flex-col border-t lg:border-t-0 lg:border-l border-gray-200 dark:border-gray-700 max-h-[50vh] lg:max-h-full">
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+            <div className="p-3 sm:p-4 border-b border-gray-200 dark:border-gray-700">
               <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold">{currentItem.title}</h2>
+                <h2 className="text-lg sm:text-xl font-semibold">{currentItem.title}</h2>
                 <div className="relative" ref={menuRef}>
                   <button 
                     onClick={() => setShowMenu(!showMenu)}
                     className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
                   >
-                    <HiOutlineDotsVertical className="w-5 h-5" />
+                    <HiOutlineDotsVertical className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
                   {showMenu && (
                     <div className="absolute top-full right-0 mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden min-w-[160px]">
@@ -323,32 +324,32 @@ const LightboxModal = ({
                   )}
                 </div>
               </div>
-              <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mt-1">
                 {currentItem.description}
               </p>
             </div>
 
             {/* Engagement */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-              <div className="flex items-center gap-4">
+            <div className="flex items-center justify-between p-3 sm:p-4 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center gap-3 sm:gap-4">
                 <button 
                   onClick={() => setIsLiked(!isLiked)}
                   className="flex items-center gap-1 hover:scale-110 transition-transform"
                 >
                   {isLiked ? (
-                    <AiFillHeart className="w-6 h-6 text-red-500" />
+                    <AiFillHeart className="w-5 h-5 sm:w-6 sm:h-6 text-red-500" />
                   ) : (
-                    <AiOutlineHeart className="w-6 h-6" />
+                    <AiOutlineHeart className="w-5 h-5 sm:w-6 sm:h-6" />
                   )}
-                  <span>{currentItem.likes}</span>
+                  <span className="text-sm">{currentItem.likes}</span>
                 </button>
                 <button className="flex items-center gap-1">
-                  <FaRegCommentDots className="w-5 h-5" />
-                  <span>{currentItem.comments}</span>
+                  <FaRegCommentDots className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <span className="text-sm">{currentItem.comments}</span>
                 </button>
                 <div className="flex items-center gap-1">
-                  <FaRegEye className="w-5 h-5" />
-                  <span>{currentItem.views || 0}</span>
+                  <FaRegEye className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <span className="text-sm">{currentItem.views || 0}</span>
                 </div>
               </div>
               <button 
@@ -356,23 +357,22 @@ const LightboxModal = ({
                 className="flex items-center gap-1"
               >
                 {isSaved ? (
-                  <FaBookmark className="w-5 h-5 text-purple-500" />
+                  <FaBookmark className="w-4 h-4 sm:w-5 sm:h-5 text-purple-500" />
                 ) : (
-                  <FaRegBookmark className="w-5 h-5" />
+                  <FaRegBookmark className="w-4 h-4 sm:w-5 sm:h-5" />
                 )}
               </button>
             </div>
 
             {/* Comments section */}
-            <div className="flex-1 overflow-y-auto p-4">
+            <div className="flex-1 overflow-y-auto p-3 sm:p-4">
               <div className="space-y-4">
-                {/* Add sample comments here */}
-                <p className="text-sm text-gray-500 dark:text-gray-400">No comments yet</p>
+                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">No comments yet</p>
               </div>
             </div>
 
             {/* Comment input */}
-            <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+            <div className="p-3 sm:p-4 border-t border-gray-200 dark:border-gray-700">
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -380,14 +380,13 @@ const LightboxModal = ({
                   onChange={(e) => setComment(e.target.value)}
                   placeholder="Add a comment..."
                   className="flex-1 px-3 py-2 rounded-full bg-gray-100 dark:bg-gray-800 
-                           text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                           text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
                 <button 
-                  className="px-4 py-2 bg-purple-500 text-white rounded-full text-sm 
+                  className="px-3 sm:px-4 py-2 bg-purple-500 text-white rounded-full text-xs sm:text-sm 
                            hover:bg-purple-600 transition-colors disabled:opacity-50"
                   disabled={!comment.trim()}
                   onClick={() => {
-                    // Handle comment submission
                     alert('Comment posted!');
                     setComment('');
                   }}
@@ -399,12 +398,12 @@ const LightboxModal = ({
           </div>
         </motion.div>
 
-        {/* Related items */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 p-2 bg-black/50 rounded-lg">
+        {/* Related items - Hidden on small screens */}
+        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 p-1.5 bg-black/50 rounded-lg sm:bottom-4 sm:gap-2 sm:p-2 hidden sm:flex">
           {relatedItems.slice(0, 5).map((item, index) => (
             <button
               key={item.id}
-              className="w-16 h-16 relative rounded-lg overflow-hidden opacity-70 hover:opacity-100 transition-opacity"
+              className="w-12 h-12 sm:w-16 sm:h-16 relative rounded-lg overflow-hidden opacity-70 hover:opacity-100 transition-opacity"
               onClick={(e) => {
                 e.stopPropagation();
                 // Handle related item click
