@@ -5,6 +5,7 @@ import Footer from '../components/footer';
 import Image from 'next/image';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { FiSearch, FiGrid, FiList, FiGithub, FiExternalLink, FiHeart, FiEye, FiAward, FiUsers, FiTrendingUp, FiActivity, FiMapPin } from 'react-icons/fi';
+import Head from 'next/head';
 
 const projectTypes = ['All', 'Archive', 'Platform', 'Documentation'];
 
@@ -215,7 +216,7 @@ const ArchiveCard = ({ project, onProjectClick }) => {
   );
 };
 
-const ProjectsPage = () => {
+const ArchivesPage = () => {
   const router = useRouter();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -386,6 +387,10 @@ const ProjectsPage = () => {
       animate="animate"
       exit="exit"
     >
+      <Head>
+        <title>Archives | Bernice Arthur</title>
+        <meta name="description" content="Explore the archives of digital experiences and projects" />
+      </Head>
       <Navbar />
       
       {/* Interactive Hero Section */}
@@ -573,4 +578,4 @@ const ProjectsPage = () => {
   );
 };
 
-export default ProjectsPage;
+export default ArchivesPage;

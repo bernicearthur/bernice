@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { FiSearch, FiFilter } from 'react-icons/fi';
 
-const SpotlightSearch = ({ onSearch, onFilter, activeFilters, categories }) => {
+const GallerySearch = ({ onSearch, onFilter, activeFilters, categories }) => {
   return (
     <div className="sticky top-0 z-10 bg-white dark:bg-gray-900 py-4 mb-8">
       <div className="max-w-7xl mx-auto px-4">
@@ -49,4 +49,4 @@ const SpotlightSearch = ({ onSearch, onFilter, activeFilters, categories }) => {
   );
 };
 
-export default SpotlightSearch; 
+export default GallerySearch; 

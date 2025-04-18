@@ -5,8 +5,9 @@ import { FiGithub, FiTwitter, FiLinkedin, FiMail, FiInstagram, FiArrowRight } fr
 import { HiOutlineArrowNarrowDown } from 'react-icons/hi';
 import Navbar from '../components/navbar';
 import Footer from '../components/footer';
+import Head from 'next/head';
 
-const Bio = () => {
+const About = () => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [activeTab, setActiveTab] = useState('journey');
   const { scrollYProgress } = useScroll();
@@ -33,6 +34,10 @@ const Bio = () => {
 
   return (
     <div className="min-h-screen bg-main text-primary overflow-hidden">
+      <Head>
+        <title>About | Bernice Arthur</title>
+        <meta name="description" content="Learn more about Bernice Arthur - Creative writer and digital storyteller" />
+      </Head>
       <Navbar />
 
       <main className="-mt-24">
@@ -729,4 +734,4 @@ const Bio = () => {
   );
 };
 
-export default Bio;
+export default About;

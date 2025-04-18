@@ -48,7 +48,7 @@ const MOCK_ITEMS = LOCAL_IMAGES.map((img, i) => ({
   comments: Math.floor(Math.random() * 100),
 }));
 
-function SpotlightPage() {
+function GalleryPage() {
   const [items, setItems] = useState(MOCK_ITEMS);
   const [filteredItems, setFilteredItems] = useState(MOCK_ITEMS);
   const [searchQuery, setSearchQuery] = useState('');
@@ -87,7 +87,7 @@ function SpotlightPage() {
   return (
     <Layout>
       <Head>
-        <title>Spotlight | Bernice Arthur</title>
+        <title>Gallery | Bernice Arthur</title>
         <meta name="description" content="A creative showcase of work and achievements" />
       </Head>
 
@@ -139,4 +139,4 @@ function SpotlightPage() {
   );
 }
 
-export default SpotlightPage; 
+export default GalleryPage; 
