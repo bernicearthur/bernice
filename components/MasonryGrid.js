@@ -2,13 +2,11 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { AiFillHeart, AiOutlineHeart, AiFillPushpin } from 'react-icons/ai';
-import { FaRegCommentDots, FaRegEye } from 'react-icons/fa';
+import { AiFillPushpin } from 'react-icons/ai';
 import LightboxModal from './LightboxModal';
 
 const MasonryGrid = ({ items, onLoadMore }) => {
   const [columns, setColumns] = useState(4);
-  const [likedItems, setLikedItems] = useState({});
   const [selectedItem, setSelectedItem] = useState(null);
   const [pinnedItems, setPinnedItems] = useState({});
   const [hiddenItems, setHiddenItems] = useState({});
@@ -53,13 +51,6 @@ const MasonryGrid = ({ items, onLoadMore }) => {
       });
     
     return cols;
-  };
-
-  const toggleLike = (itemId) => {
-    setLikedItems(prev => ({
-      ...prev,
-      [itemId]: !prev[itemId]
-    }));
   };
 
   const handleItemClick = (item) => {
@@ -149,39 +140,10 @@ const MasonryGrid = ({ items, onLoadMore }) => {
                         className="object-cover transition-all duration-300 group-hover:scale-105"
                         sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300">
-                        <div className="absolute bottom-0 left-0 right-0 p-3 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                          <h3 className="text-sm font-semibold line-clamp-1 text-blue-400">{item.title}</h3>
-                          <p className="text-xs text-gray-200 mt-1 line-clamp-2">{item.description}</p>
-                          <div className="flex items-center justify-between mt-2 text-xs">
-                            <span className="bg-white/20 px-2 py-1 rounded-full">
-                              {item.category}
-                            </span>
-                            <div className="flex items-center gap-2">
-                              <button 
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  toggleLike(item.id);
-                                }}
-                                className="flex items-center gap-1 hover:scale-110 transition-transform"
-                              >
-                                {likedItems[item.id] ? (
-                                  <AiFillHeart className="w-4 h-4 text-red-500" />
-                                ) : (
-                                  <AiOutlineHeart className="w-4 h-4" />
-                                )}
-                                <span>{item.likes}</span>
-                              </button>
-                              <div className="flex items-center gap-1">
-                                <FaRegCommentDots className="w-3.5 h-3.5" />
-                                <span>{item.comments}</span>
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <FaRegEye className="w-3.5 h-3.5" />
-                                <span>{item.views || 0}</span>
-                              </div>
-                            </div>
-                          </div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300">
+                        <div className="absolute bottom-0 left-0 right-0 p-4 text-white transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                          <h3 className="text-base font-semibold line-clamp-1 mb-2 text-white drop-shadow-lg">{item.title}</h3>
+                          <p className="text-sm text-gray-200 line-clamp-2 drop-shadow-lg">{item.description}</p>
                         </div>
                       </div>
                     </div>

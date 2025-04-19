@@ -3,22 +3,17 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from 'next-themes';
 import { 
-  AiFillHeart, 
-  AiOutlineHeart,
   AiOutlineClose,
   AiOutlineArrowLeft,
   AiOutlineArrowRight,
   AiOutlineDownload,
   AiOutlineShareAlt,
-  AiOutlineSave,
   AiOutlineZoomIn,
   AiOutlineZoomOut,
-  AiOutlineLink,
   AiFillPushpin,
 } from 'react-icons/ai';
-import { FaRegCommentDots, FaRegBookmark, FaBookmark, FaEyeSlash, FaRegEye, FaTwitter, FaFacebookF, FaLinkedinIn, FaLink } from 'react-icons/fa';
-import { BsThreeDots, BsDownload } from 'react-icons/bs';
-import { HiOutlineDotsVertical } from 'react-icons/hi';
+import { BsDownload } from 'react-icons/bs';
+import { FaTwitter, FaFacebookF, FaLinkedinIn, FaLink } from 'react-icons/fa';
 
 const LightboxModal = ({ 
   isOpen, 
@@ -33,14 +28,9 @@ const LightboxModal = ({
   onHide,
   isPinned = false,
 }) => {
-  const [isLiked, setIsLiked] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
-  const [comment, setComment] = useState('');
-  const [showMenu, setShowMenu] = useState(false);
   const [showShareMenu, setShowShareMenu] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
-  const menuRef = useRef(null);
   const shareMenuRef = useRef(null);
   const { theme } = useTheme();
 
@@ -78,12 +68,9 @@ const LightboxModal = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose, onPrevious, onNext, hasNext, hasPrevious]);
 
-  // Handle click outside menus
+  // Handle click outside share menu
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setShowMenu(false);
-      }
       if (shareMenuRef.current && !shareMenuRef.current.contains(event.target)) {
         setShowShareMenu(false);
       }
@@ -128,7 +115,6 @@ const LightboxModal = ({
         try {
           await navigator.clipboard.writeText(shareUrl);
           setCopySuccess(true);
-          // Keep the share menu open briefly to show the success state
           setTimeout(() => {
             setShowShareMenu(false);
           }, 1000);
@@ -137,18 +123,6 @@ const LightboxModal = ({
         }
         break;
     }
-  };
-
-  const handleMenuAction = (action) => {
-    switch (action) {
-      case 'pin':
-        onPin?.(currentItem.id);
-        break;
-      case 'hide':
-        onHide?.(currentItem.id);
-        break;
-    }
-    setShowMenu(false);
   };
 
   if (!isOpen || !currentItem) return null;
@@ -199,12 +173,11 @@ const LightboxModal = ({
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
-          className="relative flex flex-col lg:flex-row w-full max-w-7xl h-[90vh] lg:h-[80vh] mx-auto 
-                     bg-white dark:bg-gray-900 rounded-lg overflow-hidden"
+          className="relative w-full max-w-7xl h-[90vh] mx-auto rounded-lg overflow-hidden"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Left side - Image */}
-          <div className="relative flex-1 bg-black h-[40vh] lg:h-full">
+          {/* Image container */}
+          <div className="relative w-full h-full bg-black">
             {isPinned && (
               <div className="absolute top-2 right-2 z-10 sm:top-4 sm:right-4">
                 <AiFillPushpin className="w-5 h-5 sm:w-6 sm:h-6 text-purple-500" />
@@ -220,204 +193,87 @@ const LightboxModal = ({
                   isZoomed ? 'scale-150' : 'scale-100'
                 }`}
               />
-            </div>
-            {/* Image controls */}
-            <div className="absolute bottom-2 right-2 flex gap-1 sm:bottom-4 sm:right-4 sm:gap-2">
-              <button 
-                onClick={() => setIsZoomed(!isZoomed)}
-                className="p-1.5 sm:p-2 bg-black/50 hover:bg-black/70 rounded-full text-white"
-              >
-                {isZoomed ? (
-                  <AiOutlineZoomOut className="w-4 h-4 sm:w-5 sm:h-5" />
-                ) : (
-                  <AiOutlineZoomIn className="w-4 h-4 sm:w-5 sm:h-5" />
-                )}
-              </button>
-              <button 
-                onClick={handleDownload}
-                className="p-1.5 sm:p-2 bg-black/50 hover:bg-black/70 rounded-full text-white"
-              >
-                <BsDownload className="w-4 h-4 sm:w-5 sm:h-5" />
-              </button>
-              <div className="relative" ref={shareMenuRef}>
-                <button 
-                  onClick={() => setShowShareMenu(!showShareMenu)}
-                  className="p-1.5 sm:p-2 bg-black/50 hover:bg-black/70 rounded-full text-white"
-                >
-                  <AiOutlineShareAlt className="w-4 h-4 sm:w-5 sm:h-5" />
-                </button>
-                {showShareMenu && (
-                  <div className="absolute bottom-full right-0 mb-2 bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
-                    <div className="p-2 flex gap-2">
+              {/* Title and description overlay */}
+              <div className="absolute bottom-0 left-0 right-0">
+                <div className="bg-black/50 backdrop-blur-sm p-4">
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
+                    <div className="flex-1">
+                      <h2 className="text-xl sm:text-2xl font-semibold text-white">{currentItem.title}</h2>
+                      <p className="text-base sm:text-lg text-gray-200">{currentItem.description}</p>
+                    </div>
+                    <div className="flex flex-wrap justify-center sm:justify-end gap-2 sm:flex-nowrap">
                       <button 
-                        onClick={() => handleShare('twitter')}
-                        className="w-8 h-8 flex items-center justify-center rounded-full bg-[#1DA1F2] text-white hover:opacity-90 transition-opacity"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsZoomed(!isZoomed);
+                        }}
+                        className="p-2 bg-black/30 hover:bg-black/50 rounded-full text-white transition-colors"
                       >
-                        <FaTwitter className="w-4 h-4" />
-                      </button>
-                      <button 
-                        onClick={() => handleShare('facebook')}
-                        className="w-8 h-8 flex items-center justify-center rounded-full bg-[#4267B2] text-white hover:opacity-90 transition-opacity"
-                      >
-                        <FaFacebookF className="w-4 h-4" />
-                      </button>
-                      <button 
-                        onClick={() => handleShare('linkedin')}
-                        className="w-8 h-8 flex items-center justify-center rounded-full bg-[#0077b5] text-white hover:opacity-90 transition-opacity"
-                      >
-                        <FaLinkedinIn className="w-4 h-4" />
-                      </button>
-                      <button 
-                        onClick={() => handleShare('copy')}
-                        className={`w-8 h-8 flex items-center justify-center rounded-full 
-                                   ${copySuccess 
-                                     ? 'bg-green-500 dark:bg-green-600' 
-                                     : 'bg-gray-500 dark:bg-gray-600'} 
-                                   text-white hover:opacity-90 transition-all duration-300`}
-                        title={copySuccess ? 'Link copied!' : 'Copy link'}
-                      >
-                        {copySuccess ? (
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
+                        {isZoomed ? (
+                          <AiOutlineZoomOut className="w-4 h-4 sm:w-5 sm:h-5" />
                         ) : (
-                          <FaLink className="w-4 h-4" />
+                          <AiOutlineZoomIn className="w-4 h-4 sm:w-5 sm:h-5" />
                         )}
                       </button>
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDownload();
+                        }}
+                        className="p-2 bg-black/30 hover:bg-black/50 rounded-full text-white transition-colors"
+                      >
+                        <BsDownload className="w-4 h-4 sm:w-5 sm:h-5" />
+                      </button>
+                      <div className="relative" ref={shareMenuRef}>
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowShareMenu(!showShareMenu);
+                          }}
+                          className="p-2 bg-black/30 hover:bg-black/50 rounded-full text-white transition-colors"
+                        >
+                          <AiOutlineShareAlt className="w-4 h-4 sm:w-5 sm:h-5" />
+                        </button>
+                        {showShareMenu && (
+                          <div className="absolute bottom-full right-0 mb-2 bg-white/90 dark:bg-gray-800/90 rounded-lg shadow-lg overflow-hidden backdrop-blur-sm">
+                            <button
+                              onClick={() => handleShare('twitter')}
+                              className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left"
+                            >
+                              <FaTwitter className="w-4 h-4 text-blue-400" />
+                              <span>Twitter</span>
+                            </button>
+                            <button
+                              onClick={() => handleShare('facebook')}
+                              className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left"
+                            >
+                              <FaFacebookF className="w-4 h-4 text-blue-600" />
+                              <span>Facebook</span>
+                            </button>
+                            <button
+                              onClick={() => handleShare('linkedin')}
+                              className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left"
+                            >
+                              <FaLinkedinIn className="w-4 h-4 text-blue-700" />
+                              <span>LinkedIn</span>
+                            </button>
+                            <button
+                              onClick={() => handleShare('copy')}
+                              className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 w-full text-left"
+                            >
+                              <FaLink className="w-4 h-4" />
+                              <span>{copySuccess ? 'Copied!' : 'Copy Link'}</span>
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Right side - Info */}
-          <div className="w-full lg:w-96 flex flex-col border-t lg:border-t-0 lg:border-l border-gray-200 dark:border-gray-700 max-h-[50vh] lg:max-h-full">
-            {/* Header */}
-            <div className="p-3 sm:p-4 border-b border-gray-200 dark:border-gray-700">
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg sm:text-xl font-semibold">{currentItem.title}</h2>
-                <div className="relative" ref={menuRef}>
-                  <button 
-                    onClick={() => setShowMenu(!showMenu)}
-                    className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
-                  >
-                    <HiOutlineDotsVertical className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </button>
-                  {showMenu && (
-                    <div className="absolute top-full right-0 mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden min-w-[160px]">
-                      <button 
-                        onClick={() => handleMenuAction('pin')}
-                        className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
-                      >
-                        <AiFillPushpin className={`${isPinned ? "text-purple-500" : ""}`} />
-                        {isPinned ? 'Unpin Post' : 'Pin Post'}
-                      </button>
-                      <button 
-                        onClick={() => handleMenuAction('hide')}
-                        className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
-                      >
-                        <FaEyeSlash />
-                        Hide Post
-                      </button>
-                    </div>
-                  )}
                 </div>
-              </div>
-              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mt-1">
-                {currentItem.description}
-              </p>
-            </div>
-
-            {/* Engagement */}
-            <div className="flex items-center justify-between p-3 sm:p-4 border-b border-gray-200 dark:border-gray-700">
-              <div className="flex items-center gap-3 sm:gap-4">
-                <button 
-                  onClick={() => setIsLiked(!isLiked)}
-                  className="flex items-center gap-1 hover:scale-110 transition-transform"
-                >
-                  {isLiked ? (
-                    <AiFillHeart className="w-5 h-5 sm:w-6 sm:h-6 text-red-500" />
-                  ) : (
-                    <AiOutlineHeart className="w-5 h-5 sm:w-6 sm:h-6" />
-                  )}
-                  <span className="text-sm">{currentItem.likes}</span>
-                </button>
-                <button className="flex items-center gap-1">
-                  <FaRegCommentDots className="w-4 h-4 sm:w-5 sm:h-5" />
-                  <span className="text-sm">{currentItem.comments}</span>
-                </button>
-                <div className="flex items-center gap-1">
-                  <FaRegEye className="w-4 h-4 sm:w-5 sm:h-5" />
-                  <span className="text-sm">{currentItem.views || 0}</span>
-                </div>
-              </div>
-              <button 
-                onClick={() => setIsSaved(!isSaved)}
-                className="flex items-center gap-1"
-              >
-                {isSaved ? (
-                  <FaBookmark className="w-4 h-4 sm:w-5 sm:h-5 text-purple-500" />
-                ) : (
-                  <FaRegBookmark className="w-4 h-4 sm:w-5 sm:h-5" />
-                )}
-              </button>
-            </div>
-
-            {/* Comments section */}
-            <div className="flex-1 overflow-y-auto p-3 sm:p-4">
-              <div className="space-y-4">
-                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">No comments yet</p>
-              </div>
-            </div>
-
-            {/* Comment input */}
-            <div className="p-3 sm:p-4 border-t border-gray-200 dark:border-gray-700">
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                  placeholder="Add a comment..."
-                  className="flex-1 px-3 py-2 rounded-full bg-gray-100 dark:bg-gray-800 
-                           text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
-                />
-                <button 
-                  className="px-3 sm:px-4 py-2 bg-purple-500 text-white rounded-full text-xs sm:text-sm 
-                           hover:bg-purple-600 transition-colors disabled:opacity-50"
-                  disabled={!comment.trim()}
-                  onClick={() => {
-                    alert('Comment posted!');
-                    setComment('');
-                  }}
-                >
-                  Post
-                </button>
               </div>
             </div>
           </div>
         </motion.div>
-
-        {/* Related items - Hidden on small screens */}
-        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 p-1.5 bg-black/50 rounded-lg sm:bottom-4 sm:gap-2 sm:p-2 hidden sm:flex">
-          {relatedItems.slice(0, 5).map((item, index) => (
-            <button
-              key={item.id}
-              className="w-12 h-12 sm:w-16 sm:h-16 relative rounded-lg overflow-hidden opacity-70 hover:opacity-100 transition-opacity"
-              onClick={(e) => {
-                e.stopPropagation();
-                // Handle related item click
-              }}
-            >
-              <Image
-                src={item.image}
-                alt={item.title}
-                fill
-                className="object-cover"
-              />
-            </button>
-          ))}
-        </div>
       </motion.div>
     </AnimatePresence>
   );

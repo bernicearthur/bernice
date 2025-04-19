@@ -147,91 +147,62 @@ const StoriesPage = () => {
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-screen bg-main"
+      className="min-h-screen bg-main flex flex-col"
     >
       <Navbar />
 
       {/* Interactive Hero Section */}
       <motion.div 
-        style={{ opacity: heroOpacity, scale: heroScale }}
-        className={`relative bg-gradient-to-b ${timeBasedGradient} py-20 px-4 sm:px-6 lg:px-8 text-center overflow-hidden`}
+        className="relative bg-main py-12 px-4 sm:px-6 lg:px-8 text-center"
       >
-        <motion.div
-          style={{ y: titleY }}
-          className="relative z-10"
-        >
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring", duration: 0.8 }}
-            className="mb-6"
-          >
-            <FiBookOpen className="mx-auto text-6xl text-accent" />
-          </motion.div>
-          <motion.h1 
-            className="text-4xl sm:text-5xl lg:text-6xl font-bold text-primary mb-4"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
+        <div className="relative z-10">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-primary mb-4">
             Stories
-          </motion.h1>
-          <motion.p 
-            className="text-lg sm:text-xl text-secondary max-w-2xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-          >
+          </h1>
+          <p className="text-lg sm:text-xl text-secondary max-w-2xl mx-auto">
             Explore a collection of tales that inspire, entertain, and spark imagination.
-          </motion.p>
-        </motion.div>
-
-        {/* Floating Elements Animation */}
-        <div className="absolute inset-0 pointer-events-none">
-          {[...Array(20)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute"
-              initial={{
-                x: Math.random() * 100 - 50 + '%',
-                y: Math.random() * 100 + '%',
-                scale: Math.random() * 0.5 + 0.5,
-                opacity: Math.random() * 0.3 + 0.1
-              }}
-              animate={{
-                y: [null, '-100%'],
-                opacity: [null, 0]
-              }}
-              transition={{
-                duration: Math.random() * 10 + 10,
-                repeat: Infinity,
-                ease: 'linear'
-              }}
-            >
-              {i % 3 === 0 ? '✨' : i % 3 === 1 ? '📖' : '🪶'}
-            </motion.div>
-          ))}
+          </p>
         </div>
       </motion.div>
 
       {/* Enhanced Filters Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="flex flex-col md:flex-row justify-between items-center gap-4"
+          className="flex flex-col items-center gap-4"
         >
-          <div className="flex gap-2 flex-wrap w-full justify-center md:justify-start">
+          <div className="flex gap-2 flex-wrap justify-center">
             {genres.map(genre => (
               <motion.button
                 key={genre}
                 onClick={() => handleGenreChange(genre)}
-                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm ${
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm transition-colors duration-300 ${
                   selectedGenre === genre 
-                    ? 'bg-accent text-white' 
-                    : 'bg-border text-primary hover:bg-accent hover:text-white'
-                } transition-all`}
+                    ? `${
+                        genre === 'All' 
+                          ? 'bg-primary text-white dark:bg-white dark:text-black border-2 border-primary dark:border-white' 
+                          : `${
+                              genre === 'Fantasy' ? 'bg-purple-500 text-black border-2 border-purple-500 dark:text-white' :
+                              genre === 'Personal' ? 'bg-blue-500 text-black border-2 border-blue-500 dark:text-white' :
+                              genre === 'Adventure' ? 'bg-green-500 text-black border-2 border-green-500 dark:text-white' :
+                              genre === 'Mystery' ? 'bg-red-500 text-black border-2 border-red-500 dark:text-white' :
+                              'bg-gray-500 text-black border-2 border-gray-500 dark:text-white'
+                            }`
+                      }`
+                    : `${
+                        genre === 'All' 
+                          ? 'bg-main text-black dark:text-white border-2 border-primary dark:border-white hover:bg-primary hover:text-white dark:hover:bg-white dark:hover:text-black' 
+                          : `${
+                              genre === 'Fantasy' ? 'text-black border-2 border-purple-500/50 hover:bg-purple-500/10 dark:text-white' :
+                              genre === 'Personal' ? 'text-black border-2 border-blue-500/50 hover:bg-blue-500/10 dark:text-white' :
+                              genre === 'Adventure' ? 'text-black border-2 border-green-500/50 hover:bg-green-500/10 dark:text-white' :
+                              genre === 'Mystery' ? 'text-black border-2 border-red-500/50 hover:bg-red-500/10 dark:text-white' :
+                              'text-black border-2 border-gray-500/50 hover:bg-gray-500/10 dark:text-white'
+                            } bg-main`
+                      }`
+                }`}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -239,15 +210,6 @@ const StoriesPage = () => {
               </motion.button>
             ))}
           </div>
-          <motion.input
-            type="text"
-            placeholder="Search stories..."
-            value={searchQuery}
-            onChange={(e) => handleSearch(e.target.value)}
-            className="w-full md:w-64 px-4 py-2 rounded-full bg-border text-primary placeholder-secondary focus:outline-none focus:ring-2 focus:ring-accent transition-all text-sm"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          />
         </motion.div>
 
         {/* Stories Grid */}
@@ -257,14 +219,15 @@ const StoriesPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <AnimatePresence>
+          <AnimatePresence mode="wait">
             {filteredStories.map((story, index) => (
               <motion.div
                 key={story.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                transition={{ delay: index * 0.1 }}
+                transition={{ duration: 0.3 }}
+                layout
                 className="relative overflow-hidden rounded-xl aspect-[4/5] group"
               >
                 <Link href={`/stories/${story.id}`}>
@@ -281,25 +244,21 @@ const StoriesPage = () => {
                     <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black/80" />
                   </div>
 
-                  {/* Bookmark Icon */}
-                  <button className="absolute top-4 right-4 z-10 p-2 rounded-full bg-black/20 backdrop-blur-sm text-white hover:bg-black/40 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                    </svg>
-                  </button>
-
                   {/* Content */}
                   <div className="relative h-full flex flex-col p-6">
                     {/* Tags */}
                     <div className="flex gap-2 mb-auto">
-                      {[story.genre, story.mood, story.theme].slice(0, 3).map((tag, i) => (
-                        <span
-                          key={i}
-                          className="px-3 py-1 text-xs rounded-full bg-white/20 backdrop-blur-sm text-white"
-                        >
-                          {tag}
-                        </span>
-                      ))}
+                      <span
+                        className={`px-3 py-1 text-xs rounded-full backdrop-blur-sm text-white ${
+                          story.genre === 'Fantasy' ? 'bg-purple-500/80' :
+                          story.genre === 'Personal' ? 'bg-blue-500/80' :
+                          story.genre === 'Adventure' ? 'bg-green-500/80' :
+                          story.genre === 'Mystery' ? 'bg-red-500/80' :
+                          'bg-gray-500/80'
+                        }`}
+                      >
+                        {story.genre}
+                      </span>
                     </div>
 
                     {/* Bottom Content */}
@@ -307,22 +266,15 @@ const StoriesPage = () => {
                       <h3 className="text-2xl font-bold text-white">{story.title}</h3>
                       <p className="text-white/90 line-clamp-2">{story.description}</p>
                       
-                      {/* Metadata */}
-                      <div className="flex items-center gap-4 text-white/80">
-                        <span className="flex items-center gap-1">
-                          <FiClock className="w-4 h-4" />
-                          {story.readTime}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <FiHeart className="w-4 h-4" />
-                          {story.likes}
-                        </span>
-                      </div>
-
                       {/* Read Story Button */}
-                      <button className="w-full py-3 rounded-lg bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-colors">
+                      <a 
+                        href={story.externalLink || 'https://amazon.com'} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="block w-full py-3 rounded-lg bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 transition-colors text-center"
+                      >
                         Read Story
-                      </button>
+                      </a>
                     </div>
                   </div>
                 </Link>

@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useTheme } from '../components/theme';
-import { FiSun, FiMoon, FiMenu, FiX } from 'react-icons/fi';
+import { FiSun, FiMoon, FiMenu, FiX, FiHome, FiUser, FiBook, FiImage, FiBookOpen, FiArchive } from 'react-icons/fi';
 import Head from 'next/head';
+import Image from 'next/image';
 
 const Navbar = () => {
   const [mounted, setMounted] = useState(false);
@@ -12,8 +13,22 @@ const Navbar = () => {
   const [lastScrollY, setLastScrollY] = useState(0);
   const { theme, toggleTheme } = useTheme();
   const router = useRouter();
+  const menuRef = useRef(null);
 
   useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     const controlNavbar = () => {
@@ -54,18 +69,24 @@ const Navbar = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex-shrink-0 flex items-center">
-              <Link href="/" className="flex items-center space-x-2 transform hover:scale-105 transition-transform duration-200">
-                <span className="text-xl font-bold text-primary">Bernice Arthur</span>
+              <Link href="/" className="flex items-center transform hover:scale-105 transition-transform duration-200">
+                <Image
+                  src={theme === 'dark' ? '/images/dark.svg' : '/images/light.svg'}
+                  alt="Bernice Arthur"
+                  width={200}
+                  height={60}
+                  className="w-28 sm:w-36 h-auto"
+                />
               </Link>
             </div>
 
             <div className="hidden md:flex items-center space-x-8">
-              <Link href="/" className={`nav-link relative pb-1 hover:pb-2 after:content-[''] after:absolute after:w-full after:h-0.5 after:bottom-0 after:left-0 after:bg-accent after:transition-transform after:duration-300 ${isActive('/') ? 'pb-2 after:scale-x-100' : 'after:scale-x-0 after:origin-bottom-right hover:after:scale-x-100 hover:after:origin-bottom-left'}`}>Home</Link>
-              <Link href="/about" className={`nav-link relative pb-1 hover:pb-2 after:content-[''] after:absolute after:w-full after:h-0.5 after:bottom-0 after:left-0 after:bg-accent after:transition-transform after:duration-300 ${isActive('/about') ? 'pb-2 after:scale-x-100' : 'after:scale-x-0 after:origin-bottom-right hover:after:scale-x-100 hover:after:origin-bottom-left'}`}>About</Link>
-              <Link href="/blog" className={`nav-link relative pb-1 hover:pb-2 after:content-[''] after:absolute after:w-full after:h-0.5 after:bottom-0 after:left-0 after:bg-accent after:transition-transform after:duration-300 ${isActive('/blog') ? 'pb-2 after:scale-x-100' : 'after:scale-x-0 after:origin-bottom-right hover:after:scale-x-100 hover:after:origin-bottom-left'}`}>Blog</Link>
-              <Link href="/gallery" className={`nav-link relative pb-1 hover:pb-2 after:content-[''] after:absolute after:w-full after:h-0.5 after:bottom-0 after:left-0 after:bg-accent after:transition-transform after:duration-300 ${isActive('/gallery') ? 'pb-2 after:scale-x-100' : 'after:scale-x-0 after:origin-bottom-right hover:after:scale-x-100 hover:after:origin-bottom-left'}`}>Gallery</Link>
-              <Link href="/stories" className={`nav-link relative pb-1 hover:pb-2 after:content-[''] after:absolute after:w-full after:h-0.5 after:bottom-0 after:left-0 after:bg-accent after:transition-transform after:duration-300 ${isActive('/stories') ? 'pb-2 after:scale-x-100' : 'after:scale-x-0 after:origin-bottom-right hover:after:scale-x-100 hover:after:origin-bottom-left'}`}>Stories</Link>
-              <Link href="/archives" className={`nav-link relative pb-1 hover:pb-2 after:content-[''] after:absolute after:w-full after:h-0.5 after:bottom-0 after:left-0 after:bg-accent after:transition-transform after:duration-300 ${isActive('/archives') ? 'pb-2 after:scale-x-100' : 'after:scale-x-0 after:origin-bottom-right hover:after:scale-x-100 hover:after:origin-bottom-left'}`}>Archives</Link>
+              <Link href="/" className={`nav-link relative pb-1 hover:pb-2 after:content-[''] after:absolute after:w-full after:h-0.5 after:bottom-0 after:left-0 after:bg-accent after:transition-transform after:duration-300 ${isActive('/') ? 'pb-2 after:scale-x-100' : 'after:scale-x-0 after:origin-bottom-right hover:after:scale-x-100 hover:after:origin-bottom-left'} ${theme === 'light' ? 'text-black' : 'text-primary'}`}>Home</Link>
+              <Link href="/about" className={`nav-link relative pb-1 hover:pb-2 after:content-[''] after:absolute after:w-full after:h-0.5 after:bottom-0 after:left-0 after:bg-accent after:transition-transform after:duration-300 ${isActive('/about') ? 'pb-2 after:scale-x-100' : 'after:scale-x-0 after:origin-bottom-right hover:after:scale-x-100 hover:after:origin-bottom-left'} ${theme === 'light' ? 'text-black' : 'text-primary'}`}>About</Link>
+              <Link href="/blog" className={`nav-link relative pb-1 hover:pb-2 after:content-[''] after:absolute after:w-full after:h-0.5 after:bottom-0 after:left-0 after:bg-accent after:transition-transform after:duration-300 ${isActive('/blog') ? 'pb-2 after:scale-x-100' : 'after:scale-x-0 after:origin-bottom-right hover:after:scale-x-100 hover:after:origin-bottom-left'} ${theme === 'light' ? 'text-black' : 'text-primary'}`}>Blog</Link>
+              <Link href="/gallery" className={`nav-link relative pb-1 hover:pb-2 after:content-[''] after:absolute after:w-full after:h-0.5 after:bottom-0 after:left-0 after:bg-accent after:transition-transform after:duration-300 ${isActive('/gallery') ? 'pb-2 after:scale-x-100' : 'after:scale-x-0 after:origin-bottom-right hover:after:scale-x-100 hover:after:origin-bottom-left'} ${theme === 'light' ? 'text-black' : 'text-primary'}`}>Gallery</Link>
+              <Link href="/stories" className={`nav-link relative pb-1 hover:pb-2 after:content-[''] after:absolute after:w-full after:h-0.5 after:bottom-0 after:left-0 after:bg-accent after:transition-transform after:duration-300 ${isActive('/stories') ? 'pb-2 after:scale-x-100' : 'after:scale-x-0 after:origin-bottom-right hover:after:scale-x-100 hover:after:origin-bottom-left'} ${theme === 'light' ? 'text-black' : 'text-primary'}`}>Stories</Link>
+              <Link href="/archives" className={`nav-link relative pb-1 hover:pb-2 after:content-[''] after:absolute after:w-full after:h-0.5 after:bottom-0 after:left-0 after:bg-accent after:transition-transform after:duration-300 ${isActive('/archives') ? 'pb-2 after:scale-x-100' : 'after:scale-x-0 after:origin-bottom-right hover:after:scale-x-100 hover:after:origin-bottom-left'} ${theme === 'light' ? 'text-black' : 'text-primary'}`}>Archives</Link>
             </div>
 
             <div className="hidden md:flex items-center space-x-4">
@@ -76,14 +97,11 @@ const Navbar = () => {
                   aria-label="Toggle theme"
                 >
                   {theme === 'dark' ? 
-                    <FiSun className="h-5 w-5 text-accent" /> : 
+                    <FiSun className="h-5 w-5 text-white" /> : 
                     <FiMoon className="h-5 w-5 text-primary" />
                   }
                 </button>
               )}
-              <Link href="/login" className="px-4 py-2 bg-accent hover:bg-accent-hover text-white rounded-full transition-all duration-300 hover:shadow-lg transform hover:-translate-y-0.5">
-                Login
-              </Link>
             </div>
 
             <div className="md:hidden flex items-center space-x-4">
@@ -94,32 +112,109 @@ const Navbar = () => {
                   aria-label="Toggle theme"
                 >
                   {theme === 'dark' ? 
-                    <FiSun className="h-5 w-5 text-accent" /> : 
+                    <FiSun className="h-5 w-5 text-white" /> : 
                     <FiMoon className="h-5 w-5 text-primary" />
                   }
                 </button>
               )}
-              <button onClick={toggleMenu} className="p-2 rounded-md text-primary hover:bg-border transition-colors duration-300">
+              <button 
+                onClick={toggleMenu} 
+                className="p-2 rounded-md text-primary hover:bg-border transition-colors duration-300"
+                aria-label="Toggle menu"
+              >
                 {isOpen ? <FiX className="h-6 w-6 transform rotate-0 transition-transform duration-300" /> : <FiMenu className="h-6 w-6 transform rotate-180 transition-transform duration-300" />}
               </button>
             </div>
           </div>
         </div>
 
-        {/* Mobile menu */}
+        {/* Enhanced Mobile menu */}
         <div 
-          className={`md:hidden transform transition-all duration-300 ease-in-out ${
-            isOpen ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full'
-          } ${isOpen ? 'block' : 'hidden'} bg-main shadow-lg w-1/2 absolute right-0 top-[5rem]`}
+          ref={menuRef}
+          className={`md:hidden fixed top-0 right-0 h-screen w-1/2 bg-main shadow-lg transform transition-all duration-500 ease-in-out ${
+            isOpen 
+              ? 'translate-x-0 opacity-100' 
+              : 'translate-x-full opacity-0'
+          }`}
+          style={{
+            transform: isOpen ? 'translateX(0)' : 'translateX(100%)',
+            opacity: isOpen ? 1 : 0,
+            transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease-in-out',
+            maxHeight: '100vh',
+            overflowY: 'auto'
+          }}
         >
-          <div className="px-4 py-3 space-y-0">
-            <Link href="/" className={`block px-3 py-3 border-y border-border transform transition-all duration-200 text-center hover:bg-border ${isActive('/') ? 'bg-border text-accent' : 'text-primary'}`}>Home</Link>
-            <Link href="/about" className={`block px-3 py-3 border-b border-border transform transition-all duration-200 text-center hover:bg-border ${isActive('/about') ? 'bg-border text-accent' : 'text-primary'}`}>About</Link>
-            <Link href="/blog" className={`block px-3 py-3 border-b border-border transform transition-all duration-200 text-center hover:bg-border ${isActive('/blog') ? 'bg-border text-accent' : 'text-primary'}`}>Blog</Link>
-            <Link href="/gallery" className={`block px-3 py-3 border-b border-border transform transition-all duration-200 text-center hover:bg-border ${isActive('/gallery') ? 'bg-border text-accent' : 'text-primary'}`}>Gallery</Link>
-            <Link href="/stories" className={`block px-3 py-3 border-b border-border transform transition-all duration-200 text-center hover:bg-border ${isActive('/stories') ? 'bg-border text-accent' : 'text-primary'}`}>Stories</Link>
-            <Link href="/archives" className={`block px-3 py-3 border-b border-border transform transition-all duration-200 text-center hover:bg-border ${isActive('/archives') ? 'bg-border text-accent' : 'text-primary'}`}>Archives</Link>
-            <Link href="/login" className={`block px-3 py-3 border-b border-border transform transition-all duration-200 text-center hover:bg-border ${isActive('/login') ? 'bg-border text-accent' : 'text-primary'}`}>Login</Link>
+          <div className="flex flex-col h-full">
+            <div className="flex justify-end p-4">
+              <button 
+                onClick={toggleMenu}
+                className="p-2 rounded-md text-primary hover:bg-border transition-colors duration-300"
+              >
+                <FiX className="h-6 w-6" />
+              </button>
+            </div>
+            <div className="flex-1 flex flex-col justify-center px-4 space-y-6">
+              <Link 
+                href="/" 
+                className={`text-lg transform transition-all duration-300 hover:scale-105 flex items-center space-x-3 ${
+                  isActive('/') ? 'text-accent font-bold' : 'text-primary'
+                }`}
+                onClick={() => setIsOpen(false)}
+              >
+                <FiHome className="h-5 w-5" />
+                <span>Home</span>
+              </Link>
+              <Link 
+                href="/about" 
+                className={`text-lg transform transition-all duration-300 hover:scale-105 flex items-center space-x-3 ${
+                  isActive('/about') ? 'text-accent font-bold' : 'text-primary'
+                }`}
+                onClick={() => setIsOpen(false)}
+              >
+                <FiUser className="h-5 w-5" />
+                <span>About</span>
+              </Link>
+              <Link 
+                href="/blog" 
+                className={`text-lg transform transition-all duration-300 hover:scale-105 flex items-center space-x-3 ${
+                  isActive('/blog') ? 'text-accent font-bold' : 'text-primary'
+                }`}
+                onClick={() => setIsOpen(false)}
+              >
+                <FiBook className="h-5 w-5" />
+                <span>Blog</span>
+              </Link>
+              <Link 
+                href="/gallery" 
+                className={`text-lg transform transition-all duration-300 hover:scale-105 flex items-center space-x-3 ${
+                  isActive('/gallery') ? 'text-accent font-bold' : 'text-primary'
+                }`}
+                onClick={() => setIsOpen(false)}
+              >
+                <FiImage className="h-5 w-5" />
+                <span>Gallery</span>
+              </Link>
+              <Link 
+                href="/stories" 
+                className={`text-lg transform transition-all duration-300 hover:scale-105 flex items-center space-x-3 ${
+                  isActive('/stories') ? 'text-accent font-bold' : 'text-primary'
+                }`}
+                onClick={() => setIsOpen(false)}
+              >
+                <FiBookOpen className="h-5 w-5" />
+                <span>Stories</span>
+              </Link>
+              <Link 
+                href="/archives" 
+                className={`text-lg transform transition-all duration-300 hover:scale-105 flex items-center space-x-3 ${
+                  isActive('/archives') ? 'text-accent font-bold' : 'text-primary'
+                }`}
+                onClick={() => setIsOpen(false)}
+              >
+                <FiArchive className="h-5 w-5" />
+                <span>Archives</span>
+              </Link>
+            </div>
           </div>
         </div>
       </nav>

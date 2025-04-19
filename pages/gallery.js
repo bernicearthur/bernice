@@ -3,9 +3,9 @@ import Head from 'next/head';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useTheme } from 'next-themes';
-import Layout from '../components/layout';
 import MasonryGrid from '../components/MasonryGrid';
 import { FiSearch } from 'react-icons/fi';
+import Layout from '../components/layout';
 
 // Create an array of available images with more specific categorization
 const LOCAL_IMAGES = [
@@ -92,23 +92,6 @@ function GalleryPage() {
       </Head>
 
       <div className="min-h-screen pt-8">
-        {/* Minimal Search */}
-        <div className="max-w-xl mx-auto px-4 mb-12 mt-4">
-          <motion.div className="relative"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-          >
-            <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-secondary" />
-            <input
-              type="text"
-              placeholder="Search creations..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-2 pl-12 rounded-full bg-border text-primary placeholder-secondary focus:outline-none focus:ring-2 focus:ring-accent transition-all text-sm"
-            />
-          </motion.div>
-        </div>
-
         {/* Content Grid */}
         <div className="max-w-7xl mx-auto px-4">
           <MasonryGrid

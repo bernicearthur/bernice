@@ -7,7 +7,7 @@ import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import { FiSearch, FiGrid, FiList, FiGithub, FiExternalLink, FiHeart, FiEye, FiAward, FiUsers, FiTrendingUp, FiActivity, FiMapPin } from 'react-icons/fi';
 import Head from 'next/head';
 
-const projectTypes = ['All', 'Archive', 'Platform', 'Documentation'];
+const statusTypes = ['All', 'Active', 'Completed', 'On Hold'];
 
 const ITEMS_PER_PAGE = 6;
 
@@ -29,7 +29,7 @@ const ArchiveCard = ({ project, onProjectClick }) => {
   return (
     <motion.div
       className="group relative bg-gradient-to-br from-card-bg via-card-bg to-accent/5 rounded-2xl shadow-lg overflow-hidden 
-        border border-white/[0.05] dark:border-white/[0.02] backdrop-blur-sm"
+        border border-white/[0.05] dark:border-white/[0.02] backdrop-blur-sm cursor-pointer"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
@@ -39,6 +39,7 @@ const ArchiveCard = ({ project, onProjectClick }) => {
       }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
+      onClick={() => onProjectClick(project.id)}
     >
       {/* Decorative Elements */}
       <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full -mr-16 -mt-16 blur-2xl" />
@@ -91,12 +92,24 @@ const ArchiveCard = ({ project, onProjectClick }) => {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
           >
-            <span className={`w-2 h-2 rounded-full ${
-              project.status === 'live' ? 'bg-green-400' :
-              project.status === 'beta' ? 'bg-yellow-400' :
-              'bg-purple-400'
-            }`} />
-            <span className="text-xs text-white font-medium">{project.type}</span>
+            {project.status === 'active' && (
+              <>
+                <span className="text-green-400">🟢</span>
+                <span className="text-xs text-white font-medium">Active</span>
+              </>
+            )}
+            {project.status === 'completed' && (
+              <>
+                <span className="text-blue-400">✅</span>
+                <span className="text-xs text-white font-medium">Completed</span>
+              </>
+            )}
+            {project.status === 'on-hold' && (
+              <>
+                <span className="text-yellow-400">⏳</span>
+                <span className="text-xs text-white font-medium">On Hold</span>
+              </>
+            )}
           </motion.div>
 
           {/* Region Badge */}
@@ -131,65 +144,10 @@ const ArchiveCard = ({ project, onProjectClick }) => {
           <h3 className="text-2xl font-bold text-black dark:text-white">
             {project.title}
           </h3>
-          {project.impact?.communityEngagement === 'growing' && (
-            <div className="flex items-center gap-1 text-green-400 bg-green-400/10 px-2 py-1 rounded-full">
-              <FiUsers className="w-4 h-4" />
-              <span className="text-xs font-medium">Active</span>
-            </div>
-          )}
         </div>
 
         {/* Description */}
-        <p className="text-secondary line-clamp-2 mb-6">{project.description}</p>
-
-        {/* Methods Tags */}
-        <div className="flex flex-wrap gap-2 mb-6">
-          {project.methods?.map((method, index) => (
-            <motion.span 
-              key={index}
-              className="px-3 py-1 bg-accent/10 text-accent rounded-full text-xs font-medium border border-accent/20 hover:bg-accent/20 transition-colors"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: index * 0.1 }}
-            >
-              {method}
-            </motion.span>
-          ))}
-        </div>
-
-        {/* Stats and Action */}
-        <div className="flex items-center justify-between mt-auto">
-          <div className="flex items-center gap-4">
-            <motion.div 
-              className="flex items-center gap-1.5 text-secondary bg-secondary/5 px-3 py-1 rounded-full"
-              whileHover={{ scale: 1.05 }}
-            >
-              <FiHeart className="w-4 h-4" />
-              <span className="text-sm font-medium">{project.likes}</span>
-            </motion.div>
-            <motion.div 
-              className="flex items-center gap-1.5 text-secondary bg-secondary/5 px-3 py-1 rounded-full"
-              whileHover={{ scale: 1.05 }}
-            >
-              <FiEye className="w-4 h-4" />
-              <span className="text-sm font-medium">{project.views}</span>
-            </motion.div>
-          </div>
-          <motion.button
-            onClick={() => onProjectClick(project.id)}
-            className="relative group/button bg-accent hover:bg-accent-hover text-white px-6 py-2 rounded-full text-sm font-medium transition-colors overflow-hidden"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <span className="relative z-10">Explore</span>
-            <motion.div 
-              className="absolute inset-0 bg-white/20"
-              initial={{ x: '-100%' }}
-              whileHover={{ x: '100%' }}
-              transition={{ duration: 0.5 }}
-            />
-          </motion.button>
-        </div>
+        <p className="text-secondary line-clamp-7 mb-6">{project.description}</p>
 
         {/* Recognition */}
         {project.recognition && project.recognition.length > 0 && (
@@ -300,9 +258,9 @@ const ArchivesPage = () => {
           {
             id: 1,
             title: "Cultural Heritage Archive",
-            description: "A comprehensive digital archive preserving the cultural heritage of indigenous communities through interactive storytelling and modern preservation techniques.",
+            description: "A comprehensive digital archive preserving the cultural heritage of indigenous communities through interactive storytelling and modern preservation techniques. This project focuses on documenting traditional practices, oral histories, and cultural artifacts.",
             type: "Archive",
-            status: "live",
+            status: "active",
             location: "Kumasi",
             featured: true,
             images: [
@@ -311,16 +269,14 @@ const ArchivesPage = () => {
               "/images/bg1.jpg"
             ],
             methods: ["Digital Preservation", "Oral History", "Interactive Mapping"],
-            impact: { communityEngagement: "growing" },
-            likes: 234,
-            views: 1200
+            impact: { communityEngagement: "growing" }
           },
           {
             id: 2,
             title: "Indigenous Knowledge Platform",
-            description: "A collaborative platform for sharing and preserving indigenous knowledge systems, focusing on traditional practices and cultural wisdom.",
+            description: "A collaborative platform for sharing and preserving indigenous knowledge systems, focusing on traditional practices and cultural wisdom. The platform enables community members to contribute and access valuable cultural resources.",
             type: "Platform",
-            status: "beta",
+            status: "completed",
             location: "Tamale",
             featured: false,
             images: [
@@ -329,15 +285,14 @@ const ArchivesPage = () => {
               "/images/story.jpg"
             ],
             methods: ["Knowledge Management", "Community Engagement", "Digital Storytelling"],
-            likes: 189,
-            views: 890
+            impact: { communityEngagement: "established" }
           },
           {
             id: 3,
             title: "Cultural Documentation System",
-            description: "Advanced system for documenting and preserving cultural practices and traditions of local communities using modern technology.",
+            description: "Advanced system for documenting and preserving cultural practices and traditions of local communities using modern technology. Includes features for audio-visual recording, metadata management, and community feedback.",
             type: "Documentation",
-            status: "live",
+            status: "on-hold",
             location: "Cape Coast",
             featured: true,
             images: [
@@ -346,9 +301,55 @@ const ArchivesPage = () => {
               "/images/bg2.jpg"
             ],
             methods: ["Video Documentation", "Audio Recording", "Cultural Mapping"],
-            impact: { communityEngagement: "growing" },
-            likes: 312,
-            views: 1500
+            impact: { communityEngagement: "growing" }
+          },
+          {
+            id: 4,
+            title: "Traditional Music Archive",
+            description: "Digital repository of traditional music and dance performances from various ethnic groups. Features high-quality audio recordings, video documentation, and detailed cultural context for each performance.",
+            type: "Archive",
+            status: "active",
+            location: "Accra",
+            featured: false,
+            images: [
+              "/images/bg3.jpg",
+              "/images/projecthero.jpg",
+              "/images/bg1.jpg"
+            ],
+            methods: ["Audio Preservation", "Performance Documentation", "Cultural Context"],
+            impact: { communityEngagement: "growing" }
+          },
+          {
+            id: 5,
+            title: "Language Preservation Initiative",
+            description: "Interactive platform for preserving and teaching indigenous languages. Includes pronunciation guides, cultural context, and community-contributed content to ensure language survival for future generations.",
+            type: "Platform",
+            status: "active",
+            location: "Kumasi",
+            featured: true,
+            images: [
+              "/images/bg1.jpg",
+              "/images/bg2.jpg",
+              "/images/story.jpg"
+            ],
+            methods: ["Language Learning", "Community Contribution", "Cultural Education"],
+            impact: { communityEngagement: "established" }
+          },
+          {
+            id: 6,
+            title: "Cultural Heritage Mapping",
+            description: "Interactive digital map documenting significant cultural sites and landmarks. Combines historical data, community stories, and multimedia content to create an engaging cultural landscape.",
+            type: "Documentation",
+            status: "completed",
+            location: "Tamale",
+            featured: false,
+            images: [
+              "/images/projectbackground.jpg",
+              "/images/bg3.jpg",
+              "/images/bg1.jpg"
+            ],
+            methods: ["Geographic Mapping", "Historical Documentation", "Community Stories"],
+            impact: { communityEngagement: "growing" }
           }
         ];
         setProjects(exampleProjects);
@@ -365,8 +366,11 @@ const ArchivesPage = () => {
   const filteredProjects = projects.filter(project => {
     const matchesSearch = project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          project.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesType = selectedType === 'All' || project.type === selectedType;
-    return matchesSearch && matchesType;
+    const matchesStatus = selectedType === 'All' || 
+      (selectedType === 'Active' && project.status === 'active') ||
+      (selectedType === 'Completed' && project.status === 'completed') ||
+      (selectedType === 'On Hold' && project.status === 'on-hold');
+    return matchesSearch && matchesStatus;
   }).sort((a, b) => {
     // Sort featured projects first
     if (a.featured && !b.featured) return -1;
@@ -381,7 +385,7 @@ const ArchivesPage = () => {
 
   return (
     <motion.div 
-      className="min-h-screen bg-main"
+      className="min-h-screen bg-main flex flex-col"
       variants={pageVariants}
       initial="initial"
       animate="animate"
@@ -395,81 +399,31 @@ const ArchivesPage = () => {
       
       {/* Interactive Hero Section */}
       <motion.div 
-        style={{ opacity: heroOpacity, scale: heroScale }}
-        className={`relative bg-gradient-to-b ${timeBasedGradient} py-20 px-4 sm:px-6 lg:px-8 text-center overflow-hidden`}
-        variants={itemVariants}
+        className="relative bg-main py-12 px-4 sm:px-6 lg:px-8 text-center"
       >
-        <motion.div
-          style={{ y: titleY }}
-          className="relative z-10"
-        >
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring", duration: 0.8 }}
-            className="mb-6"
-          >
-            <FiGrid className="mx-auto text-6xl text-accent" />
-          </motion.div>
-          <motion.h1 
-            className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 text-black dark:text-white"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
+        <div className="relative z-10">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-primary mb-4">
             Disappearing Cultures
-          </motion.h1>
-          <motion.p 
-            className="text-lg sm:text-xl text-secondary max-w-2xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-          >
+          </h1>
+          <p className="text-lg sm:text-xl text-secondary max-w-2xl mx-auto">
             Explore my portfolio of innovative digital experiences, interactive archives, and experimental projects.
-          </motion.p>
-        </motion.div>
-
-        {/* Floating Elements Animation */}
-        <div className="absolute inset-0 pointer-events-none">
-          {[...Array(20)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute"
-              initial={{
-                x: Math.random() * 100 - 50 + '%',
-                y: Math.random() * 100 + '%',
-                scale: Math.random() * 0.5 + 0.5,
-                opacity: Math.random() * 0.3 + 0.1
-              }}
-              animate={{
-                y: [null, '-100%'],
-                opacity: [null, 0]
-              }}
-              transition={{
-                duration: Math.random() * 10 + 10,
-                repeat: Infinity,
-                ease: 'linear'
-              }}
-            >
-              {i % 3 === 0 ? '💻' : i % 3 === 1 ? '🎨' : '⚡'}
-            </motion.div>
-          ))}
+          </p>
         </div>
       </motion.div>
 
       {/* Main Content */}
       <motion.div 
-        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-grow"
         variants={itemVariants}
       >
         {/* Enhanced Filters Section */}
         <div className="w-full">
           <motion.div 
             variants={itemVariants}
-            className="flex flex-col md:flex-row justify-between items-center gap-4"
+            className="flex flex-col items-center gap-4"
           >
-            <div className="flex gap-2 flex-wrap w-full justify-center md:justify-start">
-              {projectTypes.map(type => (
+            <div className="flex gap-2 flex-wrap justify-center">
+              {statusTypes.map(type => (
                 <motion.button
                   key={type}
                   onClick={() => setSelectedType(type)}
@@ -485,15 +439,6 @@ const ArchivesPage = () => {
                 </motion.button>
               ))}
             </div>
-            <motion.input
-              type="text"
-              placeholder="Search projects..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full md:w-64 px-4 py-2 rounded-full bg-border text-primary placeholder-secondary focus:outline-none focus:ring-2 focus:ring-accent transition-all text-sm"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            />
           </motion.div>
 
           {/* Projects Grid */}
