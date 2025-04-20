@@ -81,12 +81,11 @@ const Navbar = () => {
             </div>
 
             <div className="hidden md:flex items-center space-x-8">
-              <Link href="/" className={`nav-link relative pb-1 hover:pb-2 after:content-[''] after:absolute after:w-full after:h-0.5 after:bottom-0 after:left-0 after:bg-accent after:transition-transform after:duration-300 ${isActive('/') ? 'pb-2 after:scale-x-100' : 'after:scale-x-0 after:origin-bottom-right hover:after:scale-x-100 hover:after:origin-bottom-left'} ${theme === 'light' ? 'text-black' : 'text-primary'}`}>Home</Link>
-              <Link href="/about" className={`nav-link relative pb-1 hover:pb-2 after:content-[''] after:absolute after:w-full after:h-0.5 after:bottom-0 after:left-0 after:bg-accent after:transition-transform after:duration-300 ${isActive('/about') ? 'pb-2 after:scale-x-100' : 'after:scale-x-0 after:origin-bottom-right hover:after:scale-x-100 hover:after:origin-bottom-left'} ${theme === 'light' ? 'text-black' : 'text-primary'}`}>About</Link>
-              <Link href="/blog" className={`nav-link relative pb-1 hover:pb-2 after:content-[''] after:absolute after:w-full after:h-0.5 after:bottom-0 after:left-0 after:bg-accent after:transition-transform after:duration-300 ${isActive('/blog') ? 'pb-2 after:scale-x-100' : 'after:scale-x-0 after:origin-bottom-right hover:after:scale-x-100 hover:after:origin-bottom-left'} ${theme === 'light' ? 'text-black' : 'text-primary'}`}>Blog</Link>
-              <Link href="/gallery" className={`nav-link relative pb-1 hover:pb-2 after:content-[''] after:absolute after:w-full after:h-0.5 after:bottom-0 after:left-0 after:bg-accent after:transition-transform after:duration-300 ${isActive('/gallery') ? 'pb-2 after:scale-x-100' : 'after:scale-x-0 after:origin-bottom-right hover:after:scale-x-100 hover:after:origin-bottom-left'} ${theme === 'light' ? 'text-black' : 'text-primary'}`}>Gallery</Link>
-              <Link href="/stories" className={`nav-link relative pb-1 hover:pb-2 after:content-[''] after:absolute after:w-full after:h-0.5 after:bottom-0 after:left-0 after:bg-accent after:transition-transform after:duration-300 ${isActive('/stories') ? 'pb-2 after:scale-x-100' : 'after:scale-x-0 after:origin-bottom-right hover:after:scale-x-100 hover:after:origin-bottom-left'} ${theme === 'light' ? 'text-black' : 'text-primary'}`}>Stories</Link>
-              <Link href="/archives" className={`nav-link relative pb-1 hover:pb-2 after:content-[''] after:absolute after:w-full after:h-0.5 after:bottom-0 after:left-0 after:bg-accent after:transition-transform after:duration-300 ${isActive('/archives') ? 'pb-2 after:scale-x-100' : 'after:scale-x-0 after:origin-bottom-right hover:after:scale-x-100 hover:after:origin-bottom-left'} ${theme === 'light' ? 'text-black' : 'text-primary'}`}>Archives</Link>
+              <Link href="/" className={`nav-link relative pb-1 hover:pb-2 after:content-[''] after:absolute after:w-full after:h-[3px] after:bottom-0 after:left-0 after:bg-accent after:transition-all after:duration-300 after:ease-out after:rounded-t-none after:rounded-b-[100%] ${isActive('/') ? 'pb-2 after:scale-100' : 'after:scale-0 hover:after:scale-100'} ${theme === 'light' ? 'text-black' : 'text-primary'}`}>Home</Link>
+              <Link href="/blog" className={`nav-link relative pb-1 hover:pb-2 after:content-[''] after:absolute after:w-full after:h-[3px] after:bottom-0 after:left-0 after:bg-accent after:transition-all after:duration-300 after:ease-out after:rounded-t-none after:rounded-b-[100%] ${isActive('/blog') ? 'pb-2 after:scale-100' : 'after:scale-0 hover:after:scale-100'} ${theme === 'light' ? 'text-black' : 'text-primary'}`}>Blog</Link>
+              <Link href="/gallery" className={`nav-link relative pb-1 hover:pb-2 after:content-[''] after:absolute after:w-full after:h-[3px] after:bottom-0 after:left-0 after:bg-accent after:transition-all after:duration-300 after:ease-out after:rounded-t-none after:rounded-b-[100%] ${isActive('/gallery') ? 'pb-2 after:scale-100' : 'after:scale-0 hover:after:scale-100'} ${theme === 'light' ? 'text-black' : 'text-primary'}`}>Gallery</Link>
+              <Link href="/stories" className={`nav-link relative pb-1 hover:pb-2 after:content-[''] after:absolute after:w-full after:h-[3px] after:bottom-0 after:left-0 after:bg-accent after:transition-all after:duration-300 after:ease-out after:rounded-t-none after:rounded-b-[100%] ${isActive('/stories') ? 'pb-2 after:scale-100' : 'after:scale-0 hover:after:scale-100'} ${theme === 'light' ? 'text-black' : 'text-primary'}`}>Stories</Link>
+              <Link href="/archives" className={`nav-link relative pb-1 hover:pb-2 after:content-[''] after:absolute after:w-full after:h-[3px] after:bottom-0 after:left-0 after:bg-accent after:transition-all after:duration-300 after:ease-out after:rounded-t-none after:rounded-b-[100%] ${isActive('/archives') ? 'pb-2 after:scale-100' : 'after:scale-0 hover:after:scale-100'} ${theme === 'light' ? 'text-black' : 'text-primary'}`}>Archives</Link>
             </div>
 
             <div className="hidden md:flex items-center space-x-4">
@@ -163,16 +162,6 @@ const Navbar = () => {
               >
                 <FiHome className="h-5 w-5" />
                 <span>Home</span>
-              </Link>
-              <Link 
-                href="/about" 
-                className={`text-lg transform transition-all duration-300 hover:scale-105 flex items-center space-x-3 ${
-                  isActive('/about') ? 'text-accent font-bold' : 'text-primary'
-                }`}
-                onClick={() => setIsOpen(false)}
-              >
-                <FiUser className="h-5 w-5" />
-                <span>About</span>
               </Link>
               <Link 
                 href="/blog" 

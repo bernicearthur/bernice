@@ -77,6 +77,39 @@ const stories = [
 
 const genres = ['All', 'Fantasy', 'Personal', 'Adventure', 'Mystery'];
 
+const genreColors = {
+  'All': {
+    bg: 'bg-primary dark:bg-white',
+    border: 'border-primary dark:border-white',
+    hover: 'hover:bg-primary/10 dark:hover:bg-white/10',
+    activeText: 'text-white dark:text-black'
+  },
+  'Fantasy': {
+    bg: 'bg-purple-600',
+    border: 'border-purple-600',
+    hover: 'hover:bg-purple-600/10',
+    activeText: 'text-white'
+  },
+  'Personal': {
+    bg: 'bg-blue-600',
+    border: 'border-blue-600',
+    hover: 'hover:bg-blue-600/10',
+    activeText: 'text-white'
+  },
+  'Adventure': {
+    bg: 'bg-green-600',
+    border: 'border-green-600',
+    hover: 'hover:bg-green-600/10',
+    activeText: 'text-white'
+  },
+  'Mystery': {
+    bg: 'bg-red-600',
+    border: 'border-red-600',
+    hover: 'hover:bg-red-600/10',
+    activeText: 'text-white'
+  }
+};
+
 const StoriesPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('All');
@@ -178,30 +211,10 @@ const StoriesPage = () => {
               <motion.button
                 key={genre}
                 onClick={() => handleGenreChange(genre)}
-                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm transition-colors duration-300 ${
-                  selectedGenre === genre 
-                    ? `${
-                        genre === 'All' 
-                          ? 'bg-primary text-white dark:bg-white dark:text-black border-2 border-primary dark:border-white' 
-                          : `${
-                              genre === 'Fantasy' ? 'bg-purple-500 text-black border-2 border-purple-500 dark:text-white' :
-                              genre === 'Personal' ? 'bg-blue-500 text-black border-2 border-blue-500 dark:text-white' :
-                              genre === 'Adventure' ? 'bg-green-500 text-black border-2 border-green-500 dark:text-white' :
-                              genre === 'Mystery' ? 'bg-red-500 text-black border-2 border-red-500 dark:text-white' :
-                              'bg-gray-500 text-black border-2 border-gray-500 dark:text-white'
-                            }`
-                      }`
-                    : `${
-                        genre === 'All' 
-                          ? 'bg-main text-black dark:text-white border-2 border-primary dark:border-white hover:bg-primary hover:text-white dark:hover:bg-white dark:hover:text-black' 
-                          : `${
-                              genre === 'Fantasy' ? 'text-black border-2 border-purple-500/50 hover:bg-purple-500/10 dark:text-white' :
-                              genre === 'Personal' ? 'text-black border-2 border-blue-500/50 hover:bg-blue-500/10 dark:text-white' :
-                              genre === 'Adventure' ? 'text-black border-2 border-green-500/50 hover:bg-green-500/10 dark:text-white' :
-                              genre === 'Mystery' ? 'text-black border-2 border-red-500/50 hover:bg-red-500/10 dark:text-white' :
-                              'text-black border-2 border-gray-500/50 hover:bg-gray-500/10 dark:text-white'
-                            } bg-main`
-                      }`
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm transition-colors border-2 ${
+                  selectedGenre === genre
+                    ? `${genreColors[genre].bg} ${genreColors[genre].activeText} border-transparent`
+                    : `bg-transparent ${genreColors[genre].border} text-primary dark:text-white ${genreColors[genre].hover}`
                 }`}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -248,16 +261,8 @@ const StoriesPage = () => {
                   <div className="relative h-full flex flex-col p-6">
                     {/* Tags */}
                     <div className="flex gap-2 mb-auto">
-                      <span
-                        className={`px-3 py-1 text-xs rounded-full backdrop-blur-sm text-white ${
-                          story.genre === 'Fantasy' ? 'bg-purple-500/80' :
-                          story.genre === 'Personal' ? 'bg-blue-500/80' :
-                          story.genre === 'Adventure' ? 'bg-green-500/80' :
-                          story.genre === 'Mystery' ? 'bg-red-500/80' :
-                          'bg-gray-500/80'
-                        }`}
-                      >
-                        {story.genre}
+                      <span className={`inline-block px-4 py-1.5 text-xs font-medium text-white rounded-full ${genreColors[story.genre]?.bg || 'bg-accent'}`}>
+                        {story.genre.toUpperCase()}
                       </span>
                     </div>
 
