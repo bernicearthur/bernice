@@ -246,152 +246,136 @@ const BlogPost = () => {
       <Navbar />
 
       <article className="flex-grow">
-        {/* Hero Image */}
-        <div className="relative w-full h-[60vh]">
-          <Image
-            src={blogPost.image}
-            alt={blogPost.title}
-            fill
-            className="object-cover"
-            priority
-          />
-          <div className="absolute inset-0 bg-black bg-opacity-30" />
-        </div>
-
-        {/* Content */}
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-32 relative z-10">
+        {/* Article Header */}
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="card p-6 sm:p-8 bg-main"
+            className="text-center mb-8"
           >
-            {/* Header */}
-            <div className="mb-8">
-              <div className="flex items-center justify-between mb-4">
-                <span className={`px-4 py-2 rounded-full text-sm bg-border text-primary hover:bg-accent hover:text-white transition-all`}>
-                  {blogPost.category}
-                </span>
-                <div className="relative">
-                  <button
-                    onClick={toggleShareMenu}
-                    className="text-secondary hover:text-accent p-2 rounded-full hover:bg-border/50"
-                  >
-                    <FiShare2 className="text-xl" />
-                  </button>
-                  {showShareMenu && (
-                    <motion.div 
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      ref={shareMenuRef}
-                      className="absolute right-0 mt-2 w-48 bg-border shadow-lg rounded-lg overflow-hidden"
-                    >
-                      <button 
-                        onClick={() => handleShare('facebook')} 
-                        className="w-full text-left px-4 py-3 hover:bg-main text-primary flex items-center gap-2 transition-colors"
-                      >
-                        <FiFacebook className="text-accent" /> Facebook
-                      </button>
-                      <button 
-                        onClick={() => handleShare('linkedin')} 
-                        className="w-full text-left px-4 py-3 hover:bg-main text-primary flex items-center gap-2 transition-colors"
-                      >
-                        <FiLinkedin className="text-accent" /> LinkedIn
-                      </button>
-                      <button 
-                        onClick={() => handleShare('whatsapp')} 
-                        className="w-full text-left px-4 py-3 hover:bg-main text-primary flex items-center gap-2 transition-colors"
-                      >
-                        <FaWhatsapp className="text-accent" /> WhatsApp
-                      </button>
-                      <button 
-                        onClick={() => handleShare('instagram')} 
-                        className="w-full text-left px-4 py-3 hover:bg-main text-primary flex items-center gap-2 transition-colors"
-                      >
-                        <FiInstagram className="text-accent" /> Instagram
-                      </button>
-                      <button 
-                        onClick={() => handleShare('copy')} 
-                        className="w-full text-left px-4 py-3 hover:bg-main text-primary flex items-center gap-2 transition-colors"
-                      >
-                        <FiLink className="text-accent" /> Copy Link
-                      </button>
-                    </motion.div>
-                  )}
-                </div>
-              </div>
-              <h1 className="text-3xl sm:text-4xl font-bold text-primary mb-4">{blogPost.title}</h1>
-              
-              {/* Author Info */}
-              <div className="flex items-center gap-4">
-                <Image
-                  src={blogPost.author.image}
-                  alt={blogPost.author.name}
-                  width={48}
-                  height={48}
-                  className="rounded-full"
-                />
-                <div>
-                  <p className="text-primary font-medium">{blogPost.author.name}</p>
-                  <div className="flex items-center text-secondary text-sm gap-2">
-                    <span>{new Date(blogPost.publishDate).toLocaleDateString()}</span>
-                    <span>•</span>
-                    <span>{blogPost.readTime} read</span>
-                  </div>
+            <div className="inline-flex items-center px-4 py-2 rounded-full bg-accent/10 text-accent text-sm font-medium mb-6">
+              <span className="w-2 h-2 rounded-full bg-accent animate-pulse mr-2" />
+              {blogPost.category}
+            </div>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary mb-6 leading-tight">
+              {blogPost.title}
+            </h1>
+            
+            {/* Author Info */}
+            <div className="flex items-center justify-center gap-4 mb-8">
+              <Image
+                src={blogPost.author.image}
+                alt={blogPost.author.name}
+                width={48}
+                height={48}
+                className="rounded-full"
+              />
+              <div className="text-left">
+                <p className="text-primary font-medium">{blogPost.author.name}</p>
+                <div className="flex items-center text-secondary text-sm gap-2">
+                  <span>{new Date(blogPost.publishDate).toLocaleDateString()}</span>
+                  <span>•</span>
+                  <span>{blogPost.readTime} read</span>
                 </div>
               </div>
             </div>
+          </motion.div>
 
+          {/* Featured Image */}
+          <div className="relative w-full h-[400px] rounded-2xl overflow-hidden mb-8">
+            <Image
+              src={blogPost.image}
+              alt={blogPost.title}
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-card-bg border border-border rounded-2xl p-8 mb-8"
+          >
             {/* Blog Content */}
             <div 
-              className="prose prose-lg dark:prose-invert max-w-none mb-8 bg-main/30 p-6 rounded-lg"
+              className="prose prose-lg dark:prose-invert max-w-none mb-8"
               dangerouslySetInnerHTML={{ __html: blogPost.content }}
             />
 
-            {/* Engagement Section */}
-            <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-8 mb-4 py-6 border-y border-border">
-              <button
-                onClick={handleLike}
-                className={`flex items-center ${liked ? 'text-red-500' : 'text-secondary hover:text-red-500'} transition-colors hover:scale-105`}
-                title="Like this post"
-              >
-                <FiHeart className={`w-5 h-5 ${liked ? 'fill-current' : ''}`} />
-                <span className="ml-2 hidden sm:inline">{blogPost.likes + (liked ? 1 : 0)} likes</span>
-                <span className="ml-2 sm:hidden">{blogPost.likes + (liked ? 1 : 0)}</span>
-              </button>
-
-              <div 
-                className="flex items-center text-secondary hover:text-primary transition-colors hover:scale-105"
-                title="Comments"
-              >
-                <FiMessageCircle className="w-5 h-5" />
-                <span className="ml-2 hidden sm:inline">{blogPost.comments.length} comments</span>
-                <span className="ml-2 sm:hidden">{blogPost.comments.length}</span>
+            {/* Share Section */}
+            <div className="flex items-center justify-between pt-8 border-t border-border">
+              <div className="flex items-center gap-4">
+                <span className="text-secondary text-sm">Share this article:</span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleShare('twitter')}
+                    className="p-2 rounded-full bg-border hover:bg-accent hover:text-white transition-colors"
+                  >
+                    <FiTwitter className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => handleShare('facebook')}
+                    className="p-2 rounded-full bg-border hover:bg-accent hover:text-white transition-colors"
+                  >
+                    <FiFacebook className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => handleShare('linkedin')}
+                    className="p-2 rounded-full bg-border hover:bg-accent hover:text-white transition-colors"
+                  >
+                    <FiLinkedin className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => handleShare('copy')}
+                    className="p-2 rounded-full bg-border hover:bg-accent hover:text-white transition-colors"
+                  >
+                    <FiLink className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
               
-              <div 
-                className="flex items-center text-secondary hover:text-primary transition-colors hover:scale-105"
-                title="View count"
+              <button
+                onClick={handleLike}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-colors ${
+                  liked 
+                    ? 'border-red-500 text-red-500 bg-red-50 dark:bg-red-900/20' 
+                    : 'border-border text-secondary hover:text-red-500 hover:border-red-500'
+                }`}
               >
-                <FiEye className="w-5 h-5" />
-                <span className="ml-2 hidden sm:inline">{blogPost.views} views</span>
-                <span className="ml-2 sm:hidden">{blogPost.views}</span>
-              </div>
+                <FiHeart className={`w-5 h-5 ${liked ? 'fill-current' : ''}`} />
+                <span>{blogPost.likes + (liked ? 1 : 0)}</span>
+              </button>
             </div>
+          </motion.div>
 
-            {/* Comments Section */}
-            <div className="py-6">
+          {/* Comments Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-card-bg border border-border rounded-2xl p-8"
+          >
+            <div className="flex items-center gap-4 mb-6">
               <h3 className="text-xl font-semibold text-primary mb-4">Comments</h3>
+              <span className="px-3 py-1 bg-accent/10 text-accent text-sm rounded-full">
+                {blogPost.comments.length}
+              </span>
+            </div>
+            
               <form onSubmit={handleComment} className="mb-8">
                 <textarea
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
                   placeholder="Share your thoughts..."
-                  className="w-full p-4 rounded-lg bg-main border border-border text-primary focus:outline-none focus:ring-2 focus:ring-accent placeholder-secondary/50 resize-none"
+                  className="w-full p-4 rounded-xl bg-main border border-border text-primary focus:outline-none focus:ring-2 focus:ring-accent placeholder-secondary/50 resize-none"
                   rows={3}
                 />
                 <button
                   type="submit"
-                  className="mt-3 px-6 py-2 bg-accent text-white rounded-full hover:bg-opacity-90 transition-colors"
+                  className="mt-3 px-6 py-2 bg-accent text-white rounded-xl hover:bg-accent-hover transition-colors"
                 >
                   Post Comment
                 </button>
@@ -401,7 +385,7 @@ const BlogPost = () => {
                 {blogPost.comments.map((comment, index) => (
                   <div key={comment.id}>
                     <div className="space-y-4">
-                      <div className="p-4 rounded-lg border border-border">
+                      <div className="p-4 rounded-xl border border-border">
                         <div className="flex items-start gap-3">
                           {comment.author === blogPost.author.name ? (
                             <Image
@@ -463,20 +447,20 @@ const BlogPost = () => {
                             value={replyText}
                             onChange={(e) => setReplyText(e.target.value)}
                             placeholder="Write a reply..."
-                            className="w-full p-4 rounded-lg bg-main border border-border text-primary focus:outline-none focus:ring-2 focus:ring-accent placeholder-secondary/50"
+                            className="w-full p-4 rounded-xl bg-main border border-border text-primary focus:outline-none focus:ring-2 focus:ring-accent placeholder-secondary/50"
                             rows={2}
                           />
                           <div className="flex gap-2 mt-2">
                             <button
                               type="submit"
-                              className="px-4 py-1.5 bg-accent text-white rounded-full hover:bg-opacity-90 text-sm"
+                              className="px-4 py-1.5 bg-accent text-white rounded-xl hover:bg-accent-hover text-sm"
                             >
                               Post Reply
                             </button>
                             <button
                               type="button"
                               onClick={() => setReplyingTo(null)}
-                              className="px-4 py-1.5 bg-border text-primary rounded-full hover:bg-opacity-90 text-sm"
+                              className="px-4 py-1.5 bg-border text-primary rounded-xl hover:bg-opacity-90 text-sm"
                             >
                               Cancel
                             </button>
@@ -490,7 +474,7 @@ const BlogPost = () => {
                           <div className="ml-4 sm:ml-14 w-px h-4 bg-border" />
                           <div className="ml-4 sm:ml-14 space-y-3">
                             {comment.replies.map((reply) => (
-                              <div key={reply.id} className="p-4 rounded-lg border border-border">
+                              <div key={reply.id} className="p-4 rounded-xl border border-border">
                                 <div className="flex items-start gap-3">
                                   {reply.author === blogPost.author.name ? (
                                     <Image
@@ -557,13 +541,13 @@ const BlogPost = () => {
                                   value={replyToReplyText}
                                   onChange={(e) => setReplyToReplyText(e.target.value)}
                                   placeholder="Write a reply..."
-                                  className="w-full p-4 rounded-lg bg-main border border-border text-primary focus:outline-none focus:ring-2 focus:ring-accent placeholder-secondary/50"
+                                  className="w-full p-4 rounded-xl bg-main border border-border text-primary focus:outline-none focus:ring-2 focus:ring-accent placeholder-secondary/50"
                                   rows={2}
                                 />
                                 <div className="flex gap-2 mt-2">
                                   <button
                                     type="submit"
-                                    className="px-4 py-1.5 bg-accent text-white rounded-full hover:bg-opacity-90 text-sm"
+                                    className="px-4 py-1.5 bg-accent text-white rounded-xl hover:bg-accent-hover text-sm"
                                   >
                                     Post Reply
                                   </button>
@@ -573,7 +557,7 @@ const BlogPost = () => {
                                       setReplyingToReply(null);
                                       setReplyToReplyText('');
                                     }}
-                                    className="px-4 py-1.5 bg-border text-primary rounded-full hover:bg-opacity-90 text-sm"
+                                    className="px-4 py-1.5 bg-border text-primary rounded-xl hover:bg-opacity-90 text-sm"
                                   >
                                     Cancel
                                   </button>
@@ -590,60 +574,53 @@ const BlogPost = () => {
                   </div>
                 ))}
               </div>
-            </div>
           </motion.div>
         </div>
 
         {/* Read Next Section */}
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 my-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 my-16">
           <h2 className="text-2xl font-bold text-primary mb-6">Read Next</h2>
           <motion.div
             variants={container}
             initial="hidden"
             animate="show"
-            className="grid grid-cols-1 sm:grid-cols-2 gap-8"
+            className="grid grid-cols-1 md:grid-cols-2 gap-8"
           >
             {blogPost.relatedPosts.map((post) => (
               <motion.div
                 key={post.id}
                 variants={item}
-                className="card p-6 hover:transform hover:scale-105 transition-transform duration-300"
+                className="bg-card-bg border border-border rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-accent/30"
               >
                 <Link href={`/blogpost/${post.id}`} className="block">
-                  <div className="relative overflow-hidden">
+                  <div className="relative h-48 overflow-hidden">
                     <Image
                       src={post.image}
                       alt={post.title}
-                      width={500}
-                      height={300}
-                      className="w-full h-48 sm:h-56 object-cover transform hover:scale-110 transition-transform duration-500"
+                      fill
+                      className="object-cover transition-transform duration-500 hover:scale-105"
                     />
                   </div>
-                  <div className="p-3 sm:p-4">
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <p className="text-secondary text-xs italic mb-2">
-                        On {new Date(post.publishDate).getDate()}, {new Date(post.publishDate).toLocaleString('default', { month: 'short' })}, {new Date(post.publishDate).getFullYear()}
-                      </p>
-                      <h3 className="text-primary font-semibold text-lg sm:text-xl uppercase tracking-wider mb-2 font-['Times_New_Roman']">{post.title}</h3>
-                      <div className="border-b border-gray-300 dark:border-gray-600 my-2"></div>
-                      <div className="flex flex-wrap items-center text-secondary text-xs sm:text-sm uppercase gap-y-2">
-                        <span className="font-medium mr-4 text-primary">{post.category}</span>
-                        <span className="hidden sm:inline text-secondary">|</span>
-                        <span className="ml-0 sm:ml-4 flex items-center gap-1">
-                          <FiMessageCircle className="text-base sm:text-lg" /> {post.comments}
-                        </span>
-                        <span className="mx-4 flex items-center gap-1">
-                          <FiEye className="text-base sm:text-lg" /> {post.views}
+                  <div className="p-6">
+                    <div className="flex items-center text-secondary text-sm mb-3">
+                      <time>{new Date(post.publishDate).toLocaleDateString()}</time>
+                      <span className="mx-2">•</span>
+                      <span>{post.category}</span>
+                    </div>
+                    <h3 className="text-xl font-bold text-primary mb-3 hover:text-accent transition-colors">
+                      {post.title}
+                    </h3>
+                    <div className="flex items-center justify-between text-sm text-secondary">
+                      <div className="flex items-center gap-4">
+                        <span className="flex items-center gap-1">
+                          <FiHeart className="w-4 h-4" /> {post.likes}
                         </span>
                         <span className="flex items-center gap-1">
-                          <FiHeart className="text-base sm:text-lg" /> {post.likes}
+                          <FiMessageCircle className="w-4 h-4" /> {post.comments}
                         </span>
                       </div>
-                    </motion.div>
+                      <span className="text-accent font-medium">Read more →</span>
+                    </div>
                   </div>
                 </Link>
               </motion.div>

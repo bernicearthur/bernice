@@ -64,10 +64,10 @@ const Navbar = () => {
       <Head>
         <link rel="icon" href="/icons/favicon.png" type="image/png" />
       </Head>
-      <div className="h-24" /> {/* Spacer to prevent content jump */}
-      <nav className={`fixed top-0 left-0 right-0 z-50 bg-main shadow-md py-4 transition-transform duration-300 ${show ? 'translate-y-0' : '-translate-y-full'}`}>
+      <div className="h-16" /> {/* Spacer to prevent content jump */}
+      <nav className={`fixed top-0 left-0 right-0 z-50 bg-main py-2 transition-transform duration-300 ${show ? 'translate-y-0' : '-translate-y-full'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+          <div className="flex items-center justify-between h-12">
             <div className="flex-shrink-0 flex items-center">
               <Link href="/" className="flex items-center transform hover:scale-105 transition-transform duration-200">
                 <Image
@@ -75,7 +75,7 @@ const Navbar = () => {
                   alt="Bernice Arthur"
                   width={200}
                   height={60}
-                  className="w-28 sm:w-36 h-auto"
+                  className="w-24 sm:w-32 h-auto"
                 />
               </Link>
             </div>

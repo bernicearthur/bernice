@@ -138,53 +138,65 @@ const ITEMS_PER_PAGE = 8;
 const BlogCard = ({ blog, index }) => {
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    const month = date.toLocaleString('default', { month: 'long' });
+    const month = date.toLocaleString('default', { month: 'short' });
     const day = date.getDate();
     const year = date.getFullYear();
     return `${month} ${day}, ${year}`;
   };
 
   return (
-    <motion.div
+    <motion.article
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 }}
-      className="group relative aspect-[3/4] overflow-hidden rounded-lg"
+      className="group bg-card-bg border border-border rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-accent/30"
     >
-      <Link href={`/blogpost/${blog.id}`}>
-        {/* Background Image */}
-        <div className="absolute inset-0">
+      <Link href={`/blogpost/${blog.id}`} className="block">
+        {/* Featured Image */}
+        <div className="relative h-48 overflow-hidden">
           <Image
             src={blog.image}
             alt={blog.title}
             fill
-            className="object-cover transition-transform duration-700 group-hover:scale-110"
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
-          {/* Dark Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/30" />
+          <div className="absolute top-4 left-4">
+            <span className={`inline-block px-3 py-1 text-xs font-medium text-white rounded-full ${categoryColors[blog.category]?.bg || 'bg-accent'}`}>
+              {blog.category}
+            </span>
+          </div>
         </div>
 
         {/* Content */}
-        <div className="relative h-full p-6 flex flex-col">
-          {/* Category Tag */}
-          <div className="mb-auto">
-            <span className={`inline-block px-4 py-1.5 text-xs font-medium text-white rounded-full ${categoryColors[blog.category]?.bg || 'bg-accent'}`}>
-              {blog.category.toUpperCase()}
-            </span>
+        <div className="p-6">
+          <div className="flex items-center text-secondary text-sm mb-3">
+            <time dateTime={blog.publishDate}>{formatDate(blog.publishDate)}</time>
+            <span className="mx-2">•</span>
+            <span>5 min read</span>
           </div>
-
-          {/* Title and Date */}
-          <div className="mt-auto">
-            <h3 className="text-xl sm:text-2xl font-bold text-white mb-2 line-clamp-2 group-hover:text-accent/90 transition-colors">
-              {blog.title}
-            </h3>
-            <p className="text-sm text-gray-300">
-              {formatDate(blog.publishDate)}
-            </p>
+          
+          <h3 className="text-xl font-bold text-primary mb-3 line-clamp-2 group-hover:text-accent transition-colors">
+            {blog.title}
+          </h3>
+          
+          <p className="text-secondary line-clamp-3 mb-4">
+            {blog.excerpt}
+          </p>
+          
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-1">
+              <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center">
+                <span className="text-accent text-sm font-medium">BA</span>
+              </div>
+              <span className="text-sm text-secondary ml-2">Bernice Arthur</span>
+            </div>
+            <span className="text-accent text-sm font-medium group-hover:translate-x-1 transition-transform">
+              Read more →
+            </span>
           </div>
         </div>
       </Link>
-    </motion.div>
+    </motion.article>
   );
 };
 
@@ -214,24 +226,34 @@ const BlogPage = () => {
 
   return (
     <Layout>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* Hero Section */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-primary mb-4">
-            Blog
+        <div className="text-center mb-12">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="inline-flex items-center px-4 py-2 rounded-full bg-accent/10 text-accent text-sm font-medium mb-6"
+          >
+            <span className="w-2 h-2 rounded-full bg-accent animate-pulse mr-2" />
+            Latest Articles & Insights
+          </motion.div>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary mb-4">
+            Stories & Insights
           </h1>
-          <p className="text-lg sm:text-xl text-secondary max-w-2xl mx-auto">
-            Explore our collection of articles, tutorials, and insights on writing and storytelling.
+          <p className="text-lg text-secondary max-w-2xl mx-auto">
+            Discover articles, tutorials, and insights on writing, storytelling, and creative expression.
           </p>
         </div>
 
         {/* Categories */}
-        <div className="mb-12">
+        <div className="mb-8">
           <div className="flex flex-wrap justify-center gap-3">
             {categories.map(category => (
-              <button
+              <motion.button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm transition-colors border-2 ${
                   selectedCategory === category
                     ? `${categoryColors[category].bg} ${categoryColors[category].activeText} border-transparent`
@@ -239,13 +261,13 @@ const BlogPage = () => {
                 }`}
               >
                 {category}
-              </button>
+              </motion.button>
             ))}
           </div>
         </div>
 
         {/* Blog Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           <AnimatePresence>
             {currentBlogs.map((blog, index) => (
               <BlogCard
@@ -270,6 +292,20 @@ const BlogPage = () => {
             />
           </div>
         )}
+
+        {/* Newsletter Signup */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-accent/5 border border-accent/20 rounded-2xl p-8 text-center"
+        >
+          <h3 className="text-2xl font-bold text-primary mb-4">Stay Updated</h3>
+          <p className="text-secondary mb-6">Get the latest articles and insights delivered to your inbox.</p>
+          <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+            <input type="email" placeholder="Enter your email" className="flex-1 px-4 py-2 rounded-lg border border-border bg-main focus:ring-2 focus:ring-accent focus:border-transparent" />
+            <button className="px-6 py-2 bg-accent hover:bg-accent-hover text-white rounded-lg transition-colors">Subscribe</button>
+          </div>
+        </motion.div>
       </div>
     </Layout>
   );
