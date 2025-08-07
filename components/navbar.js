@@ -61,6 +61,20 @@ const Navbar = () => {
     }
   }, [lastScrollY]);
 
+  // Prevent background scrolling when search is open
+  useEffect(() => {
+    if (isSearchOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    // Cleanup function to restore scrolling when component unmounts
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isSearchOpen]);
+
   const toggleMenu = () => setIsOpen(!isOpen);
 
   const toggleSearch = () => {
@@ -70,6 +84,8 @@ const Navbar = () => {
         const searchInput = document.getElementById('search-input');
         if (searchInput) searchInput.focus();
       }, 100);
+    } else {
+      setSearchQuery('');
     }
   };
 
@@ -252,35 +268,30 @@ const Navbar = () => {
         <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm">
           <div 
             ref={searchRef}
-            className="fixed top-16 left-0 right-0 bg-main border-b border-border shadow-lg"
-            style={{ height: 'calc(100vh - 4rem)' }}
+            className="fixed left-0 right-0 bg-main border-b border-border shadow-lg transition-all duration-300 ease-in-out"
+            style={{ top: show ? '64px' : '0px' }}
           >
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-              <form onSubmit={handleSearchSubmit} className="mb-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+              <form onSubmit={handleSearchSubmit}>
                 <div className="relative">
-                  <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-secondary w-6 h-6" />
+                  <FiSearch className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-secondary w-4 h-4 sm:w-6 sm:h-6" />
                   <input
                     id="search-input"
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search articles, stories, projects..."
-                    className="w-full pl-12 pr-4 py-4 text-xl bg-card-bg border border-border focus:ring-2 focus:ring-accent focus:border-transparent outline-none"
+                    className="w-full pl-10 sm:pl-12 pr-12 sm:pr-16 py-3 sm:py-4 text-base sm:text-xl bg-card-bg border border-border rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent outline-none transition-all duration-300"
                   />
                   <button
                     type="button"
-                    onClick={() => setIsSearchOpen(false)}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-secondary hover:text-primary"
+                    onClick={toggleSearch}
+                    className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-secondary hover:text-primary transition-colors duration-300 p-1"
                   >
-                    <FiX className="w-6 h-6" />
+                    <FiX className="w-4 h-4 sm:w-6 sm:h-6" />
                   </button>
                 </div>
               </form>
-              
-              {/* Search suggestions or recent searches could go here */}
-              <div className="text-secondary">
-                <p className="text-sm">Popular searches: Writing Tips, Creative Process, Digital Art</p>
-              </div>
             </div>
           </div>
         </div>
