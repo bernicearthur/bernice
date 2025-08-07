@@ -149,7 +149,7 @@ const BlogCard = ({ blog, index }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 }}
-      className="group bg-card-bg border border-border rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 hover:border-accent/30"
+      className="group bg-card-bg hover:shadow-lg transition-all duration-300"
     >
       <Link href={`/blogpost/${blog.id}`} className="block">
         {/* Featured Image */}
@@ -161,7 +161,7 @@ const BlogCard = ({ blog, index }) => {
             className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
           <div className="absolute top-4 left-4">
-            <span className={`inline-block px-3 py-1 text-xs font-medium text-white rounded-full ${categoryColors[blog.category]?.bg || 'bg-accent'}`}>
+            <span className={`inline-block px-3 py-1 text-xs font-medium text-white ${categoryColors[blog.category]?.bg || 'bg-accent'}`}>
               {blog.category}
             </span>
           </div>
@@ -171,8 +171,6 @@ const BlogCard = ({ blog, index }) => {
         <div className="p-6">
           <div className="flex items-center text-secondary text-sm mb-3">
             <time dateTime={blog.publishDate}>{formatDate(blog.publishDate)}</time>
-            <span className="mx-2">•</span>
-            <span>5 min read</span>
           </div>
           
           <h3 className="text-xl font-bold text-primary mb-3 line-clamp-2 group-hover:text-accent transition-colors">
@@ -185,7 +183,7 @@ const BlogCard = ({ blog, index }) => {
           
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-1">
-              <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center">
+              <div className="w-8 h-8 bg-accent/10 flex items-center justify-center">
                 <span className="text-accent text-sm font-medium">BA</span>
               </div>
               <span className="text-sm text-secondary ml-2">Bernice Arthur</span>
@@ -226,35 +224,27 @@ const BlogPage = () => {
 
   return (
     <Layout>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        {/* Hero Section */}
-        <div className="text-center mb-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-flex items-center px-4 py-2 rounded-full bg-accent/10 text-accent text-sm font-medium mb-6"
-          >
-            <span className="w-2 h-2 rounded-full bg-accent animate-pulse mr-2" />
-            Latest Articles & Insights
-          </motion.div>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary mb-4">
-            Stories & Insights
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Page Title */}
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-primary mb-4">
+            Latest Articles
           </h1>
-          <p className="text-lg text-secondary max-w-2xl mx-auto">
-            Discover articles, tutorials, and insights on writing, storytelling, and creative expression.
+          <p className="text-lg text-secondary">
+            Discover insights, tutorials, and stories about writing and creativity.
           </p>
         </div>
 
         {/* Categories */}
         <div className="mb-8">
-          <div className="flex flex-wrap justify-center gap-3">
+          <div className="flex flex-wrap gap-3">
             {categories.map(category => (
               <motion.button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm transition-colors border-2 ${
+                className={`px-4 py-2 text-sm transition-colors border-2 ${
                   selectedCategory === category
                     ? `${categoryColors[category].bg} ${categoryColors[category].activeText} border-transparent`
                     : `bg-transparent ${categoryColors[category].border} text-primary dark:text-white ${categoryColors[category].hover}`
@@ -288,7 +278,7 @@ const BlogPage = () => {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="w-8 h-8 border-t-2 border-accent rounded-full animate-spin"
+              className="w-8 h-8 border-t-2 border-accent animate-spin"
             />
           </div>
         )}
@@ -297,13 +287,19 @@ const BlogPage = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-accent/5 border border-accent/20 rounded-2xl p-8 text-center"
+          className="bg-accent/5 p-8 text-center mt-16"
         >
           <h3 className="text-2xl font-bold text-primary mb-4">Stay Updated</h3>
           <p className="text-secondary mb-6">Get the latest articles and insights delivered to your inbox.</p>
           <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-            <input type="email" placeholder="Enter your email" className="flex-1 px-4 py-2 rounded-lg border border-border bg-main focus:ring-2 focus:ring-accent focus:border-transparent" />
-            <button className="px-6 py-2 bg-accent hover:bg-accent-hover text-white rounded-lg transition-colors">Subscribe</button>
+            <input 
+              type="email" 
+              placeholder="Enter your email" 
+              className="flex-1 px-4 py-2 border border-border bg-main focus:ring-2 focus:ring-accent focus:border-transparent" 
+            />
+            <button className="px-6 py-2 bg-accent hover:bg-accent-hover text-white transition-colors">
+              Subscribe
+            </button>
           </div>
         </motion.div>
       </div>

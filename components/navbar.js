@@ -2,18 +2,21 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useTheme } from '../components/theme';
-import { FiSun, FiMoon, FiMenu, FiX, FiHome, FiUser, FiBook, FiImage, FiBookOpen, FiArchive } from 'react-icons/fi';
+import { FiSun, FiMoon, FiMenu, FiX, FiHome, FiUser, FiBook, FiImage, FiBookOpen, FiArchive, FiSearch } from 'react-icons/fi';
 import Head from 'next/head';
 import Image from 'next/image';
 
 const Navbar = () => {
   const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const [show, setShow] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const { theme, toggleTheme } = useTheme();
   const router = useRouter();
   const menuRef = useRef(null);
+  const searchRef = useRef(null);
 
   useEffect(() => setMounted(true), []);
 
@@ -21,6 +24,9 @@ const Navbar = () => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setIsOpen(false);
+      }
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setIsSearchOpen(false);
       }
     };
 
@@ -57,6 +63,25 @@ const Navbar = () => {
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
+  const toggleSearch = () => {
+    setIsSearchOpen(!isSearchOpen);
+    if (!isSearchOpen) {
+      setTimeout(() => {
+        const searchInput = document.getElementById('search-input');
+        if (searchInput) searchInput.focus();
+      }, 100);
+    }
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setIsSearchOpen(false);
+      setSearchQuery('');
+    }
+  };
+
   const isActive = (path) => router.pathname === path;
 
   return (
@@ -65,7 +90,7 @@ const Navbar = () => {
         <link rel="icon" href="/icons/favicon.png" type="image/png" />
       </Head>
       <div className="h-16" /> {/* Spacer to prevent content jump */}
-      <nav className={`fixed top-0 left-0 right-0 z-50 bg-main py-2 transition-transform duration-300 ${show ? 'translate-y-0' : '-translate-y-full'}`}>
+      <nav className={`fixed top-0 left-0 right-0 z-50 bg-main py-2 border-b border-border transition-transform duration-300 ${show ? 'translate-y-0' : '-translate-y-full'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-12">
             <div className="flex-shrink-0 flex items-center">
@@ -89,6 +114,13 @@ const Navbar = () => {
             </div>
 
             <div className="hidden md:flex items-center space-x-4">
+              <button
+                onClick={toggleSearch}
+                className="p-2 rounded-full hover:bg-border transition-all duration-300"
+                aria-label="Search"
+              >
+                <FiSearch className="h-5 w-5 text-primary" />
+              </button>
               {mounted && (
                 <button
                   onClick={toggleTheme}
@@ -104,6 +136,13 @@ const Navbar = () => {
             </div>
 
             <div className="md:hidden flex items-center space-x-4">
+              <button
+                onClick={toggleSearch}
+                className="p-2 rounded-full hover:bg-border transition-all duration-300"
+                aria-label="Search"
+              >
+                <FiSearch className="h-5 w-5 text-primary" />
+              </button>
               {mounted && (
                 <button
                   onClick={toggleTheme}
@@ -207,6 +246,45 @@ const Navbar = () => {
           </div>
         </div>
       </nav>
+
+      {/* Search Overlay */}
+      {isSearchOpen && (
+        <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm">
+          <div 
+            ref={searchRef}
+            className="fixed top-16 left-0 right-0 bg-main border-b border-border shadow-lg"
+            style={{ height: 'calc(100vh - 4rem)' }}
+          >
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+              <form onSubmit={handleSearchSubmit} className="mb-8">
+                <div className="relative">
+                  <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-secondary w-6 h-6" />
+                  <input
+                    id="search-input"
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search articles, stories, projects..."
+                    className="w-full pl-12 pr-4 py-4 text-xl bg-card-bg border border-border focus:ring-2 focus:ring-accent focus:border-transparent outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setIsSearchOpen(false)}
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-secondary hover:text-primary"
+                  >
+                    <FiX className="w-6 h-6" />
+                  </button>
+                </div>
+              </form>
+              
+              {/* Search suggestions or recent searches could go here */}
+              <div className="text-secondary">
+                <p className="text-sm">Popular searches: Writing Tips, Creative Process, Digital Art</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
