@@ -9,7 +9,7 @@ import Image from 'next/image';
 const heroItems = [
   { title: "Writer" },
   { title: "Digital Archivist" },
-  { title: "Storyteller" }
+  { title: "Pan-Africanist" }
 ];
 
 const projects = [
