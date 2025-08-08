@@ -31,7 +31,7 @@ const Footer = () => {
             © {currentYear} <Link href="/login" className="text-accent hover:text-accent-hover transition-colors duration-300">Bernice Arthur</Link>.  All rights reserved.
           </p>
           <p className="text-secondary text-sm flex items-center justify-center group">
-            Developed by <a href="https://github.com/andrewsemtetteh" target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent-hover transition-colors duration-300 ml-1">Andrew</a>
+            Developed by <a href="https://andrewsemtetteh.com" target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent-hover transition-colors duration-300 ml-1">Andrew</a>
           </p>
         </div>
       </div>
